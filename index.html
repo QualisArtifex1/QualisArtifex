@@ -143,22 +143,21 @@
           <li><a href="https://raw.githubusercontent.com/QualisArtifex1/pdfs/main/AP%20Blank.pdf" target="_blank" rel="noopener">Blank</a></li>
         </ul>
       </li>
+      <li><a href="./quizbowl.html">Quiz Bowl</a></li>
     </ul>
   </div>
   <script>
     function positionAndAnimateNodes() {
       const wrapper = document.querySelector('.wrapper');
-      const items = document.querySelectorAll('.game-menu > li:not(.dropdown-menu li)');
+      const items = document.querySelectorAll('.game-menu > li');
       const { width, height } = wrapper.getBoundingClientRect();
       const centerX = width / 2;
       const centerY = height / 2;
       const radius = Math.min(width, height) * parseFloat(
         getComputedStyle(document.documentElement).getPropertyValue('--radius-factor')
       );
-      document.querySelectorAll('.game-menu > li').forEach((item, idx) => {
-        const isDropdown = item.classList.contains('dropdown');
-        const index = Array.from(document.querySelectorAll('.game-menu > li:not(.dropdown-menu li)')).indexOf(item);
-        const angle = (2 * Math.PI / items.length) * (isDropdown ? items.length - 1 : index) - Math.PI / 2;
+      items.forEach((item, idx) => {
+        const angle = (2 * Math.PI / items.length) * idx - Math.PI / 2;
         const x = centerX + radius * Math.cos(angle);
         const y = centerY + radius * Math.sin(angle);
         item.style.left = `${x}px`;
