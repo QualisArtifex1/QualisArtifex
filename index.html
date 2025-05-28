@@ -13,42 +13,30 @@
       --accent-color: #8b4513;
       --text-color: #333;
       --node-font: 2vmin;
-      --wrapper-size: 90vmin;
-      --radius-factor: 0.35;
-      --bg-zoom: 100%;
-      --bg-offset: 0%;
+      --radius-factor: 0.4;
       --font-family: 'Cinzel', serif;
+      --max-width: 1200px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       background-color: var(--bg-color);
       display: flex;
-      align-items: center;
       justify-content: center;
-      height: 100vh;
-      font-family: var(--font-family);
+      padding: 20px;
     }
     .wrapper {
       position: relative;
-      width: var(--wrapper-size);
-      height: var(--wrapper-size);
+      width: 100%;
+      max-width: var(--max-width);
+      margin: auto;
     }
     .bg-container {
-      position: absolute;
-      top: 0;
-      left: 0;
       width: 100%;
-      height: 100%;
-      overflow: hidden;
     }
     .bg-container img {
-      width: var(--bg-zoom);
-      height: var(--bg-zoom);
-      object-fit: contain;
+      width: 100%;
+      height: auto;
       display: block;
-      position: absolute;
-      top: var(--bg-offset);
-      left: var(--bg-offset);
     }
     .game-menu {
       position: absolute;
@@ -128,19 +116,12 @@
 <body>
   <div class="wrapper">
     <div class="bg-container">
-      <img src="qualis-artifex-logo.png" alt="Qualis Artifex Logo" />
+      <img src="qualis-artifex-logo.jpeg" alt="Qualis Artifex Logo" />
     </div>
     <ul class="game-menu">
       <li><a href="https://qualisartifex1.github.io/DeclensionRacer/" target="_blank" rel="noopener">Declension Racer</a></li>
 
-      <!-- Textbook dropdown -->
-      <li class="dropdown">
-        <div class="dropdown-btn">Textbook ▾</div>
-        <ul class="dropdown-menu">
-          <li><a href="https://drive.google.com/drive/folders/0B-Qj28gpl1H3LThZUTFWYmxTY1k?resourcekey=0--JTE4jyPoxoDUcG5geMPrw&usp=sharing" target="_blank" rel="noopener">Textbook</a></li>
-          <li><a href="https://qualisartifex1.github.io/FlashCards/" target="_blank" rel="noopener">FlashCards</a></li>
-        </ul>
-      </li>
+      <li><a href="https://drive.google.com/drive/folders/0B-Qj28gpl1H3LThZUTFWYmxTY1k?resourcekey=0--JTE4jyPoxoDUcG5geMPrw&usp=sharing" target="_blank" rel="noopener">Textbook</a></li>
 
       <li><a href="https://qualisartifex1.github.io/VerbIDGame/" target="_blank" rel="noopener">Verb Identification</a></li>
       <li><a href="https://qualisartifex1.github.io/LatinNotes/" target="_blank" rel="noopener">Note Taking</a></li>
