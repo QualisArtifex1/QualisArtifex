@@ -9,33 +9,41 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg-color: #f9f4e6;
       --accent-color: #8b4513;
       --text-color: #333;
       --node-font: 2vmin;
       --radius-factor: 0.4;
       --font-family: 'Cinzel', serif;
-      --max-width: 1200px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background-color: var(--bg-color);
+      margin: 0;
+      padding: 0;
+      background-color: var(--text-color);
       display: flex;
       justify-content: center;
-      padding: 20px;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      font-family: var(--font-family);
     }
     .wrapper {
       position: relative;
-      width: 100%;
-      max-width: var(--max-width);
-      margin: auto;
+      width: 100vw;
+      height: 100vh;
     }
     .bg-container {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
+      height: 100%;
+      overflow: hidden;
     }
     .bg-container img {
       width: 100%;
-      height: auto;
+      height: 100%;
+      object-fit: cover;
       display: block;
     }
     .game-menu {
@@ -120,13 +128,16 @@
     </div>
     <ul class="game-menu">
       <li><a href="https://qualisartifex1.github.io/DeclensionRacer/" target="_blank" rel="noopener">Declension Racer</a></li>
-
-      <li><a href="https://drive.google.com/drive/folders/0B-Qj28gpl1H3LThZUTFWYmxTY1k?resourcekey=0--JTE4jyPoxoDUcG5geMPrw&usp=sharing" target="_blank" rel="noopener">Textbook</a></li>
-
+      <li class="dropdown">
+        <div class="dropdown-btn">Textbook ▾</div>
+        <ul class="dropdown-menu">
+          <li><a href="https://drive.google.com/drive/folders/0B-Qj28gpl1H3LThZUTFWYmxTY1k?resourcekey=0--JTE4jyPoxoDUcG5geMPrw&usp=sharing" target="_blank" rel="noopener">Textbook</a></li>
+          <li><a href="https://qualisartifex1.github.io/FlashCards/" target="_blank" rel="noopener">FlashCards</a></li>
+        </ul>
+      </li>
       <li><a href="https://qualisartifex1.github.io/VerbIDGame/" target="_blank" rel="noopener">Verb Identification</a></li>
       <li><a href="https://qualisartifex1.github.io/LatinNotes/" target="_blank" rel="noopener">Note Taking</a></li>
       <li><a href="https://qualisartifex1.github.io/LatinDeclensionGame/" target="_blank" rel="noopener">Declension Game</a></li>
-
       <li class="dropdown">
         <div class="dropdown-btn">AP Readings ▾</div>
         <ul class="dropdown-menu">
@@ -134,7 +145,6 @@
           <li><a href="https://raw.githubusercontent.com/QualisArtifex1/pdfs/main/AP%20Blank.pdf" target="_blank" rel="noopener">Blank</a></li>
         </ul>
       </li>
-
       <li><a href="./quizbowl.html">Quiz Bowl</a></li>
     </ul>
   </div>
