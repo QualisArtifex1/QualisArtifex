@@ -6,50 +6,50 @@
   <title>Quiz Bowl - Qualis Artifex</title>
   <!-- Google Font: Cinzel -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
   <style>
     :root {
-      --bg-color: #f9f4e6;
       --accent-color: #8b4513;
       --text-color: #333;
       --node-font: 2vmin;
       --wrapper-size: 90vmin;
       --radius-factor: 0.35;
-      --bg-zoom: 100%;
-      --bg-offset: 0%;
       --font-family: 'Cinzel', serif;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Make the background image cover the entire viewport */
     body {
-      background-color: var(--bg-color);
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-family);
       display: flex;
       align-items: center;
       justify-content: center;
       height: 100vh;
-      font-family: var(--font-family);
+
+      /* <<-- NEW: set the background here -->> */
+      background-image: url('qualis-artifex-logo.png');
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
     }
+
     .wrapper {
       position: relative;
       width: var(--wrapper-size);
       height: var(--wrapper-size);
+      /* We want a transparent wrapper so the body background shows through */
+      background: transparent;
     }
-    .bg-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-    }
-    .bg-container img {
-      width: var(--bg-zoom);
-      height: var(--bg-zoom);
-      object-fit: contain;
-      display: block;
-      position: absolute;
-      top: var(--bg-offset);
-      left: var(--bg-offset);
-    }
+
     .game-menu {
       position: absolute;
       top: 0;
@@ -60,45 +60,73 @@
       pointer-events: none;
       z-index: 2;
     }
+
     .game-menu li {
       position: absolute;
       transform: translate(-50%, -50%);
       pointer-events: auto;
       opacity: 0;
     }
+
     .game-menu li a {
       text-decoration: none;
       color: var(--accent-color);
       font-size: var(--node-font);
       font-weight: 600;
-      background: rgba(255,255,255,0.9);
+      background: rgba(255, 255, 255, 0.9);
       white-space: nowrap;
       padding: 0.5vmin 2vmin;
       border-radius: 0.5vmin;
       border: 0.5vmin solid var(--accent-color);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       cursor: pointer;
     }
+
     .game-menu li a:hover {
       transform: scale(1.1);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
+
     @keyframes fadeInScale {
-      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
-      100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.6);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
     }
   </style>
 </head>
 <body>
   <div class="wrapper">
-    <div class="bg-container">
-      <img src="qualis-artifex-logo.png" alt="Qualis Artifex Logo" />
-    </div>
     <ul class="game-menu">
-      <li><a href="https://qualisartifex1.github.io/NAQT/" target="_blank" rel="noopener">NAQT Scoresheet</a></li>
-      <li><a href="https://qualisartifex1.github.io/QBPractice/" target="_blank" rel="noopener">QB Practice</a></li>
-      <li><a href="https://qualisartifex1.github.io/QBStudy/" target="_blank" rel="noopener">Quiz Bowl Study</a></li>
+      <li>
+        <a
+          href="https://qualisartifex1.github.io/NAQT/"
+          target="_blank"
+          rel="noopener"
+          >NAQT Scoresheet</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://qualisartifex1.github.io/QBPractice/"
+          target="_blank"
+          rel="noopener"
+          >QB Practice</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://qualisartifex1.github.io/QBStudy/"
+          target="_blank"
+          rel="noopener"
+          >Quiz Bowl Study</a
+        >
+      </li>
     </ul>
   </div>
   <script>
@@ -108,9 +136,10 @@
       const { width, height } = wrapper.getBoundingClientRect();
       const centerX = width / 2;
       const centerY = height / 2;
-      const radius = Math.min(width, height) * parseFloat(
-        getComputedStyle(document.documentElement).getPropertyValue('--radius-factor')
-      );
+      const radius = Math.min(width, height) *
+        parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue('--radius-factor')
+        );
       items.forEach((item, idx) => {
         const angle = (2 * Math.PI / items.length) * idx - Math.PI / 2;
         const x = centerX + radius * Math.cos(angle);
