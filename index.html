@@ -12,30 +12,22 @@
     --ink:#2e2a27;
     --node-font:2.1vmin;
     --radius-factor:0.40;
-    --ring-thickness:0.55vmin;
   }
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
     margin:0; background:#2b241d; color:var(--ink);
     font-family:'Cinzel',serif; overflow:hidden;
-    touch-action:manipulation;
   }
   .wrapper{position:relative; width:100vw; height:100vh; isolation:isolate;}
-
-  /* --- BACKGROUND (parallax layer) --- */
   .bg{
     position:absolute; inset:0; overflow:hidden; z-index:0;
-    perspective:800px;
   }
   .bg img{
     position:absolute; left:50%; top:50%;
-    transform:translate(-50%,-50%) scale(1.05); /* slight zoom for parallax room */
-    width:110%; height:110%; object-fit:cover; filter:contrast(1.02) saturate(0.95);
-    will-change:transform;
+    transform:translate(-50%,-50%);
+    width:100%; height:auto; max-height:100%; object-fit:contain;
   }
-
-  /* --- VIGNETTE + GRAIN overlays --- */
   .vignette, .grain, .torch{
     position:absolute; inset:0; pointer-events:none; z-index:1;
   }
@@ -45,11 +37,7 @@
   }
   .grain{
     opacity:.18;
-    background-image:url("data:image/svg+xml;utf8,\
-      <svg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'>\
-        <filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/></filter>\
-        <rect width='100%' height='100%' filter='url(%23n)' opacity='0.55'/>\
-      </svg>");
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.55'/></svg>");
     background-size:140px 140px;
     animation:grainShift 9s linear infinite;
     mix-blend-mode:overlay;
@@ -58,15 +46,9 @@
     from{transform:translate3d(0,0,0)}
     to{transform:translate3d(-140px,-140px,0)}
   }
-
-  /* --- TORCHLIGHT (subtle flicker that follows pointer a bit) --- */
   .torch{
     --x:50%; --y:40%; --r1:10vmin; --r2:40vmin;
-    background:
-      radial-gradient(circle at var(--x) var(--y),
-        rgba(255,240,200,0.20) 0,
-        rgba(255,215,160,0.12) var(--r1),
-        rgba(0,0,0,0) var(--r2));
+    background: radial-gradient(circle at var(--x) var(--y), rgba(255,240,200,0.20) 0, rgba(255,215,160,0.12) var(--r1), rgba(0,0,0,0) var(--r2));
     mix-blend-mode:soft-light;
     animation:torchFlicker 2.4s ease-in-out infinite;
   }
@@ -75,8 +57,6 @@
     50%{filter:brightness(1.06) blur(0.2px)}
     100%{filter:brightness(1) blur(0.1px)}
   }
-
-  /* --- MENU RING --- */
   .menu{
     position:absolute; inset:0; z-index:2; list-style:none; margin:0; padding:0;
     pointer-events:none;
@@ -87,16 +67,14 @@
   }
   .menu a, .dropdown-btn{
     display:inline-block; text-decoration:none; color:var(--accent);
-    font-weight:700; font-size:var(--node-font); line-height:1;
+    font-weight:700; font-size:var(--node-font);
     background:rgba(255,255,255,.92);
     padding:.6vmin 1.9vmin; border:.45vmin solid var(--accent);
     border-radius:.65vmin; box-shadow:0 .4vmin 1.2vmin rgba(0,0,0,.15);
     transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
     outline:none;
   }
-  .menu a:hover, .dropdown-btn:hover{ transform:translateZ(0) scale(1.08); box-shadow:0 .6vmin 1.6vmin rgba(0,0,0,.22); filter:drop-shadow(0 0 .6vmin rgba(139,69,19,.6)); }
-  .menu a:focus-visible, .dropdown-btn:focus-visible{ box-shadow:0 0 0 .6vmin rgba(139,69,19,.45), 0 .6vmin 1.6vmin rgba(0,0,0,.22); }
-
+  .menu a:hover, .dropdown-btn:hover{ transform:scale(1.08); box-shadow:0 .6vmin 1.6vmin rgba(0,0,0,.22); filter:drop-shadow(0 0 .6vmin rgba(139,69,19,.6)); }
   .dropdown{ position:absolute; }
   .dropdown-menu{
     display:none; position:absolute; left:50%; top:calc(100% + .6vmin); transform:translateX(-50%);
@@ -104,90 +82,53 @@
     box-shadow:0 .6vmin 1.6vmin rgba(0,0,0,.18); white-space:nowrap; z-index:3;
   }
   .dropdown.open .dropdown-menu{ display:block; }
-  .dropdown-menu li{ position:static; transform:none; opacity:1!important; pointer-events:auto; }
+  .dropdown-menu li{ position:static; opacity:1!important; pointer-events:auto; }
   .dropdown-menu a{ margin:0; border:0; border-radius:0; display:block; padding:.7vmin 1.4vmin; }
-
-  /* ring entrance */
   @keyframes popIn{
     from{opacity:0; transform:translate(-50%,-50%) scale(.6)}
     to{opacity:1; transform:translate(-50%,-50%) scale(1)}
   }
-
-  /* --- CANVAS dust --- */
   canvas#dust{position:absolute; inset:0; z-index:1; pointer-events:none; mix-blend-mode:soft-light;}
-
-  /* --- Reduced motion --- */
-  @media (prefers-reduced-motion:reduce){
-    .grain{animation:none}
-    .torch{animation:none}
-    .menu a:hover, .dropdown-btn:hover{transform:none}
-  }
-
-  /* Slightly bigger targets on small screens */
-  @media (max-width:780px){
-    :root{ --node-font:2.8vmin; --radius-factor:.44; }
-    .menu a, .dropdown-btn{ padding:1vmin 2.4vmin; }
-  }
 </style>
 </head>
 <body>
-  <div class="wrapper" id="wrap" aria-label="Qualis Artifex navigation">
-    <div class="bg" id="bg">
+  <div class="wrapper" id="wrap">
+    <div class="bg">
       <img src="qualis-artifex-logo.png" alt="Qualis Artifex background">
       <div class="vignette"></div>
       <div class="grain"></div>
-      <div class="torch" id="torch"></div>
+      <div class="torch"></div>
       <canvas id="dust"></canvas>
     </div>
-
     <ul class="menu" id="menu">
-      <li><a href="https://qualisartifex1.github.io/DeclensionRacer/" target="_blank" rel="noopener">Declension Racer</a></li>
-
+      <li><a href="#">Declension Racer</a></li>
       <li class="dropdown">
-        <button class="dropdown-btn" aria-expanded="false">Textbook ▾</button>
-        <ul class="dropdown-menu" role="menu">
-          <li><a href="https://drive.google.com/drive/folders/0B-Qj28gpl1H3LThZUTFWYmxTY1k?resourcekey=0--JTE4jyPoxoDUcG5geMPrw&usp=sharing" target="_blank" rel="noopener">Textbook</a></li>
-          <li><a href="https://qualisartifex1.github.io/FlashCards/" target="_blank" rel="noopener">FlashCards</a></li>
-        </ul>
+        <button class="dropdown-btn">Textbook ▾</button>
+        <ul class="dropdown-menu"><li><a href="#">Textbook</a></li><li><a href="#">FlashCards</a></li></ul>
       </li>
-
-      <li><a href="https://qualisartifex1.github.io/VerbIDGame/" target="_blank" rel="noopener">Verb Identification</a></li>
-      <li><a href="https://qualisartifex1.github.io/LatinNotes/" target="_blank" rel="noopener">Note Taking</a></li>
-      <li><a href="https://qualisartifex1.github.io/LatinDeclensionGame/" target="_blank" rel="noopener">Declension Game</a></li>
-
+      <li><a href="#">Verb Identification</a></li>
+      <li><a href="#">Note Taking</a></li>
+      <li><a href="#">Declension Game</a></li>
       <li class="dropdown">
-        <button class="dropdown-btn" aria-expanded="false">AP Readings ▾</button>
-        <ul class="dropdown-menu" role="menu">
-          <li><a href="https://raw.githubusercontent.com/QualisArtifex1/pdfs/main/AP%20with%20Commentary.pdf" target="_blank" rel="noopener">With Commentary</a></li>
-          <li><a href="https://raw.githubusercontent.com/QualisArtifex1/pdfs/main/AP%20Blank.pdf" target="_blank" rel="noopener">Blank</a></li>
-        </ul>
+        <button class="dropdown-btn">AP Readings ▾</button>
+        <ul class="dropdown-menu"><li><a href="#">With Commentary</a></li><li><a href="#">Blank</a></li></ul>
       </li>
-
-      <li><a href="./quizbowl.html" target="_blank" rel="noopener">Quiz Bowl</a></li>
-
+      <li><a href="#">Quiz Bowl</a></li>
       <li class="dropdown">
-        <button class="dropdown-btn" aria-expanded="false">Cornology ▾</button>
-        <ul class="dropdown-menu" role="menu">
-          <li><a href="https://qualisartifex1.github.io/plinko/" target="_blank" rel="noopener">Plinko</a></li>
-          <li><a href="https://qualisartifex1.github.io/GameofLife/" target="_blank" rel="noopener">Game of Life</a></li>
-          <li><a href="https://qualisartifex1.github.io/DoublePendulum/" target="_blank" rel="noopener">Double Pendulum</a></li>
-        </ul>
+        <button class="dropdown-btn">Cornology ▾</button>
+        <ul class="dropdown-menu"><li><a href="#">Plinko</a></li><li><a href="#">Game of Life</a></li><li><a href="#">Double Pendulum</a></li></ul>
       </li>
-
-      <li><a href="https://qualisartifex1.github.io/FlashCardsAllSubjects/" target="_blank" rel="noopener">Flash Cards (All Subjects)</a></li>
-      <li><a href="https://latin-words.com/" target="_blank" rel="noopener">Latin Dictionary</a></li>
+      <li><a href="#">Flash Cards (All Subjects)</a></li>
+      <li><a href="#">Latin Dictionary</a></li>
     </ul>
   </div>
-
 <script>
-  // --- Layout nodes on a ring ---
   function layoutRing(){
     const wrap = document.getElementById('wrap');
     const items = [...document.querySelectorAll('.menu > li')];
     const { width, height } = wrap.getBoundingClientRect();
     const cx = width/2, cy = height/2;
     const r = Math.min(width,height) * parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--radius-factor'));
-
     items.forEach((el, i) => {
       const angle = (2*Math.PI/items.length)*i - Math.PI/2;
       const x = cx + r*Math.cos(angle);
@@ -197,15 +138,11 @@
       el.style.animation = `popIn .6s ease-out ${i*0.12}s forwards`;
     });
   }
-
-  // --- Dropdowns (tap friendly) ---
   function initDropdowns(){
     document.addEventListener('click', e=>{
       document.querySelectorAll('.dropdown').forEach(d=>{
         if(!d.contains(e.target)) {
           d.classList.remove('open');
-          const btn = d.querySelector('.dropdown-btn');
-          if(btn) btn.setAttribute('aria-expanded','false');
         }
       });
     });
@@ -213,53 +150,25 @@
       btn.addEventListener('click', e=>{
         e.stopPropagation();
         const parent = btn.closest('.dropdown');
-        const open = parent.classList.toggle('open');
-        btn.setAttribute('aria-expanded', String(open));
+        parent.classList.toggle('open');
       });
     });
   }
-
-  // --- Parallax background + torch follows pointer ---
-  const bgImg = document.querySelector('.bg img');
-  const torch = document.getElementById('torch');
-  function parallax(e){
-    const rect = document.body.getBoundingClientRect();
-    const px = (e.clientX ?? rect.width*0.5)/rect.width - 0.5;
-    const py = (e.clientY ?? rect.height*0.5)/rect.height - 0.5;
-    const maxShift = 12; // px
-    bgImg.style.transform = `translate(calc(-50% + ${-px*maxShift}px), calc(-50% + ${-py*maxShift}px)) scale(1.05)`;
-    torch.style.setProperty('--x', `${(px+0.5)*100}%`);
-    torch.style.setProperty('--y', `${(py+0.5)*100}%`);
-  }
-  window.addEventListener('mousemove', parallax);
-  // mobile tilt parallax
-  window.addEventListener('deviceorientation', (ev)=>{
-    const px = (ev.gamma||0)/40; // side tilt
-    const py = (ev.beta||0)/60;  // front tilt
-    const fake = {clientX:(px+0.5)*window.innerWidth, clientY:(py+0.5)*window.innerHeight};
-    parallax(fake);
-  });
-
-  // --- Dust motes canvas ---
   (function dust(){
     const canvas = document.getElementById('dust');
     const ctx = canvas.getContext('2d');
     let w,h, motes=[];
     function size(){ w=canvas.width=innerWidth; h=canvas.height=innerHeight; }
     size(); addEventListener('resize', size);
-
-    const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const N = prefersReduced ? 20 : 55;
-
+    const N = 55;
     function reset(p){
       p.x = Math.random()*w; p.y = Math.random()*h;
       p.r = Math.random()*1.4 + 0.4;
       p.a = Math.random()*Math.PI*2;
-      p.s = (Math.random()*0.3 + 0.05) * (prefersReduced?0.6:1);
+      p.s = (Math.random()*0.3 + 0.05);
       p.o = Math.random()*0.35 + 0.15;
     }
     for(let i=0;i<N;i++){ let p={}; reset(p); motes.push(p); }
-
     function tick(){
       ctx.clearRect(0,0,w,h);
       for(const p of motes){
@@ -267,7 +176,6 @@
         p.x += Math.cos(p.a)*p.s;
         p.y += Math.sin(p.a)*p.s*0.6;
         if(p.x<-10||p.x>w+10||p.y<-10||p.y>h+10) reset(p);
-
         ctx.globalAlpha = p.o;
         ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.closePath();
         ctx.fillStyle = '#dbc39b';
@@ -279,13 +187,9 @@
     }
     tick();
   })();
-
-  // --- Init ---
   window.addEventListener('DOMContentLoaded', ()=>{
     layoutRing();
     initDropdowns();
-    // initial parallax center
-    parallax({clientX:innerWidth*0.5, clientY:innerHeight*0.5});
   });
   window.addEventListener('resize', layoutRing);
 </script>
