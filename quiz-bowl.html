@@ -129,43 +129,68 @@
 <script>
 (function(){
   const wrap = document.querySelector('.wrapper');
-  // Fade-in on load (slower)
+
+  // 1) Normal load: fade in
   window.addEventListener('DOMContentLoaded', ()=>{
-    requestAnimationFrame(()=> wrap && wrap.classList.add('ready'));
+    // Next frame to avoid a flash
+    requestAnimationFrame(()=> { if (wrap) wrap.classList.add('ready'); });
   });
 
-  // Helper: mark active vs inert, prefetch internal pages on hover
+  // 2) BFCache restore or tab switching: ensure we're visible again
+  window.addEventListener('pageshow', (e)=>{
+    if (!wrap) return;
+    // On bfcache restore, pageshow fires (often with e.persisted === true)
+    wrap.classList.add('ready');
+    wrap.classList.remove('transitioning');
+  });
+
+  document.addEventListener('visibilitychange', ()=>{
+    if (document.visibilityState === 'visible' && wrap){
+      wrap.classList.add('ready');
+      wrap.classList.remove('transitioning');
+    }
+  });
+
+  // 3) Prefetch + intercept internal nav; external opens in new tab
   document.querySelectorAll('a.hotspot').forEach(a=>{
     const href = a.getAttribute('href') || '';
     const isExternal = /^https?:\/\//i.test(href);
-    const isInternalNav = !!href && href !== '#' && !isExternal;
+    const isInternal = !!href && href !== '#' && !isExternal;
 
-    if(isExternal){
+    if (isExternal){
       a.setAttribute('target','_blank');
       a.setAttribute('rel','noopener');
-      a.setAttribute('data-active','true');
-    } else if(isInternalNav){
-      a.setAttribute('data-active','true');
-      // Prefetch the target page on hover/focus to smooth transition
+      a.dataset.active = 'true';
+      return;
+    }
+
+    if (isInternal){
+      a.dataset.active = 'true';
+
+      // Prefetch target once for smoother nav
       const prefetch = () => {
-        if(a.dataset.prefetched) return;
+        if (a.dataset.prefetched) return;
         const link = document.createElement('link');
         link.rel = 'prefetch';
         link.href = href;
         document.head.appendChild(link);
         a.dataset.prefetched = '1';
       };
-      a.addEventListener('mouseenter', prefetch, { once: true });
-      a.addEventListener('focus', prefetch, { once: true });
+      a.addEventListener('mouseenter', prefetch, { once:true });
+      a.addEventListener('focus', prefetch, { once:true });
 
+      // Intercept clicks: fade out, then navigate
       a.addEventListener('click', (e)=>{
         e.preventDefault();
-        if(!wrap){ window.location.href = href; return; }
+        if (!wrap){ window.location.href = href; return; }
         wrap.classList.add('transitioning');
-        setTimeout(()=>{ window.location.href = href; }, 580); // match CSS ~600ms
+        setTimeout(()=>{ window.location.href = href; }, 580); // match your CSS
       });
     }
   });
+
+  // 4) Safety: if something ever leaves us faded, un-fade after a tick
+  setTimeout(()=>{ if (wrap) { wrap.classList.add('ready'); wrap.classList.remove('transitioning'); }}, 0);
 })();
 </script>
 
