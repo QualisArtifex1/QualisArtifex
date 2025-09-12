@@ -49,24 +49,13 @@
 
 <style>
 
-/* MOBILE FIT MODE: show full artwork and allow scrolling on touch devices */
+/* MOBILE IMAGE MODE: use a real <img> for exact sizing, enable scroll */
 @media (pointer:coarse) {
-  html, body {
-    overflow: auto !important;
-    height: auto !important;
-  }
-  :root { --bg-ar: 0.625; } /* fallback; JS sets the exact value */
-  .wrapper {
-    width: 100vw;
-    height: calc(var(--bg-ar) * 100vw);
-    min-height: 100svh;
-  }
-  .bg { position: absolute; inset: 0; }
-  .bg::before {
-    background-size: contain !important;
-    background-position: top center !important;
-    background-repeat: no-repeat !important;
-  }
+  html, body { overflow:auto !important; height:auto !important; }
+  .wrapper { position:relative; width:100vw; height:auto !important; min-height:100svh; }
+  .bg { position:relative; inset:auto; }
+  .bg::before { content:none !important; } /* hide CSS background; we inject <img> */
+  .bg > img.bgimg { display:block; width:100%; height:auto; max-width:100%; }
 }
 
 </style>
@@ -103,13 +92,7 @@
   const lerp = (a,b,t)=>a+(b-a)*t;
   const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
 
-  function size(){
-    dpr = Math.min(window.devicePixelRatio||1, 2);
-    w = innerWidth; h = innerHeight;
-    canvas.width = Math.floor(w*dpr);
-    canvas.height = Math.floor(h*dpr);
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-  }
+  function size(){ dpr=Math.min(window.devicePixelRatio||1,2); if (window.matchMedia && matchMedia('(pointer:coarse)').matches){ const r=canvas.getBoundingClientRect(); w=r.width||innerWidth; h=r.height||innerHeight; } else { w=innerWidth; h=innerHeight; } canvas.width=Math.floor(w*dpr); canvas.height=Math.floor(h*dpr); ctx.setTransform(dpr,0,0,dpr,0,0); }
   size(); addEventListener('resize', size);
 
   function rand(a,b){ return a + Math.random()*(b-a); }
@@ -278,21 +261,32 @@
 
 
 <script>
-/* Match wrapper height to the actual background image aspect ratio on phones */
 (function(){
   if (!matchMedia('(pointer:coarse)').matches) return;
-  const bgVar = getComputedStyle(document.documentElement).getPropertyValue('--bg') || "";
+  const root = document.documentElement;
+  const bgVar = getComputedStyle(root).getPropertyValue('--bg') || "";
   const m = bgVar.match(/url\((['"]?)(.*?)\1\)/);
-  if (!m) return;
+  if(!m) return;
   const url = m[2];
+  const bg = document.querySelector('.bg');
+  if(!bg) return;
   const img = new Image();
+  img.className = 'bgimg';
+  img.alt = '';
   img.onload = function(){
-    const ar = img.naturalHeight / img.naturalWidth;
-    document.documentElement.style.setProperty('--bg-ar', ar.toString());
-    const wrap = document.getElementById('wrap');
-    if (wrap) wrap.style.height = `calc(${ar} * 100vw)`;
+    const canvas = document.getElementById('dust');
+    const fit = () => {
+      if(!canvas) return;
+      const rect = img.getBoundingClientRect();
+      canvas.style.width = rect.width + 'px';
+      canvas.style.height = rect.height + 'px';
+      window.dispatchEvent(new Event('resize'));
+    };
+    new ResizeObserver(fit).observe(img);
+    fit();
   };
   img.src = url;
+  bg.prepend(img);
 })();
 </script>
 
