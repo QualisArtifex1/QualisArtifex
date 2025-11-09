@@ -54,158 +54,45 @@
 
 </head><body>
 <div class="stage">
-  <svg id="scene"
-       viewBox="0 0 1228 819"
-       preserveAspectRatio="xMidYMid meet"
-       style="width:100%; height:100%; display:block; background:#151311">
+  <svg
+    viewBox="0 0 1228 819"
+    preserveAspectRatio="xMidYMid meet"
+    style="width:100%; height:100%; display:block; background:#151311">
     <image href="./front-page.jpg" x="0" y="0" width="1228" height="819" />
-    <g id="hotspot-layer"></g>
+
+    <style>
+      .hit { fill: transparent; cursor: pointer; }
+      .hit:hover { fill: rgba(255,224,160,0.06); }
+    </style>
+
+    <!-- Clickable plaques -->
+    <a xlink:href="ap-reading.html">
+      <rect class="hit" x="178" y="235" width="117" height="110" />
+    </a>
+    <a xlink:href="cornology.html">
+      <rect class="hit" x="324" y="222" width="123" height="112" />
+    </a>
+    <a xlink:href="practice.html">
+      <rect class="hit" x="757" y="242" width="248" height="103" />
+    </a>
+
+    <a xlink:href="#" onclick="return false">
+      <rect class="hit" x="242" y="573" width="118" height="75" />
+    </a>
+    <a xlink:href="lower2.html">
+      <rect class="hit" x="395" y="571" width="121" height="79" />
+    </a>
+    <a xlink:href="https://qualisartifex1.github.io/LatinNotes/" target="_blank" rel="noopener">
+      <rect class="hit" x="543" y="567" width="123" height="83" />
+    </a>
+    <a xlink:href="quiz-bowl.html">
+      <rect class="hit" x="697" y="567" width="122" height="79" />
+    </a>
+    <a xlink:href="https://qualisartifex1.github.io/FlashCardsAllSubjects/" target="_blank" rel="noopener">
+      <rect class="hit" x="849" y="570" width="123" height="78" />
+    </a>
   </svg>
-
-  <div id="ui" style="position:absolute; inset:auto 1rem 1rem auto; display:flex; gap:.5rem;">
-    <button id="toggleEdit">Adjust Hotspots</button>
-    <button id="copyJson" style="display:none">Copy JSON</button>
-  </div>
 </div>
-
-<script>
-/* === 1) Hotspot config (image-space pixels, based on 1228×819) === */
-let hotspots = [
-  { id:"ap",      href:"ap-reading.html",                                           x:175, y:207, w:117, h:110 },
-  { id:"corno",   href:"cornology.html",                                            x:322, y:191, w:123, h:112 },
-  { id:"practice",href:"practice.html",                                             x:756, y:213, w:248, h:103 },
-  { id:"blank",   href:"#",                                                         x:239, y:611, w:118, h:75  },
-  { id:"textbook",href:"lower2.html",                                               x:395, y:607, w:121, h:79  },
-  { id:"notes",   href:"https://qualisartifex1.github.io/LatinNotes/",              x:542, y:606, w:123, h:83  },
-  { id:"qb",      href:"quiz-bowl.html",                                            x:696, y:607, w:122, h:79  },
-  { id:"flash",   href:"https://qualisartifex1.github.io/FlashCardsAllSubjects/",   x:848, y:609, w:123, h:78  },
-];
-
-/* Load any saved tweaks from localStorage */
-try {
-  const saved = JSON.parse(localStorage.getItem("qa_hotspots"));
-  if (Array.isArray(saved)) hotspots = hotspots.map(h => saved.find(s => s.id===h.id) || h);
-} catch {}
-
-/* === 2) Render === */
-const svg = document.getElementById('scene');
-const layer = document.getElementById('hotspot-layer');
-
-function render(edit=false) {
-  layer.innerHTML = '';
-  hotspots.forEach(h => {
-    const a = document.createElementNS('http://www.w3.org/2000/svg','a');
-    a.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', h.href);
-    if (/^https?:/.test(h.href)) { a.setAttribute('target','_blank'); a.setAttribute('rel','noopener'); }
-
-    const r = document.createElementNS('http://www.w3.org/2000/svg','rect');
-    r.setAttribute('x', h.x); r.setAttribute('y', h.y);
-    r.setAttribute('width', h.w); r.setAttribute('height', h.h);
-    r.setAttribute('rx', 4); r.setAttribute('ry', 4);
-    r.dataset.id = h.id;
-
-    if (!edit) {
-      r.setAttribute('fill','transparent');
-      r.setAttribute('class','hit');
-    } else {
-      r.setAttribute('fill','rgba(255,215,160,.18)');
-      r.setAttribute('stroke','rgba(255,230,180,.9)');
-      r.setAttribute('stroke-width','1.5');
-      r.style.cursor = 'move';
-    }
-    a.appendChild(r);
-    layer.appendChild(a);
-
-    if (edit) makeDraggable(r, h);
-  });
-}
-render(false);
-
-/* === 3) Edit mode toggles === */
-const toggleBtn = document.getElementById('toggleEdit');
-const copyBtn   = document.getElementById('copyJson');
-let editing = false;
-let selected = null;
-
-toggleBtn.addEventListener('click', () => {
-  editing = !editing;
-  toggleBtn.textContent = editing ? 'Exit Adjust Mode' : 'Adjust Hotspots';
-  copyBtn.style.display = editing ? 'inline-block' : 'none';
-  render(editing);
-});
-
-copyBtn.addEventListener('click', async () => {
-  const json = JSON.stringify(hotspots, null, 2);
-  try { await navigator.clipboard.writeText(json); } catch {}
-  localStorage.setItem('qa_hotspots', json);
-  alert('Hotspot coordinates copied to clipboard and saved to this device.');
-});
-
-/* === 4) Drag + keyboard nudge (works with mouse or touch) === */
-function makeDraggable(rect, model) {
-  let start = null;
-
-  function pt(evt){
-    const ctm = rect.ownerSVGElement.getScreenCTM();
-    const e = evt.touches ? evt.touches[0] : evt;
-    return {
-      x: (e.clientX - ctm.e) / ctm.a,
-      y: (e.clientY - ctm.f) / ctm.d
-    };
-  }
-  function down(e){
-    e.preventDefault();
-    selected = model;
-    const p = pt(e);
-    start = { p, x:model.x, y:model.y, w:model.w, h:model.h };
-    rect.focus?.();
-    window.addEventListener('pointermove', move);
-    window.addEventListener('pointerup', up, { once:true });
-    window.addEventListener('touchmove', move, { passive:false });
-    window.addEventListener('touchend', up, { once:true });
-  }
-  function move(e){
-    e.preventDefault();
-    if (!start) return;
-    const p = pt(e);
-    model.x = Math.round(start.x + (p.x - start.p.x));
-    model.y = Math.round(start.y + (p.y - start.p.y));
-    rect.setAttribute('x', model.x);
-    rect.setAttribute('y', model.y);
-  }
-  function up(){
-    start = null;
-    localStorage.setItem('qa_hotspots', JSON.stringify(hotspots));
-  }
-
-  rect.addEventListener('pointerdown', down);
-  rect.addEventListener('touchstart', down, { passive:false });
-}
-
-/* Keyboard nudges: arrows move; Alt+arrows resize; Shift = 10px */
-window.addEventListener('keydown', (e) => {
-  if (!editing || !selected) return;
-  const step = e.shiftKey ? 10 : 1;
-  let changed = true;
-  if (e.altKey) {
-    if (e.key === 'ArrowLeft')  selected.w = Math.max(1, selected.w - step);
-    else if (e.key === 'ArrowRight') selected.w += step;
-    else if (e.key === 'ArrowUp')    selected.h = Math.max(1, selected.h - step);
-    else if (e.key === 'ArrowDown')  selected.h += step;
-    else changed = false;
-  } else {
-    if (e.key === 'ArrowLeft')  selected.x -= step;
-    else if (e.key === 'ArrowRight') selected.x += step;
-    else if (e.key === 'ArrowUp')    selected.y -= step;
-    else if (e.key === 'ArrowDown')  selected.y += step;
-    else changed = false;
-  }
-  if (changed) {
-    render(true);
-    localStorage.setItem('qa_hotspots', JSON.stringify(hotspots));
-    e.preventDefault();
-  }
-});
 </script>
 
 <style>
@@ -356,6 +243,7 @@ button:hover{ filter:brightness(1.08); }
 
 
 </body></html>
+
 
 
 
