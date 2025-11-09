@@ -53,15 +53,49 @@
   </style>
 
 </head><body>
-<div class="wrapper" id="wrap"><div class="bg"><canvas id="dust"></canvas></div>
-<a class="hotspot" data-label="AP Reading" style="--x:14.229; --y:25.300; --w:9.490; --h:13.491;" href="ap-reading.html">AP Reading</a>
-<a class="hotspot" data-label="Cornology" style="--x:26.184; --y:23.340; --w:10.007; --h:13.615;" href="cornology.html">Cornology</a>
-<a class="hotspot" data-label="Practice" style="--x:61.556; --y:26.051; --w:20.180; --h:12.588;" href="practice.html">Practice</a>
-<a class="hotspot" data-label="Textbook" style="--x:19.492; --y:74.563; --w:9.620; --h:9.098;" href="#" onclick="return false;" style="cursor:default;">Textbook</a>
-<a class="hotspot" data-label="Lower 2" style="--x:32.150; --y:74.072; --w:9.815; --h:9.628;" href="lower2.html">Lower 2</a>
-<a class="hotspot" data-label="Note Taking" style="--x:44.168; --y:74.046; --w:10.004; --h:10.120;" href="https://qualisartifex1.github.io/LatinNotes/">Note Taking</a>
-<a class="hotspot" data-label="Quiz Bowl" style="--x:56.705; --y:74.153; --w:9.972; --h:9.658;" href="quiz-bowl.html">Quiz Bowl</a>
-<a class="hotspot" data-label="Flash Cards" style="--x:69.053; --y:74.362; --w:10.031; --h:9.533;" href="https://qualisartifex1.github.io/FlashCardsAllSubjects/">Flash Cards</a>
+<div class="bg" style="z-index:0">
+  <svg
+    viewBox="0 0 1228 819"
+    preserveAspectRatio="xMidYMid meet"
+    style="position:absolute; inset:0; width:100vw; height:100vh; display:block; background:#151311">
+    <!-- The base image -->
+    <image href="./front-page.jpg" x="0" y="0" width="1228" height="819" />
+
+    <style>
+      .hit { fill: transparent; cursor: pointer; }
+      .hit:focus-visible { outline: none; }
+      /* Optional: very subtle hover hint on active areas */
+      .hit:hover { fill: rgba(255,224,160,0.06); }
+    </style>
+
+    <!-- Clickable plaques (rects sized/positioned in image pixels) -->
+    <a xlink:href="ap-reading.html">
+      <rect class="hit" x="175" y="207" width="117" height="110" />
+    </a>
+    <a xlink:href="cornology.html">
+      <rect class="hit" x="322" y="191" width="123" height="112" />
+    </a>
+    <a xlink:href="practice.html">
+      <rect class="hit" x="756" y="213" width="248" height="103" />
+    </a>
+
+    <!-- Lower row -->
+    <a xlink:href="#" onclick="return false">
+      <rect class="hit" x="239" y="611" width="118" height="75" />
+    </a>
+    <a xlink:href="lower2.html">
+      <rect class="hit" x="395" y="607" width="121" height="79" />
+    </a>
+    <a xlink:href="https://qualisartifex1.github.io/LatinNotes/" target="_blank" rel="noopener">
+      <rect class="hit" x="542" y="606" width="123" height="83" />
+    </a>
+    <a xlink:href="quiz-bowl.html">
+      <rect class="hit" x="696" y="607" width="122" height="79" />
+    </a>
+    <a xlink:href="https://qualisartifex1.github.io/FlashCardsAllSubjects/" target="_blank" rel="noopener">
+      <rect class="hit" x="848" y="609" width="123" height="78" />
+    </a>
+  </svg>
 </div>
 
 
@@ -196,4 +230,5 @@
 
 
 </body></html>
+
 
