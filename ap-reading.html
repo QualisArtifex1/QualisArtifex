@@ -16,6 +16,7 @@
       -webkit-text-size-adjust: 100%;
     }
 
+    /* Same frame as index: always shows full JPEG (letterboxed if needed) */
     .stage {
       width: 100%;
       max-height: 100dvh;
@@ -27,6 +28,7 @@
       overflow: hidden;
     }
 
+    /* Dust sits behind the art */
     #dust {
       position: absolute;
       inset: 0;
@@ -35,6 +37,7 @@
       pointer-events: none;
     }
 
+    /* SVG contains the background image + hotspots in one coordinate space */
     .stage > svg {
       position: absolute;
       inset: 0;
@@ -54,26 +57,41 @@
   <div class="stage">
     <canvas id="dust"></canvas>
 
+    <!-- Keep AP page's own background -->
     <svg viewBox="0 0 1228 819" preserveAspectRatio="xMidYMid meet" aria-label="AP Reading">
-      <image href="./front-page.jpg" x="0" y="0" width="1228" height="819" />
+      <image href="./background-ap.jpg" x="0" y="0" width="1228" height="819" />
 
-      <!-- Identical coordinates to front page -->
-      <a xlink:href="ap-reading.html"><rect class="hit" x="178" y="235" width="117" height="110" /></a>
-      <a xlink:href="cornology.html"><rect class="hit" x="324" y="222" width="123" height="112" /></a>
-      <a xlink:href="practice.html"><rect class="hit" x="757" y="242" width="248" height="103" /></a>
+      <!-- TOP ROW: inert (as in your original) -->
+      <a xlink:href="#" onclick="return false">
+        <rect class="hit" x="178" y="235" width="117" height="110" />
+      </a>
+      <a xlink:href="#" onclick="return false">
+        <rect class="hit" x="324" y="222" width="123" height="112" />
+      </a>
+      <a xlink:href="#" onclick="return false">
+        <rect class="hit" x="757" y="242" width="248" height="103" />
+      </a>
 
-      <a xlink:href="index.html"><rect class="hit" x="242" y="573" width="118" height="75" /></a>
-      <a xlink:href="lower2.html"><rect class="hit" x="395" y="571" width="121" height="79" /></a>
-      <a xlink:href="https://qualisartifex1.github.io/LatinNotes/" target="_blank" rel="noopener">
+      <!-- BOTTOM ROW: AP page links -->
+      <a xlink:href="index.html">
+        <rect class="hit" x="242" y="573" width="118" height="75" />
+      </a>
+      <a xlink:href="https://drive.google.com/file/d/1XV0r0jWHmglEvPeY7iCDIVw1e2rE98EP/view?usp=sharing" target="_blank" rel="noopener">
+        <rect class="hit" x="395" y="571" width="121" height="79" />
+      </a>
+      <a xlink:href="https://drive.google.com/file/d/18qtiKGiEX-mG6e2yb0reBR-O7mm0Gd_u/view?usp=sharing" target="_blank" rel="noopener">
         <rect class="hit" x="543" y="567" width="123" height="83" />
       </a>
-      <a xlink:href="quiz-bowl.html"><rect class="hit" x="697" y="567" width="122" height="79" /></a>
-      <a xlink:href="https://qualisartifex1.github.io/FlashCardsAllSubjects/" target="_blank" rel="noopener">
+      <a xlink:href="https://docs.google.com/spreadsheets/d/1KQ0opVnnZn3s_kt1v6lOyUz7aW0DSCGgZqObMa_4kB4/edit?gid=0#gid=0" target="_blank" rel="noopener">
+        <rect class="hit" x="697" y="567" width="122" height="79" />
+      </a>
+      <a xlink:href="https://docs.google.com/spreadsheets/d/1U4Li2L5l2uufM_G9k0Z7VohcCOIJWw6lZzUklw6uNwg/edit?gid=0#gid=0" target="_blank" rel="noopener">
         <rect class="hit" x="849" y="570" width="123" height="78" />
       </a>
     </svg>
   </div>
 
+  <!-- Dust particles (guarded, same engine as index) -->
   <script>
   (function dust(){
     const canvas = document.getElementById('dust');
@@ -100,7 +118,7 @@
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
     const ro = new ResizeObserver(size);
-    ro.observe(canvas.parentElement);
+    if (canvas.parentElement) ro.observe(canvas.parentElement); else size();
 
     function rand(a,b){ return a + Math.random()*(b-a); }
     function makeMote(L){
