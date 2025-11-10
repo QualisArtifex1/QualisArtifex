@@ -59,11 +59,9 @@
   <div class="stage">
     <canvas id="dust"></canvas>
 
-    <!-- Background + hotspots in the same coordinate system as subpages -->
     <svg viewBox="0 0 1228 819" preserveAspectRatio="xMidYMid meet" aria-label="Qualis Artifex Library">
       <image href="./front-page.jpg" x="0" y="0" width="1228" height="819" />
 
-      <!-- Top row -->
       <a xlink:href="ap-reading.html">
         <rect class="hit" x="178" y="235" width="117" height="110" />
       </a>
@@ -74,7 +72,6 @@
         <rect class="hit" x="757" y="242" width="248" height="103" />
       </a>
 
-      <!-- Bottom row -->
       <a xlink:href="#" onclick="return false">
         <rect class="hit" x="242" y="573" width="118" height="75" />
       </a>
@@ -93,7 +90,6 @@
     </svg>
   </div>
 
-  <!-- Dust particles (same engine you used on subpages) -->
   <script>
   (function dust(){
     const canvas = document.getElementById('dust');
@@ -103,11 +99,16 @@
     const shimmerOrigin = { x: 0.06, y: 0.09 };
 
     let w, h, dpr, motes = [];
+    // --- MODIFIED LAYERS FOR VISIBILITY ---
     const LAYERS = [
-      { z:0.25, count:36, size:[0.6,1.2], speed:[0.02,0.06], opacity:[0.18,0.38], blur:1.2 },
-      { z:0.55, count:64, size:[0.9,1.8], speed:[0.04,0.10], opacity:[0.20,0.42], blur:1.6 },
-      { z:1.00, count:52, size:[1.2,2.4], speed:[0.06,0.14], opacity:[0.25,0.48], blur:2.4 },
+      // Layer 1 (smallest/farthest): Increased size, count, opacity, and blur
+      { z:0.25, count:50, size:[1.5, 3.0], speed:[0.02,0.06], opacity:[0.35,0.65], blur:2.0 },
+      // Layer 2 (medium): Increased size, count, opacity, and blur
+      { z:0.55, count:80, size:[2.5, 4.5], speed:[0.04,0.10], opacity:[0.40,0.70], blur:3.5 },
+      // Layer 3 (largest/closest): Increased size, count, opacity, and blur
+      { z:1.00, count:60, size:[3.5, 6.0], speed:[0.06,0.14], opacity:[0.50,0.85], blur:5.0 },
     ];
+    // --------------------------------------
 
     let mx=0.5,my=0.45, tx=0.5,ty=0.45;
     const lerp=(a,b,t)=>a+(b-a)*t, clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -166,6 +167,7 @@ size(); // <-- ensure an initial size immediately
 
       for(const L of LAYERS){
         const shiftX=(mx-0.5)*(1.2-L.z)*12, shiftY=(my-0.5)*(1.2-L.z)*10;
+        // Increased glow/shadow blur
         ctx.shadowBlur=L.blur; ctx.shadowColor='rgba(255,240,210,0.95)';
         for(const p of motes){
           if(p.z!==L.z) continue;
@@ -175,7 +177,8 @@ size(); // <-- ensure an initial size immediately
           if(p.x<-20||p.x>w+20||p.y>h+20) reset(p,true);
           p.t+=(2*Math.PI)/p.tw*(dt/1000);
           const tw=0.85+0.15*Math.sin(p.t), sh=windowShimmer(p.x,p.y,now);
-          const alpha=clamp(p.o*tw+sh,0,0.85);
+          // Increased max alpha from 0.85 to 0.95 to match higher layer opacities
+          const alpha=clamp(p.o*tw+sh,0,0.95);
           ctx.globalAlpha=alpha; ctx.fillStyle=p.c;
           ctx.beginPath(); ctx.arc(p.x+shiftX,p.y+shiftY,p.r,0,Math.PI*2); ctx.fill();
         }
@@ -188,6 +191,3 @@ size(); // <-- ensure an initial size immediately
   </script>
 </body>
 </html>
-
-
-
