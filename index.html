@@ -120,7 +120,10 @@
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
     const ro = new ResizeObserver(size);
-    ro.observe(canvas.parentElement);
+if (canvas.parentElement) {
+  ro.observe(canvas.parentElement);
+}
+size(); // <-- ensure an initial size immediately
 
     function rand(a,b){ return a + Math.random()*(b-a); }
     function makeMote(L){
@@ -185,4 +188,5 @@
   </script>
 </body>
 </html>
+
 
