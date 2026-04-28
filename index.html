@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Qualis Artifex</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="site" id="site">
+    <video id="scrollVideo" class="scroll-video" preload="auto" playsinline>
+      <source src="assets/scroll-unroll-background.mp4" type="video/mp4">
+    </video>
+
+    <div class="ambient-vignette" aria-hidden="true"></div>
+    <canvas id="dust" aria-hidden="true"></canvas>
+
+    <button id="openScroll" class="open-scroll" type="button" aria-label="Open navigation scroll">
+      <span class="open-main">Open the Scroll</span>
+      <span class="open-sub">Click to unfurl the archive</span>
+    </button>
+
+    <section id="linkPanel" class="link-panel" aria-hidden="true">
+      <h1>Qualis Artifex</h1>
+
+      <div class="link-grid">
+        <section class="link-category annotate">
+          <h2>Annotate Text</h2>
+          <a href="https://latin-text-annotator-253895394361.us-west1.run.app/" target="_blank" rel="noopener noreferrer">Annotate Text</a>
+        </section>
+
+        <section class="link-category practice">
+          <h2>Practice</h2>
+          <a href="https://qualisartifex1.github.io/FrogDeclensionGame/" target="_blank" rel="noopener noreferrer">Frog Game</a>
+          <a href="https://qualisartifex1.github.io/LatinDeclensionGame/" target="_blank" rel="noopener noreferrer">Declension Chart</a>
+          <a href="https://qualisartifex1.github.io/DeclensionRacer/" target="_blank" rel="noopener noreferrer">Declension Racer</a>
+          <a href="https://qualisartifex1.github.io/VerbGameWithSynopsis/" target="_blank" rel="noopener noreferrer">Verb ID</a>
+          <a href="https://qualisartifex1.github.io/NounIDGame/" target="_blank" rel="noopener noreferrer">Case ID</a>
+        </section>
+
+        <section class="link-category cornology">
+          <h2>Cornology</h2>
+          <a href="https://qualisartifex1.github.io/GameofLife/" target="_blank" rel="noopener noreferrer">Game of Life</a>
+          <a href="https://qualisartifex1.github.io/DoublePendulum/" target="_blank" rel="noopener noreferrer">Double Pendulum</a>
+          <a href="https://qualisartifex1.github.io/Stoicism/" target="_blank" rel="noopener noreferrer">Stoicism</a>
+          <a href="https://qualisartifex1.github.io/plinko/" target="_blank" rel="noopener noreferrer">Plinko</a>
+        </section>
+
+        <section class="link-category ap">
+          <h2>AP Reading</h2>
+          <a href="https://drive.google.com/file/d/1XV0r0jWHmglEvPeY7iCDIVw1e2rE98EP/view" target="_blank" rel="noopener noreferrer">Commentary</a>
+          <a href="https://drive.google.com/file/d/18qtiKGiEX-mG6e2yb0reBR-O7mm0Gd_u/view" target="_blank" rel="noopener noreferrer">Blank Readings</a>
+          <a href="https://docs.google.com/spreadsheets/d/1KQ0opVnnZn3s_kt1v6lOyUz7aW0DSCGgZqObMa_4kB4/edit?gid=0#gid=0" target="_blank" rel="noopener noreferrer">Word Lists</a>
+          <a href="https://docs.google.com/spreadsheets/d/1U4Li2L5l2uufM_G9k0Z7VohcCOIJWw6lZzUklw6uNwg/edit?gid=0#gid=0" target="_blank" rel="noopener noreferrer">Reading List</a>
+        </section>
+
+        <section class="link-category textbook">
+          <h2>Textbook</h2>
+          <a href="https://drive.google.com/drive/folders/0B-Qj28gpl1H3LThZUTFWYmxTY1k?resourcekey=0--JTE4jyPoxoDUcG5geMPrw" target="_blank" rel="noopener noreferrer">Chapters</a>
+          <a href="https://qualisartifex1.github.io/FlashCards/" target="_blank" rel="noopener noreferrer">Flashcards</a>
+        </section>
+
+        <section class="link-category quiz">
+          <h2>Quiz Bowl</h2>
+          <a href="https://qualisartifex1.github.io/NAQT/" target="_blank" rel="noopener noreferrer">Tournament Scoring</a>
+          <a href="https://qualisartifex1.github.io/QBPractice/" target="_blank" rel="noopener noreferrer">Practice Scoring</a>
+          <a href="https://qualisartifex1.github.io/QBStudy/" target="_blank" rel="noopener noreferrer">Practice Notes</a>
+        </section>
+
+        <section class="link-category flash">
+          <h2>Flashcards Any Subject</h2>
+          <a href="https://qualisartifex1.github.io/FlashCardsAllSubjects/" target="_blank" rel="noopener noreferrer">Flashcards Any Subject</a>
+        </section>
+      </div>
+    </section>
+
+    <button id="resetScroll" class="reset-scroll" type="button">Replay Scroll</button>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
