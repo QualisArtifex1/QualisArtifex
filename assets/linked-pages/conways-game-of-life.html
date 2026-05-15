@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conway's Game of Life — Pattern Studio</title>
+  <style>
+    :root{
+      --bg:#091014;
+      --panel:#101a21cc;
+      --panel-strong:#14242e;
+      --ink:#e9fbff;
+      --muted:#8faab3;
+      --accent:#81f4d8;
+      --accent2:#79a8ff;
+      --danger:#ff7b7b;
+      --gold:#ffd166;
+      --grid:#1e333d;
+      --cell:#a9fff0;
+      --cell-old:#6bd7ff;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --radius: 22px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink);font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;}
+    body{
+      background:
+        radial-gradient(circle at 18% 12%, rgba(121,168,255,.22), transparent 32%),
+        radial-gradient(circle at 80% 16%, rgba(129,244,216,.16), transparent 30%),
+        radial-gradient(circle at 50% 90%, rgba(255,209,102,.08), transparent 35%),
+        linear-gradient(135deg,#071014 0%,#0a1218 45%,#0b1720 100%);
+    }
+    .app{display:grid;grid-template-columns:340px 1fr;gap:18px;height:100%;padding:18px;}
+    aside{min-width:0;background:linear-gradient(180deg,rgba(18,31,40,.9),rgba(12,20,26,.86));border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;overflow:auto;backdrop-filter:blur(18px);}
+    main{position:relative;min-width:0;min-height:0;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.08);background:rgba(4,10,14,.62);}
+    .brand{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+    .mark{width:44px;height:44px;border-radius:16px;background:radial-gradient(circle at 35% 30%, #fff, var(--accent) 28%, #179fbe 60%, #182946 100%);box-shadow:0 0 30px rgba(129,244,216,.28), inset 0 0 12px rgba(255,255,255,.35);}
+    h1{font-size:1.22rem;margin:0;line-height:1.05;letter-spacing:.2px}.subtitle{margin:.25rem 0 0;color:var(--muted);font-size:.82rem}.section{margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08)}
+    label,.label{display:block;color:#b9d4dc;font-size:.75rem;text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;font-weight:750}.row{display:flex;gap:8px;align-items:center}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+    button,select,input[type="number"],input[type="range"]{font:inherit}button,select,input[type="number"]{border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.065);color:var(--ink);border-radius:14px;padding:10px 11px;outline:none}button{cursor:pointer;font-weight:750;transition:transform .12s ease, background .12s ease, border-color .12s ease, box-shadow .12s ease;user-select:none}button:hover{transform:translateY(-1px);background:rgba(255,255,255,.1);border-color:rgba(129,244,216,.38)}button:active{transform:translateY(0)}button.primary{background:linear-gradient(135deg,rgba(129,244,216,.95),rgba(121,168,255,.88));color:#041215;border:0;box-shadow:0 10px 26px rgba(129,244,216,.18)}button.danger{color:#ffd7d7;border-color:rgba(255,123,123,.25)}button.gold{color:#fff5d7;border-color:rgba(255,209,102,.35)}button.ghost{background:transparent}.wide{width:100%}select{width:100%;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 17px) 50%,calc(100% - 12px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:32px}option{background:#0f1b23;color:var(--ink)}input[type="range"]{width:100%;accent-color:var(--accent)}input[type="number"]{width:100%}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.stat{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:10px}.stat b{display:block;font-size:1.1rem}.stat span{display:block;color:var(--muted);font-size:.72rem;margin-top:1px}.hint{font-size:.78rem;line-height:1.35;color:var(--muted);margin:8px 0 0}.pillbar{display:flex;flex-wrap:wrap;gap:7px}.pill{border-radius:999px;padding:8px 10px;font-size:.78rem;color:#cde6ec;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.075)}.pill.active{border-color:rgba(129,244,216,.5);color:#eafffb;background:rgba(129,244,216,.08)}
+    canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:crosshair}.hud{position:absolute;left:16px;right:16px;top:16px;display:flex;justify-content:space-between;gap:12px;pointer-events:none}.hud-card{pointer-events:auto;background:rgba(7,14,18,.68);border:1px solid rgba(255,255,255,.09);backdrop-filter:blur(14px);border-radius:18px;padding:10px 12px;color:#dff8ff;box-shadow:0 10px 30px rgba(0,0,0,.25);font-size:.85rem}.toast{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);background:rgba(7,14,18,.78);border:1px solid rgba(129,244,216,.25);border-radius:999px;padding:10px 14px;color:#dff8ff;box-shadow:0 10px 30px rgba(0,0,0,.35);opacity:0;transition:opacity .2s ease, bottom .2s ease;pointer-events:none;font-size:.84rem}.toast.show{opacity:1;bottom:24px}.mini{font-size:.74rem;color:var(--muted)}.kbd{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.09);border-bottom-color:rgba(255,255,255,.18);border-radius:7px;padding:1px 5px;color:#d9f9ff}.patternPreview{height:94px;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.18);margin-top:8px;position:relative;overflow:hidden}.patternPreview canvas{position:static;width:100%;height:100%;cursor:default}.toggle{display:flex;align-items:center;justify-content:space-between;gap:10px}.toggle input{accent-color:var(--accent)}
+    .mobileTop{display:none}
+    @media(max-width:900px){body{overflow:auto}.app{height:auto;min-height:100%;grid-template-columns:1fr;padding:10px;gap:10px}aside{order:2;max-height:none}main{height:68vh;min-height:430px;order:1}.hud{top:10px;left:10px;right:10px}.hud-card.hideSmall{display:none}.mobileTop{display:block}.brand{margin-bottom:10px}.section{margin-top:12px;padding-top:12px}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <div class="mark" aria-hidden="true"></div>
+        <div><h1>Life Pattern Studio</h1><p class="subtitle">Conway's Game of Life, polished for easy tinkering.</p></div>
+      </div>
+
+      <div class="grid2">
+        <button id="runBtn" class="primary">▶ Start</button>
+        <button id="stepBtn">Step</button>
+      </div>
+      <div class="grid2" style="margin-top:8px">
+        <button id="clearBtn" class="danger">Clear</button>
+        <button id="randomBtn" class="gold">Random</button>
+      </div>
+      <div class="stats" aria-live="polite">
+        <div class="stat"><b id="genStat">0</b><span>Generation</span></div>
+        <div class="stat"><b id="liveStat">0</b><span>Alive</span></div>
+        <div class="stat"><b id="fpsStat">10</b><span>Gen/sec</span></div>
+      </div>
+
+      <div class="section">
+        <label for="speed">Speed</label>
+        <input id="speed" type="range" min="1" max="40" value="10" />
+        <p class="hint">Drag the grid to paint cells. Hold <span class="kbd">Space</span> to pan. Scroll or pinch to zoom.</p>
+      </div>
+
+      <div class="section">
+        <div class="label">Tool</div>
+        <div class="pillbar" id="toolbar">
+          <button class="pill active" data-tool="draw">Draw</button>
+          <button class="pill" data-tool="erase">Erase</button>
+          <button class="pill" data-tool="toggle">Toggle</button>
+          <button class="pill" data-tool="pattern">Stamp Pattern</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <label for="patternSelect">Premade Shape</label>
+        <select id="patternSelect"></select>
+        <div class="patternPreview"><canvas id="preview" width="520" height="160"></canvas></div>
+        <div class="grid2" style="margin-top:8px">
+          <button id="rotateBtn">⟳ Rotate 90°</button>
+          <button id="flipBtn">⇄ Flip</button>
+        </div>
+        <div class="grid3" style="margin-top:8px">
+          <button data-orient="0">0°</button>
+          <button data-orient="90">90°</button>
+          <button data-orient="180">180°</button>
+        </div>
+        <p class="hint">Choose a shape, rotate/flip it, then click the board to place it. The ghost preview shows exactly where it will land.</p>
+      </div>
+
+      <div class="section">
+        <div class="label">Board</div>
+        <div class="grid2">
+          <button id="centerBtn">Center</button>
+          <button id="fitBtn">Fit Live Cells</button>
+        </div>
+        <div class="grid2" style="margin-top:8px">
+          <button id="saveBtn">Export JSON</button>
+          <button id="loadBtn">Import JSON</button>
+        </div>
+        <input id="fileInput" type="file" accept="application/json" hidden />
+        <p class="hint">The universe is effectively infinite: only living cells are stored, so large patterns stay quick.</p>
+      </div>
+
+      <div class="section">
+        <label class="toggle"><span>Wrap edges for visible board</span><input id="wrapToggle" type="checkbox"></label>
+        <p class="hint">Off = infinite board. On = cells wrap around the currently visible rectangle, useful for classroom demos.</p>
+      </div>
+
+      <div class="section mini">
+        <b>Shortcuts:</b> <span class="kbd">Enter</span> start/stop · <span class="kbd">.</span> step · <span class="kbd">C</span> clear · <span class="kbd">R</span> rotate · <span class="kbd">F</span> flip · <span class="kbd">1–4</span> tools
+      </div>
+    </aside>
+
+    <main id="stage" aria-label="Game of Life canvas">
+      <canvas id="life"></canvas>
+      <div class="hud">
+        <div class="hud-card"><b id="modeLabel">Draw</b><br><span class="mini" id="coordLabel">x: 0, y: 0</span></div>
+        <div class="hud-card hideSmall"><span class="mini">Tip</span><br>Try a glider gun + press Start.</div>
+      </div>
+      <div class="toast" id="toast">Ready</div>
+    </main>
+  </div>
+<script>
+(() => {
+  'use strict';
+
+  const $ = sel => document.querySelector(sel);
+  const canvas = $('#life');
+  const ctx = canvas.getContext('2d', { alpha: false });
+  const stage = $('#stage');
+  const preview = $('#preview');
+  const pctx = preview.getContext('2d');
+
+  const ui = {
+    runBtn: $('#runBtn'), stepBtn: $('#stepBtn'), clearBtn: $('#clearBtn'), randomBtn: $('#randomBtn'),
+    speed: $('#speed'), genStat: $('#genStat'), liveStat: $('#liveStat'), fpsStat: $('#fpsStat'),
+    toolbar: $('#toolbar'), modeLabel: $('#modeLabel'), coordLabel: $('#coordLabel'), toast: $('#toast'),
+    patternSelect: $('#patternSelect'), rotateBtn: $('#rotateBtn'), flipBtn: $('#flipBtn'),
+    centerBtn: $('#centerBtn'), fitBtn: $('#fitBtn'), saveBtn: $('#saveBtn'), loadBtn: $('#loadBtn'), fileInput: $('#fileInput'), wrapToggle: $('#wrapToggle')
+  };
+
+  const PATTERNS = {
+    'Glider': [[0,1],[1,2],[2,0],[2,1],[2,2]],
+    'Lightweight Spaceship': [[0,1],[0,4],[1,0],[2,0],[3,0],[3,4],[4,0],[4,1],[4,2],[4,3]],
+    'Blinker': [[0,0],[1,0],[2,0]],
+    'Toad': [[1,0],[2,0],[3,0],[0,1],[1,1],[2,1]],
+    'Beacon': [[0,0],[1,0],[0,1],[3,2],[2,3],[3,3]],
+    'Pulsar': [[2,0],[3,0],[4,0],[8,0],[9,0],[10,0],[0,2],[5,2],[7,2],[12,2],[0,3],[5,3],[7,3],[12,3],[0,4],[5,4],[7,4],[12,4],[2,5],[3,5],[4,5],[8,5],[9,5],[10,5],[2,7],[3,7],[4,7],[8,7],[9,7],[10,7],[0,8],[5,8],[7,8],[12,8],[0,9],[5,9],[7,9],[12,9],[0,10],[5,10],[7,10],[12,10],[2,12],[3,12],[4,12],[8,12],[9,12],[10,12]],
+    'Pentadecathlon': [[2,0],[3,0],[1,1],[4,1],[2,2],[3,2],[2,3],[3,3],[2,4],[3,4],[1,5],[4,5],[2,6],[3,6]],
+    'R-pentomino': [[1,0],[2,0],[0,1],[1,1],[1,2]],
+    'Diehard': [[6,0],[0,1],[1,1],[1,2],[5,2],[6,2],[7,2]],
+    'Acorn': [[1,0],[3,1],[0,2],[1,2],[4,2],[5,2],[6,2]],
+    'Gosper Glider Gun': [[24,0],[22,1],[24,1],[12,2],[13,2],[20,2],[21,2],[34,2],[35,2],[11,3],[15,3],[20,3],[21,3],[34,3],[35,3],[0,4],[1,4],[10,4],[16,4],[20,4],[21,4],[0,5],[1,5],[10,5],[14,5],[16,5],[17,5],[22,5],[24,5],[10,6],[16,6],[24,6],[11,7],[15,7],[12,8],[13,8]],
+    'Simkin Glider Gun': [[0,0],[1,0],[0,1],[1,1],[7,4],[8,4],[7,5],[8,5],[4,7],[5,7],[4,8],[5,8],[22,8],[23,8],[24,8],[21,9],[24,9],[21,10],[22,10],[23,10],[26,12],[26,13],[26,14],[28,13],[30,12],[30,13],[30,14],[31,12],[31,14],[32,12],[32,13],[32,14],[35,15],[36,15],[35,16],[36,16]]
+  };
+
+  let live = new Set();
+  let generation = 0;
+  let running = false;
+  let speed = 10;
+  let accumulator = 0;
+  let lastTime = performance.now();
+  let tool = 'draw';
+  let cellSize = 18;
+  let cameraX = -20; // grid coordinates at screen left
+  let cameraY = -14;
+  let pointer = {x:0,y:0,gx:0,gy:0,down:false,button:0,pan:false,lastX:0,lastY:0,inside:false};
+  let spaceDown = false;
+  let patternName = 'Glider';
+  let rotation = 0;
+  let flipped = false;
+  let raf;
+
+  const keyOf = (x,y) => x + ',' + y;
+  const parseKey = k => k.split(',').map(Number);
+  const has = (x,y) => live.has(keyOf(x,y));
+  const setCell = (x,y,on=true) => on ? live.add(keyOf(x,y)) : live.delete(keyOf(x,y));
+
+  function transformedPattern(){
+    let pts = PATTERNS[patternName].map(([x,y]) => [flipped ? -x : x, y]);
+    const r = ((rotation % 360) + 360) % 360;
+    pts = pts.map(([x,y]) => {
+      if(r === 90) return [-y, x];
+      if(r === 180) return [-x, -y];
+      if(r === 270) return [y, -x];
+      return [x,y];
+    });
+    const minX = Math.min(...pts.map(p=>p[0]));
+    const minY = Math.min(...pts.map(p=>p[1]));
+    return pts.map(([x,y]) => [x-minX, y-minY]);
+  }
+
+  function populatePatternSelect(){
+    for(const name of Object.keys(PATTERNS)){
+      const o = document.createElement('option'); o.value = name; o.textContent = name; ui.patternSelect.appendChild(o);
+    }
+    ui.patternSelect.value = patternName;
+  }
+
+  function resize(){
+    const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    const rect = stage.getBoundingClientRect();
+    canvas.width = Math.floor(rect.width * dpr);
+    canvas.height = Math.floor(rect.height * dpr);
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    draw();
+  }
+
+  function screenToGrid(sx,sy){ return { gx: Math.floor(sx / cellSize + cameraX), gy: Math.floor(sy / cellSize + cameraY) }; }
+  function gridToScreen(gx,gy){ return { sx: (gx - cameraX) * cellSize, sy: (gy - cameraY) * cellSize }; }
+
+  function visibleBounds(){
+    const rect = stage.getBoundingClientRect();
+    return {
+      minX: Math.floor(cameraX)-2,
+      minY: Math.floor(cameraY)-2,
+      maxX: Math.ceil(cameraX + rect.width/cellSize)+2,
+      maxY: Math.ceil(cameraY + rect.height/cellSize)+2,
+      w: Math.ceil(rect.width/cellSize), h: Math.ceil(rect.height/cellSize)
+    };
+  }
+
+  function draw(){
+    const rect = stage.getBoundingClientRect();
+    ctx.fillStyle = '#071014';
+    ctx.fillRect(0,0,rect.width,rect.height);
+
+    const grad = ctx.createRadialGradient(rect.width*.25, rect.height*.15, 10, rect.width*.5, rect.height*.5, Math.max(rect.width,rect.height));
+    grad.addColorStop(0, 'rgba(121,168,255,.14)'); grad.addColorStop(.45, 'rgba(129,244,216,.045)'); grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grad; ctx.fillRect(0,0,rect.width,rect.height);
+
+    const b = visibleBounds();
+    ctx.lineWidth = 1;
+    if(cellSize >= 7){
+      ctx.strokeStyle = 'rgba(83,130,143,.18)'; ctx.beginPath();
+      for(let x=b.minX; x<=b.maxX; x++){ const sx = Math.round((x-cameraX)*cellSize)+.5; ctx.moveTo(sx,0); ctx.lineTo(sx,rect.height); }
+      for(let y=b.minY; y<=b.maxY; y++){ const sy = Math.round((y-cameraY)*cellSize)+.5; ctx.moveTo(0,sy); ctx.lineTo(rect.width,sy); }
+      ctx.stroke();
+    }
+
+    const pad = Math.max(1, Math.min(4, cellSize*.12));
+    for(const k of live){
+      const [x,y] = parseKey(k);
+      if(x < b.minX || x > b.maxX || y < b.minY || y > b.maxY) continue;
+      const {sx,sy} = gridToScreen(x,y);
+      ctx.fillStyle = 'rgba(169,255,240,.92)';
+      ctx.shadowColor = 'rgba(129,244,216,.32)'; ctx.shadowBlur = cellSize > 10 ? 8 : 2;
+      roundRect(ctx, sx+pad, sy+pad, cellSize-pad*2, cellSize-pad*2, Math.max(2, cellSize*.18)); ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    if(pointer.inside && tool === 'pattern') drawGhost();
+  }
+
+  function roundRect(c,x,y,w,h,r){
+    r = Math.min(r,w/2,h/2); c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath();
+  }
+
+  function drawGhost(){
+    const pts = transformedPattern();
+    const pad = Math.max(1, Math.min(4, cellSize*.12));
+    ctx.save(); ctx.globalAlpha = .48; ctx.fillStyle = 'rgba(255,209,102,.95)'; ctx.strokeStyle = 'rgba(255,255,255,.45)';
+    for(const [dx,dy] of pts){
+      const {sx,sy} = gridToScreen(pointer.gx + dx, pointer.gy + dy);
+      roundRect(ctx, sx+pad, sy+pad, cellSize-pad*2, cellSize-pad*2, Math.max(2,cellSize*.18)); ctx.fill(); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawPreview(){
+    const w = preview.width, h = preview.height; pctx.clearRect(0,0,w,h);
+    const pts = transformedPattern();
+    const maxX = Math.max(...pts.map(p=>p[0])), maxY = Math.max(...pts.map(p=>p[1]));
+    const s = Math.max(5, Math.min((w-24)/(maxX+1), (h-24)/(maxY+1)));
+    const ox = (w - (maxX+1)*s)/2, oy = (h - (maxY+1)*s)/2;
+    pctx.fillStyle = 'rgba(255,255,255,.025)'; pctx.fillRect(0,0,w,h);
+    pctx.strokeStyle = 'rgba(129,244,216,.1)'; pctx.lineWidth = 1;
+    for(let x=0;x<=maxX+1;x++){ pctx.beginPath(); pctx.moveTo(ox+x*s,oy); pctx.lineTo(ox+x*s,oy+(maxY+1)*s); pctx.stroke(); }
+    for(let y=0;y<=maxY+1;y++){ pctx.beginPath(); pctx.moveTo(ox,oy+y*s); pctx.lineTo(ox+(maxX+1)*s,oy+y*s); pctx.stroke(); }
+    pctx.fillStyle = 'rgba(169,255,240,.95)'; pctx.shadowColor = 'rgba(129,244,216,.45)'; pctx.shadowBlur = 10;
+    for(const [x,y] of pts){ roundRect(pctx, ox+x*s+1, oy+y*s+1, s-2, s-2, Math.max(2,s*.18)); pctx.fill(); }
+    pctx.shadowBlur = 0;
+  }
+
+  function step(){
+    if(ui.wrapToggle.checked) return stepWrapped();
+    const counts = new Map();
+    for(const k of live){
+      const [x,y] = parseKey(k);
+      for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++) if(dx||dy){
+        const nk = keyOf(x+dx,y+dy); counts.set(nk, (counts.get(nk)||0)+1);
+      }
+    }
+    const next = new Set();
+    for(const [k,n] of counts){ if(n === 3 || (n === 2 && live.has(k))) next.add(k); }
+    live = next; generation++; updateStats();
+  }
+
+  function stepWrapped(){
+    const b = visibleBounds(); const minX=b.minX+2, minY=b.minY+2, width=Math.max(1,b.w), height=Math.max(1,b.h);
+    const norm = (x,y) => keyOf(minX + mod(x-minX,width), minY + mod(y-minY,height));
+    const liveWrapped = new Set();
+    for(const k of live){ const [x,y]=parseKey(k); liveWrapped.add(norm(x,y)); }
+    const counts = new Map();
+    for(const k of liveWrapped){ const [x,y]=parseKey(k); for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++) if(dx||dy){ const nk=norm(x+dx,y+dy); counts.set(nk,(counts.get(nk)||0)+1); } }
+    const next = new Set(); for(const [k,n] of counts){ if(n===3 || (n===2 && liveWrapped.has(k))) next.add(k); }
+    live = next; generation++; updateStats();
+  }
+  const mod = (n,m) => ((n%m)+m)%m;
+
+  function loop(now){
+    const dt = Math.min(100, now - lastTime); lastTime = now;
+    if(running){
+      accumulator += dt;
+      const interval = 1000 / speed;
+      let safety = 0;
+      while(accumulator >= interval && safety++ < 8){ step(); accumulator -= interval; }
+    }
+    draw(); raf = requestAnimationFrame(loop);
+  }
+
+  function updateStats(){ ui.genStat.textContent = generation.toLocaleString(); ui.liveStat.textContent = live.size.toLocaleString(); ui.fpsStat.textContent = speed; }
+  function toast(msg){ ui.toast.textContent = msg; ui.toast.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(()=>ui.toast.classList.remove('show'), 1300); }
+
+  function setRunning(on){ running = on; ui.runBtn.textContent = running ? '⏸ Stop' : '▶ Start'; ui.runBtn.classList.toggle('primary', !running); toast(running ? 'Simulation running' : 'Simulation paused'); }
+  function setTool(t){ tool=t; document.querySelectorAll('.pill').forEach(b=>b.classList.toggle('active', b.dataset.tool===t)); ui.modeLabel.textContent = t==='pattern' ? 'Stamp Pattern' : t[0].toUpperCase()+t.slice(1); draw(); }
+
+  function applyTool(gx,gy){
+    if(tool === 'draw') setCell(gx,gy,true);
+    else if(tool === 'erase') setCell(gx,gy,false);
+    else if(tool === 'toggle') setCell(gx,gy,!has(gx,gy));
+    else if(tool === 'pattern') { for(const [dx,dy] of transformedPattern()) setCell(gx+dx, gy+dy, true); toast(patternName + ' placed'); }
+    updateStats(); draw();
+  }
+
+  function randomize(){
+    const b = visibleBounds(); live.clear(); generation = 0;
+    for(let y=b.minY+2;y<b.maxY-2;y++) for(let x=b.minX+2;x<b.maxX-2;x++) if(Math.random()<.19) live.add(keyOf(x,y));
+    updateStats(); toast('Random soup created');
+  }
+
+  function center(){ cameraX = -Math.floor(stage.clientWidth/cellSize/2); cameraY = -Math.floor(stage.clientHeight/cellSize/2); draw(); }
+  function fitLive(){
+    if(!live.size) return center();
+    const pts = [...live].map(parseKey); const minX=Math.min(...pts.map(p=>p[0])), maxX=Math.max(...pts.map(p=>p[0])), minY=Math.min(...pts.map(p=>p[1])), maxY=Math.max(...pts.map(p=>p[1]));
+    const w=maxX-minX+1, h=maxY-minY+1; const newSize=Math.floor(Math.min(stage.clientWidth/(w+8), stage.clientHeight/(h+8)));
+    cellSize = Math.max(4, Math.min(42, newSize)); cameraX = minX - (stage.clientWidth/cellSize - w)/2; cameraY = minY - (stage.clientHeight/cellSize - h)/2; draw();
+  }
+
+  function exportJSON(){
+    const data = { app:'Life Pattern Studio', version:1, generation, cells:[...live].map(parseKey) };
+    const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'game-of-life-pattern.json'; a.click(); URL.revokeObjectURL(a.href); toast('Board exported');
+  }
+  function importJSON(file){
+    const reader = new FileReader(); reader.onload = () => { try{
+      const data = JSON.parse(reader.result); if(!Array.isArray(data.cells)) throw new Error('Missing cells array'); live = new Set(data.cells.map(([x,y])=>keyOf(Number(x),Number(y)))); generation = Number(data.generation)||0; updateStats(); fitLive(); toast('Board imported');
+    } catch(e){ toast('Could not import this file'); }}; reader.readAsText(file);
+  }
+
+  stage.addEventListener('pointerdown', e => { stage.setPointerCapture(e.pointerId); pointer.down=true; pointer.button=e.button; pointer.lastX=e.offsetX; pointer.lastY=e.offsetY; pointer.pan = spaceDown || e.button===1 || e.button===2; if(!pointer.pan) applyTool(pointer.gx,pointer.gy); });
+  stage.addEventListener('pointermove', e => { const rect=stage.getBoundingClientRect(); pointer.x=e.clientX-rect.left; pointer.y=e.clientY-rect.top; const g=screenToGrid(pointer.x,pointer.y); pointer.gx=g.gx; pointer.gy=g.gy; pointer.inside=true; ui.coordLabel.textContent = `x: ${g.gx}, y: ${g.gy}`; if(pointer.down){ if(pointer.pan){ cameraX -= (pointer.x-pointer.lastX)/cellSize; cameraY -= (pointer.y-pointer.lastY)/cellSize; } else if(tool !== 'pattern') applyTool(g.gx,g.gy); } pointer.lastX=pointer.x; pointer.lastY=pointer.y; draw(); });
+  stage.addEventListener('pointerup', e => { pointer.down=false; pointer.pan=false; try{stage.releasePointerCapture(e.pointerId)}catch{} });
+  stage.addEventListener('pointerleave', () => { pointer.inside=false; draw(); });
+  stage.addEventListener('contextmenu', e => e.preventDefault());
+  stage.addEventListener('wheel', e => { e.preventDefault(); const old=cellSize; const factor = e.deltaY < 0 ? 1.12 : .89; cellSize = Math.max(4, Math.min(56, cellSize*factor)); const mx=e.offsetX, my=e.offsetY; cameraX += mx/old - mx/cellSize; cameraY += my/old - my/cellSize; draw(); }, {passive:false});
+
+  ui.runBtn.onclick = () => setRunning(!running);
+  ui.stepBtn.onclick = () => { step(); draw(); };
+  ui.clearBtn.onclick = () => { live.clear(); generation=0; updateStats(); draw(); toast('Board cleared'); };
+  ui.randomBtn.onclick = randomize;
+  ui.speed.oninput = () => { speed=Number(ui.speed.value); updateStats(); };
+  ui.toolbar.onclick = e => { if(e.target.dataset.tool) setTool(e.target.dataset.tool); };
+  ui.patternSelect.onchange = () => { patternName=ui.patternSelect.value; setTool('pattern'); drawPreview(); draw(); };
+  ui.rotateBtn.onclick = () => { rotation=(rotation+90)%360; drawPreview(); draw(); toast(`Rotation: ${rotation}°`); };
+  ui.flipBtn.onclick = () => { flipped=!flipped; drawPreview(); draw(); toast(flipped?'Flipped':'Unflipped'); };
+  document.querySelectorAll('[data-orient]').forEach(b => b.onclick = () => { rotation=Number(b.dataset.orient); drawPreview(); draw(); toast(`Rotation: ${rotation}°`); });
+  ui.centerBtn.onclick = center; ui.fitBtn.onclick = fitLive; ui.saveBtn.onclick = exportJSON; ui.loadBtn.onclick = () => ui.fileInput.click(); ui.fileInput.onchange = e => e.target.files[0] && importJSON(e.target.files[0]);
+
+  window.addEventListener('keydown', e => {
+    if(e.code === 'Space') { spaceDown = true; }
+    if(['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+    if(e.key === 'Enter') setRunning(!running);
+    if(e.key === '.') { step(); draw(); }
+    if(e.key.toLowerCase() === 'c') { live.clear(); generation=0; updateStats(); draw(); }
+    if(e.key.toLowerCase() === 'r') { rotation=(rotation+90)%360; drawPreview(); }
+    if(e.key.toLowerCase() === 'f') { flipped=!flipped; drawPreview(); }
+    if(['1','2','3','4'].includes(e.key)) setTool(['draw','erase','toggle','pattern'][Number(e.key)-1]);
+  });
+  window.addEventListener('keyup', e => { if(e.code === 'Space') spaceDown = false; });
+  window.addEventListener('resize', resize);
+
+  function seedDemo(){
+    patternName = 'Gosper Glider Gun'; rotation = 0; flipped = false;
+    for(const [dx,dy] of transformedPattern()) setCell(-18+dx,-8+dy,true);
+    patternName = 'Glider';
+    updateStats();
+  }
+
+  populatePatternSelect(); drawPreview(); resize(); seedDemo(); center(); fitLive(); updateStats(); raf = requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
