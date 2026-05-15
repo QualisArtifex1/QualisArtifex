@@ -1,0 +1,4531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>Latin Frog — Declension Bridges</title>
+<style>
+  /* Enhanced CSS with better visuals */
+  html,body{margin:0;height:100%;background: linear-gradient(135deg, #a8d8ff 0%, #7db9e8 100%);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji",sans-serif; overflow: hidden;}
+  #wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;}
+  header{width:100%;max-width:980px;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;color:#16324f; background: rgba(255,255,255,0.8); border-radius: 0 0 16px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);}
+  header h1{font-size:22px;margin:0;font-weight:800;letter-spacing:0.4px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);}  
+  .pill{display:inline-flex;gap:12px;align-items:center;background: linear-gradient(to bottom, #f5fbff, #e3f2fd);border:2px solid #cfe9ff;border-radius:999px;padding:8px 16px;box-shadow:0 3px 8px rgba(0,0,0,0.08)}
+  #canvas{
+  flex:1;
+  width:100%;
+  max-width:980px;
+  background: linear-gradient(180deg, #70c050, #5bb140);
+  border-radius:20px;
+  box-shadow:0 12px 36px rgba(0,0,0,.2);
+  touch-action:none;
+  overflow: hidden;
+  position: relative;
+}
+  footer{width:100%;max-width:980px;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;color:#16324f; background: rgba(255,255,255,0.8); border-radius: 16px 16px 0 0; box-shadow: 0 -4px 12px rgba(0,0,0,0.1);}  
+  button{background: linear-gradient(to bottom, #16324f, #0f2238);color:white;border:none;border-radius:12px;padding:12px 18px;font-weight:700;box-shadow:0 4px 0 rgba(0,0,0,.2);cursor:pointer; transition: all 0.2s ease;}  
+  button:hover{transform: translateY(-2px); box-shadow: 0 6px 0 rgba(0,0,0,.2);}  
+  button:active{transform:translateY(1px); box-shadow: 0 2px 0 rgba(0,0,0,.2);}  
+  .legend{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .tag{background:#fff;color:#234;border:1px solid #cde;border-radius:10px;padding:6px 12px;font-size:13px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}  
+  .toast{position:fixed;left:50%;top:10px;transform:translateX(-50%);background:#ffefef;color:#7a1515;border:1px solid #ffb6b6;padding:10px 16px;border-radius:10px;box-shadow:0 6px 16px rgba(0,0,0,.2);font-size:13px;z-index:9999;display:none}
+  /* Win overlay sits over the canvas, under the banner area */
+  #winOverlay{position:absolute;top:14%;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.96);border:3px solid #cfe9ff;border-radius:18px;padding:16px 20px;display:none;z-index:20;box-shadow:0 12px 32px rgba(0,0,0,.2); backdrop-filter: blur(10px);}  
+  #winOverlay .time{color:#16324f;font-weight:800;margin-right:10px; font-size: 18px;}  
+  @media (max-width:700px){header h1{font-size:18px} button{padding:10px 14px}}  
+  @media (max-width:480px){  
+  #wrap{ gap:0; }
+  header{
+    position:absolute; top:4px; left:0; right:0;
+    display:flex; justify-content:center; z-index:5;
+    background:transparent; pointer-events:none;
+  }
+  header .pill{ pointer-events:auto; background: rgba(245, 251, 255, 0.9); } /* still tappable */  
+  footer{ display:none; }              /* hide legend to free space */  
+  header h1{ display:none; }                  /* free space */  
+  .pill{ padding:6px 12px; gap:8px; font-size:12px; border-width:1px; }
+  .pill b{ font-weight:700; }                 /* keep emphasis readable */  
+  .pill span{ white-space:nowrap; }           /* prevent wrapping */
+}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <header>
+    <h1>Latin Frogger 🐸</h1>
+    <div class="pill">
+      <span>Crossing <span id="level">1</span>/8</span>
+      <span>Lives <span id="lives">3</span></span>
+      <span>Time <span id="time">0.0</span>s</span>
+      <span>Best <span id="best">—</span></span>
+    </div>
+  </header>
+  <canvas id="canvas"></canvas>
+  <div id="winOverlay">
+    <span class="time">Total Time: <span id="finalTime">0.0s</span></span>
+    <button id="playAgainBtn">Play Again</button>
+  </div>
+  <!-- Accessory selection overlay.  This appears at the start of a new run
+       when multiple accessories are available.  Players choose which
+       unlocked item (or none) to equip for the coming run.  The overlay
+       blocks input until a selection is made.  -->
+  <div id="accOverlay" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; z-index:25; justify-content:center; align-items:center;">
+    <div style="background:rgba(255,255,255,0.98); border:3px solid #cfe9ff; border-radius:18px; padding:20px 24px; max-width:320px; width:90%; box-shadow:0 12px 32px rgba(0,0,0,.2); text-align:center;">
+      <h2 style="margin:0 0 12px 0; font-size:22px; color:#16324f;">Choose Accessory</h2>
+      <div id="accOptions" style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-bottom:12px;"></div>
+      <div id="accHints" style="font-size:12px; color:#555; margin-bottom:12px; text-align:left;"></div>
+      <button id="accConfirmBtn" style="background: linear-gradient(to bottom, #16324f, #0f2238); color:white; border:none; border-radius:12px; padding:10px 18px; font-weight:700; box-shadow:0 4px 0 rgba(0,0,0,.2); cursor:pointer;">Start</button>
+    </div>
+  </div>
+  <!-- Practice mode selection overlay.  When practice mode is toggled on,
+       this modal appears allowing players to select which declensions
+       (bridge levels) and grammatical cases (rows) they know.  Rows
+       not selected will be covered and skipped, and declensions not
+       selected will be omitted from the run. -->
+  <div id="practiceOverlay" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; z-index:26; justify-content:center; align-items:center;">
+    <div style="background:rgba(255,255,255,0.98); border:3px solid #cfe9ff; border-radius:18px; padding:20px 24px; max-width:420px; width:90%; box-shadow:0 12px 32px rgba(0,0,0,.2); text-align:center; overflow-y:auto; max-height:90vh;">
+      <h2 style="margin:0 0 12px 0; font-size:22px; color:#16324f;">Practice Mode</h2>
+      <p style="margin:0 0 12px 0; font-size:14px; color:#35516b;">Select the declensions you want to practice and the cases you know.  Unchecked items will be skipped.</p>
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div>
+          <h3 style="margin:4px 0 6px 0; font-size:16px; color:#16324f;">Declensions</h3>
+          <div id="practiceDeclensionOptions" style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center;"></div>
+        </div>
+        <div>
+          <h3 style="margin:4px 0 6px 0; font-size:16px; color:#16324f;">Cases</h3>
+          <div id="practiceCaseOptions" style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center;"></div>
+        </div>
+      </div>
+      <button id="practiceConfirmBtn" style="margin-top:16px; background: linear-gradient(to bottom, #16324f, #0f2238); color:white; border:none; border-radius:12px; padding:10px 18px; font-weight:700; box-shadow:0 4px 0 rgba(0,0,0,.2); cursor:pointer;">Start Practice</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="legend">
+      <span class="tag">Left/Right choose a tile — <b>Enter</b> jumps</span>
+      <span class="tag">Order — Nom Gen Dat Acc Abl (Sg) → Nom Gen Dat Acc Abl (Pl)</span>
+      <span class="tag">Wrong tile = splash!</span>
+    </div>
+    <div>
+      <button id="restartBtn">Restart Run</button>
+      <button id="clearUnlocksBtn">Reset Unlocks</button>
+      <!-- Practice mode toggle button.  When enabled, the game presents
+           a setup screen allowing players to choose which declensions
+           (levels) and cases (rows) they wish to practice.  When
+           disabled, the game runs normally. -->
+      <button id="practiceBtn">Practice Mode</button>
+    </div>
+  </footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+
+/* ==== DIAGNOSTIC LAYER: draws any runtime error on the canvas and logs details ==== */
+(function(){
+  function drawErrorOverlay(msg, stack){
+    try{
+      var c = document.getElementById('canvas');
+      if(!c){ return; }
+      var x = c.getContext('2d');
+      x.save();
+      x.setTransform(1,0,0,1,0,0);
+      x.globalAlpha = 0.92;
+      x.fillStyle = '#102a1f';
+      x.fillRect(0,0,c.width,c.height);
+      x.globalAlpha = 1;
+      x.fillStyle = '#ffefef';
+      x.font = '16px monospace';
+      var lines = (msg + (stack? '\n' + stack : '')).split('\n').slice(0,16);
+      var y = 40;
+      x.fillText('⚠ Runtime error — see Console for details', 20, 20);
+      for(var i=0;i<lines.length;i++){
+        x.fillText(lines[i].slice(0,120), 20, y);
+        y += 20;
+      }
+      x.restore();
+    }catch(_){/*no-op*/}
+  }
+  function handleError(ev){
+    var msg = (ev && ev.message) ? ev.message : String(ev);
+    var stack = ev && ev.error && ev.error.stack ? ev.error.stack : (ev && ev.reason && ev.reason.stack ? ev.reason.stack : '');
+    console.error('[DIAG] Runtime error:', ev);
+    drawErrorOverlay(msg, stack);
+  }
+  window.addEventListener('error', handleError);
+  window.addEventListener('unhandledrejection', handleError);
+  console.log('[DIAG] Diagnostic layer installed');
+})();
+/* ==== END DIAGNOSTIC LAYER ==== */
+/***********************
+ * COLORS (no CSS vars; only double quotes)
+ ***********************/
+const COLORS = {
+  sky:"#a8d8ff", grass1:"#70c050", grass2:"#5bb140",
+  meadow1:"#7dd56f", meadow2:"#66c15e", meadow3:"#8fe280",
+  river1:"#3aa7e0", river2:"#2f97d6",
+  bridge:"#d9bf8f", bridgeEdge:"#b79b6d", bridgeShadow:"rgba(0,0,0,.25)",
+  plank:"#ead5ae", plankLine:"#cdb68a", post:"#9c7b45", rope:"#d2b07a",
+  tile:"#f9efd9", tileText:"#2b2b2b", tileGlow:"#7bf5a3", tilePanel:"#fffaed", tileWrong:"#ffd6c7",
+  ui:"#16324f", ui2:"#f5fbff", accent:"#ffd24f",
+  flower1:"#ff77aa", flower2:"#ffd24f", flower3:"#88ddff", flower4:"#ff9de1",
+  bug:"#222", pad:"#6fb86a", padEdge:"#4f9f52",
+  fish:"#ff7043", splash:"#9dd9ff",
+  confetti1:"#ff5f6d", confetti2:"#ffc371", confetti3:"#fff176", confetti4:"#7cf6a3", confetti5:"#64b5f6", confetti6:"#ba68c8"
+};
+
+// Preserve a copy of the initial colour palette so that seasonal
+// themes or neon modes can cleanly reset all colours.  We use a
+// shallow copy because colour values are strings.  When applying a
+// seasonal theme, we first restore all colours from this base
+// palette and then override specific keys defined by the theme.
+const DEFAULT_COLORS = { ...COLORS };
+
+// 80s Neon theme palette for the secret mode.  When activated,
+// colours are replaced by these highly saturated hues.  Neon mode
+// only lasts for one run and resets afterwards.
+const NEON_THEME = {
+  // Bold, high‑contrast colours for an 80s neon look
+  sky: "#2a003d",      // dark purple sky
+  grass1: "#4b0082",   // indigo ground
+  grass2: "#8e24aa",   // violet ground
+  meadow1: "#6a1b9a",  // purple meadow
+  meadow2: "#8e24aa",  // magenta meadow
+  river1: "#00c0ff",   // electric blue river
+  river2: "#0080ff",   // deep blue river
+  bridge: "#880e4f",   // dark pink bridge
+  bridgeEdge: "#ad1457",// brighter pink edge
+  plank: "#c2185b",    // magenta planks
+  plankLine: "#ec407a",
+  tilePanel: "#4a148c", // dark purple panel
+  tileText: "#ffffff",  // white text for contrast
+  tileGlow: "#ff80ab",  // pink glow
+  pad: "#00e676",      // neon green lily pad
+  padEdge: "#00b248",
+  flower1: "#ff4081",  // neon pink flowers
+  flower2: "#00e5ff",  // neon cyan flowers
+  flower3: "#76ff03",  // neon green
+  flower4: "#ffff00",  // neon yellow
+  ui: "#ffffff",      // white UI text
+  accent: "#ffea00"    // yellow accent
+};
+
+// Flag indicating that the next run should use the neon theme.  This
+// is set via the cheat code and consumed at the start of the run.
+let neonMode = false;
+// psychedelicRunActive is true when a neon cheat triggered run is in progress.
+// It indicates that a kaleidoscope overlay should be drawn over the scene.
+let psychedelicRunActive = false;
+// Jake mode flips the bridge upside down and reverses controls.  It is
+// toggled via a secret cheat code.  Runs completed in Jake mode
+// unlock a special upside‑down frog skin.
+let jakeModeActive = false;
+// Flag capturing whether the current run was started in Jake mode.  This
+// is evaluated when the run finishes to award the Jake mode unlock.
+let currentRunJake = false;
+
+// Hard mode scrambles the order of grammatical cases for each bridge
+// run.  When active, the singular and plural case order is randomly
+// permuted at the start of the run and displayed in the legend.  Runs
+// completed in Hard mode unlock special skins.
+let hardModeActive = false;
+
+let cerberusModeActive = false;
+// Preserve the default order of cases (row indices 0..9).  This is used
+// to restore the standard order when Hard mode is deactivated.
+const DEFAULT_CASE_ORDER = Array.from({length: 10}, (_, i) => i);
+// The current case order applied to the bridge.  Initialized to the
+// default order; shuffled when Hard mode is activated.
+let caseOrder = DEFAULT_CASE_ORDER.slice();
+// Flag capturing whether the current run was started in Hard mode.
+let currentRunHard = false;
+
+// Buffer for capturing cheat codes.  Keeps the last few typed
+// characters to detect sequences like "cornish" or "skip".
+let cheatBuffer = "";
+
+/*
+ * Seasonal themes allow the game to feel different each time it loads.  Each
+ * theme defines its own palette for the sky, grass, meadow and river, along
+ * with a set of flower colours.  When the script starts a random theme is
+ * selected and its values are merged into the primary `COLORS` object.  This
+ * happens once per page load and does not impact gameplay logic.
+ */
+const SEASON_THEMES = {
+  spring: {
+    sky: "#bde0fe",
+    grass1: "#70c050",
+    grass2: "#5bb140",
+    meadow1: "#84d97a",
+    meadow2: "#65c55e",
+    river1: "#4bb4e6",
+    river2: "#3a9fd4",
+    pad: "#74c26f",
+    flowers: ["#ff77aa", "#ffd24f", "#88ddff", "#ff9de1"]
+  },
+  summer: {
+    sky: "#a8d8ff",
+    grass1: "#64b450",
+    grass2: "#4e983e",
+    meadow1: "#7dd56f",
+    meadow2: "#66c15e",
+    river1: "#3aa7e0",
+    river2: "#2f97d6",
+    pad: "#6fb86a",
+    flowers: ["#ffd24f", "#88ddff", "#ff9de1", "#ff77aa"]
+  },
+  autumn: {
+    sky: "#ffd8a8",
+    grass1: "#dca45f",
+    grass2: "#c68b46",
+    meadow1: "#e5b76d",
+    meadow2: "#d2a156",
+    river1: "#e8985d",
+    river2: "#c87f43",
+    pad: "#b77a46",
+    flowers: ["#ffb347", "#ffa07a", "#ff77aa", "#ffd24f"]
+  },
+  winter: {
+    sky: "#d0e7ff",
+    grass1: "#a3c6d1",
+    grass2: "#84acbc",
+    meadow1: "#b5d0e2",
+    meadow2: "#99bbd0",
+    river1: "#6ba4c9",
+    river2: "#4f7ba6",
+    pad: "#6fa0b6",
+    flowers: ["#c3d8e2", "#b2cadc", "#9fbdd6", "#8eaed0"]
+  }
+};
+
+// Day/night palette definitions.  These are used to gradually blend the
+// environment between daytime and nighttime over time.  Only a subset of
+// colour keys are included here; other values remain unchanged.
+const DAY_COLORS = {
+  sky: COLORS.sky,
+  grass1: COLORS.grass1,
+  grass2: COLORS.grass2,
+  meadow1: COLORS.meadow1,
+  meadow2: COLORS.meadow2,
+  river1: COLORS.river1,
+  river2: COLORS.river2
+};
+// Darker nighttime variants of the above colours.  These values were
+// hand‑picked to provide a gentle nighttime appearance without losing
+// visibility of game elements.
+const NIGHT_COLORS = {
+  sky: "#0a223f",
+  grass1: "#1c3410",
+  grass2: "#152a0c",
+  meadow1: "#18361e",
+  meadow2: "#102a15",
+  river1: "#19456c",
+  river2: "#132d4b"
+};
+
+// Time state for the day/night cycle.  The value oscillates between 0 and 2
+// over the course of each full cycle.  A value of 0 means sunrise, 1 means
+// midnight, and 2 means the end of the cycle (wraps back to 0).
+let dayTime = 0;
+// Length of a full day/night cycle in seconds.
+const DAY_LENGTH = 40; // 40 seconds for a complete daylight→night→day cycle
+// Star alpha controls the opacity of night stars and is derived from dayTime.
+let starAlpha = 0;
+
+/*
+ * Randomly selects a seasonal theme and applies its colours to the global
+ * `COLORS` object.  This function also updates the flower colours so that
+ * blossoms match the chosen season.  It should be called once during
+ * initialization before any drawing occurs.
+ */
+function applySeasonTheme(){
+  // Begin by resetting all colour keys back to the original base
+  // palette so that previous themes (including neon) do not
+  // linger.  Use the DEFAULT_COLORS snapshot for a clean reset.
+  for(const k in DEFAULT_COLORS){
+    COLORS[k] = DEFAULT_COLORS[k];
+  }
+  const keys = Object.keys(SEASON_THEMES);
+  const themeName = keys[Math.floor(Math.random()*keys.length)];
+  // Store the selected season globally so achievements can detect
+  // which season was active during the run.
+  window.currentSeason = themeName;
+  const theme = SEASON_THEMES[themeName];
+  for(const key in theme){
+    if(key === 'flowers') continue;
+    COLORS[key] = theme[key];
+  }
+  // Update lily pad colour
+  if(theme.pad) COLORS.pad = theme.pad;
+  // Apply flower palette if provided
+  if(Array.isArray(theme.flowers)){
+    const colors = theme.flowers;
+    COLORS.flower1 = colors[0] || COLORS.flower1;
+    COLORS.flower2 = colors[1] || COLORS.flower2;
+    COLORS.flower3 = colors[2] || COLORS.flower3;
+    COLORS.flower4 = colors[3] || COLORS.flower4;
+  }
+  // Update DAY_COLORS to match the newly selected theme so the day/night
+  // transition starts from these values rather than the original default
+  for(const key in DAY_COLORS){
+    if(COLORS[key]) DAY_COLORS[key] = COLORS[key];
+  }
+}
+
+// Apply the neon theme palette to all base colours.  Used when
+// neonMode has been activated by a cheat code.  Updates the
+// global colours and day colours to match the new values and
+// records the current season as "neon".
+function applyNeonTheme(){
+  for(const key in NEON_THEME){
+    COLORS[key] = NEON_THEME[key];
+  }
+  // Update day colours for day/night transitions
+  for(const key in DAY_COLORS){
+    if(COLORS[key]) DAY_COLORS[key] = COLORS[key];
+  }
+  window.currentSeason = 'neon';
+}
+
+// Helper: adjust a hex colour by a percentage.  Positive values lighten,
+// negative values darken.  Percent should be between -1 and 1.
+function shadeColor(col, percent){
+  // Remove # if present
+  const hex = col.replace('#','');
+  const num = parseInt(hex, 16);
+  let r = (num >> 16) & 0xff;
+  let g = (num >> 8) & 0xff;
+  let b = num & 0xff;
+  r = Math.min(255, Math.max(0, r + Math.round(255 * percent)));
+  g = Math.min(255, Math.max(0, g + Math.round(255 * percent)));
+  b = Math.min(255, Math.max(0, b + Math.round(255 * percent)));
+  const newNum = (r << 16) | (g << 8) | b;
+  return '#' + newNum.toString(16).padStart(6, '0');
+}
+
+// Convert a hex colour to an RGB object
+function hexToRgb(hex){
+  const cleaned = hex.replace('#','');
+  const num = parseInt(cleaned, 16);
+  return { r: (num >> 16) & 0xff, g: (num >> 8) & 0xff, b: num & 0xff };
+}
+
+// Convert RGB object back to hex
+function rgbToHex(r, g, b){
+  const n = (r << 16) | (g << 8) | b;
+  return '#' + n.toString(16).padStart(6, '0');
+}
+
+// Linearly interpolate between two hex colours
+function lerpColor(c1, c2, t){
+  const rgb1 = hexToRgb(c1);
+  const rgb2 = hexToRgb(c2);
+  const r = Math.round(rgb1.r + (rgb2.r - rgb1.r) * t);
+  const g = Math.round(rgb1.g + (rgb2.g - rgb1.g) * t);
+  const b = Math.round(rgb1.b + (rgb2.b - rgb1.b) * t);
+  return rgbToHex(r,g,b);
+}
+
+/*
+ * updateDayNight(dt)
+ *
+ * Advances the day/night cycle and smoothly interpolates a subset of colours
+ * between their daytime and nighttime values.  This function should be
+ * invoked each frame from within the main loop prior to rendering.  It
+ * computes `starAlpha` which controls the visibility of the night sky stars.
+ */
+function updateDayNight(dt){
+  // Advance time and wrap every two units (day→night→day)
+  dayTime += dt / DAY_LENGTH;
+  if(dayTime > 2) dayTime -= 2;
+  // Determine the blend factor: 0 → 1 → 0 for day→night→day
+  const phase = (dayTime <= 1) ? dayTime : (2 - dayTime);
+  // Interpolate each relevant colour
+  for(const key in DAY_COLORS){
+    const dayCol = DAY_COLORS[key];
+    const nightCol = NIGHT_COLORS[key];
+    COLORS[key] = lerpColor(dayCol, nightCol, phase);
+  }
+  // Star alpha increases once the world is more than 60% through twilight
+  starAlpha = 0;
+  if(phase > 0.6){
+    // map phase from 0.6→1 to 0→1
+    starAlpha = Math.min(1, (phase - 0.6) / 0.4);
+  }
+}
+
+/*
+ * updateCaseOrderLegend()
+ *
+ * When Hard mode is active, the order of grammatical cases is scrambled.
+ * This helper updates the legend in the footer to display the current
+ * case order for singular and plural forms.  The legend is assumed
+ * to have at least two entries, with the second entry showing the
+ * order text.  When Hard mode is disabled the default ordering
+ * (Nom Gen Dat Acc Abl) is displayed.
+ */
+function updateCaseOrderLegend(){
+  const tags = document.querySelectorAll('.legend .tag');
+  if(!tags || tags.length < 2) return;
+  if(hardModeActive){
+    const caseNames = ['Nom','Gen','Dat','Acc','Abl'];
+    const singular = caseOrder.slice(0, 5).map(i => caseNames[i % 5]);
+    const plural = caseOrder.slice(5).map(i => caseNames[i % 5]);
+    tags[1].textContent = 'Order — ' + singular.join(' ') + ' (Sg) → ' + plural.join(' ') + ' (Pl)';
+  } else {
+    tags[1].textContent = 'Order — Nom Gen Dat Acc Abl (Sg) → Nom Gen Dat Acc Abl (Pl)';
+  }
+}
+// --- mobile sizing helpers ---
+const MOBILE_BREAKPOINT = 480;
+let IS_SMALL = false; // updated in resize()
+
+// Apply a random seasonal palette once at start.  Doing this near the top of the
+// script ensures that all subsequent rendering uses the themed colours.  We call
+// this immediately so that the base colours (DAY_COLORS) inherit the theme.
+applySeasonTheme();
+
+/***********************
+ * DATA & CONFIG
+ ***********************/
+const ENDINGS_ROWS = [
+  ["a","us/r","um","*","*","us","u","es"],
+  ["ae","i","i","is","is","us","us","ei"],
+  ["ae","o","o","i","i","ui","u","ei"],
+  ["am","um","um","em","*","um","u","em"],
+  ["a","o","o","e","e","u","u","e"],
+  ["ae","i","a","es","a","us","ua","es"],
+  ["arum","orum","orum","um","um","uum","uum","erum"],
+  ["is","is","is","ibus","ibus","ibus","ibus","ebus"],
+  ["as","os","a","es","a","us","ua","es"],
+  ["is","is","is","ibus","ibus","ibus","ibus","ebus"],
+];
+const BRIDGE_ORDER = [0,1,2,3,4,5,6,7];
+const DECLENSION_LABELS = ["1st","2nd","2nd n.","3rd","3rd n.","4th","4th n.","5th"];
+const TILE_COLS = 5;
+const TILE_ROWS = 10;
+const START_COL = Math.floor(TILE_COLS/2);
+const LIVES_PER_BRIDGE = 3;
+const TOTAL_BRIDGES = 8;
+const SEQS = BRIDGE_ORDER.map(d => ENDINGS_ROWS.map(row => row[d]));
+
+// avatar persistence
+// avatar: session-only (resets on refresh)
+let nextAvatar = { color:"green", pattern:null, rainbow:false };
+let playthroughs = 0;        // counts this session only
+let rainbowShown = false;    // banner only once per session
+
+// Achievements and unlockables.  Unlocks persist across sessions via
+// localStorage and grant cosmetic items (accessories) for the frog.
+/*
+ * Define all possible achievements.  Each entry includes a unique key,
+ * a human‑readable name, a description, and the cosmetic item it
+ * unlocks.  Seasonal achievements award special accessories when
+ * players complete a run in that specific season.  The mythical
+ * skin unlocks once all other items are earned.
+ */
+const ACHIEVEMENTS = {
+  noMistakes: {
+    name: "No Mistakes",
+    description: "Complete all bridges without a single wrong step.",
+    unlock: "crown"
+  },
+  fastRun: {
+    name: "Fast Runner",
+    description: "Finish a full run under 85 seconds.",
+    unlock: "bandana"
+  },
+  seasonSpring: {
+    name: "Spring Victor",
+    description: "Beat the game in Spring season.",
+    unlock: "flowerCrown"
+  },
+  seasonSummer: {
+    name: "Summer Victor",
+    description: "Beat the game in Summer season.",
+    unlock: "sunglasses"
+  },
+  seasonAutumn: {
+    name: "Autumn Victor",
+    description: "Beat the game in Autumn season.",
+    unlock: "acornCap"
+  },
+  seasonWinter: {
+    name: "Winter Victor",
+    description: "Beat the game in Winter season.",
+    unlock: "scarf"
+  },
+  mythicalSkin: {
+    name: "Mythical Skin",
+    description: "Unlock all other items to obtain a glowing skin.",
+    unlock: "mythicalSkin"
+  },
+  persistentScholar: {
+    name: "Persistent Scholar",
+    description: "Complete three runs with no mistakes in a row.",
+    unlock: "laurelWreath"
+  },
+  enduranceFrog: {
+    name: "Endurance Frog",
+    description: "Complete ten runs in total across sessions.",
+    unlock: "backpack"
+  },
+  jakeMode: {
+    name: "Jake Mode",
+    description: "???",
+    unlock: "upsideDown"
+  },
+  hardMode: {
+    name: "Hard Mode",
+    description: "???",
+    unlock: "metalSkin"
+  },
+  unstoppable: {
+    name: "Unstoppable",
+    description: "???",
+    unlock: "brickSkin"
+  }
+};
+let unlocks = {};
+
+// Player statistics for unlock tracking.  Persisted via localStorage
+// under the key "latinFrogStats".  "streak" counts consecutive
+// mistake‑free runs; "totalRuns" counts completed runs across
+// sessions.  These support achievements like Persistent Scholar
+// and Endurance Frog.
+let stats = { streak: 0, totalRuns: 0 };
+
+// Weather system variables.  Weather events like rain or snow spawn
+// decorative particles to enhance immersion.  A weather event runs for
+// a finite duration and then clears.  See initWeather()/updateWeather()
+// for details.
+let currentWeather = 'none';
+let weatherDuration = 0;
+let weatherTimer = 0;
+const raindrops = [];
+const snowflakes = [];
+
+// Logs drifting across the river add more life to the scene.  They are
+// purely decorative and do not affect gameplay.
+const logs = [];
+
+// Backdrop type selects between mountains and a temple silhouette.
+let backdropType = 'mountains';
+
+// Timers for spawning rain and snow particles.  These are used by
+// updateWeather() to control the frequency of particle generation.
+let rainSpawnTimer = 0;
+let snowSpawnTimer = 0;
+
+// game phases
+const PHASE_BRIDGES = "bridges";
+const PHASE_MEADOW  = "meadow";
+let phase = PHASE_BRIDGES;
+
+/***********************
+ * GLOBAL STATE
+ ***********************/
+let bridge = null;        // current bridge layout
+let level = 0;            // 0..7
+let startX = 0, startY = 0, goalY = 0; // frog waypoints
+let runStartTime = performance.now();
+let lastRunElapsed = 0;
+let best = localStorage.getItem("latinFrogBest") ? parseFloat(localStorage.getItem("latinFrogBest")) : null;
+let targetRow = 0;        // which row is currently being answered
+let selectedCol = START_COL; // which column is currently highlighted
+
+// Track the number of mistakes (wrong selections) made during the current
+// run.  This counter resets when a new run starts and is used to
+// evaluate achievements.
+let mistakes = 0;
+
+/***********************
+ * CANVAS & RESPONSIVE LAYOUT
+ ***********************/
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+if (!ctx) {
+  console.error("2D context failed to initialize");
+  alert("Canvas 2D context failed to initialize.");
+}
+console.log("[init] 2D ctx OK:", !!ctx);
+
+// Note: A global error handler is useful during development to surface
+// unexpected issues quickly.  The original version of this file displayed
+// uncaught errors as a toast message.  For the production version we
+// quietly log errors to the console instead of interrupting the game
+// experience.  You can re‑enable toast display for debugging by
+// uncommenting the body below.
+window.addEventListener('error', function(e){
+  const msg = e.message || (e.error && e.error.message) || String(e.error) || 'Unknown error';
+  console.error('Uncaught error:', msg);
+  // const toast = document.getElementById('toast');
+  // if(toast){ toast.textContent = 'JS Error: ' + msg; toast.style.display = 'block'; }
+});
+  
+let DPR = 1, W = 960, H = 540;
+// don't build bridges until the bridge constants exist
+let gameReady = false;
+// runtime guard so resize() doesn't touch critters too early
+let crittersReady = false;
+let RIVER_Y1 = 0, RIVER_Y2 = 0;
+let _rzRAF = 0;
+
+// Ambience arrays for stars, birds and mountains are declared early to avoid
+// temporal dead zones.  These variables are assigned empty arrays here so
+// they exist when `resize()` is first invoked.
+let stars = [];
+let birds = [];
+let mountains = [];
+
+// Clouds array for drifting clouds across the sky
+const clouds = [];   // drifting clouds across the sky
+
+function resize(){
+  // Determine the aspect ratio based on device orientation.  In landscape
+  // mode we preserve the traditional 16:9 layout; in portrait mode we flip
+  // the ratio to 9:16 to make better use of narrow screens (e.g. phones).
+  const isLandscape = window.innerWidth > window.innerHeight;
+  const ratio = isLandscape ? (16/9) : (9/16);
+  const wrapEl = document.getElementById("wrap");
+  const header = document.querySelector("header");
+  const footer = document.querySelector("footer");
+
+ const padX = 24;
+const maxW = 980;
+const wrapW = (wrapEl && wrapEl.clientWidth) ? wrapEl.clientWidth : window.innerWidth;
+const availW = Math.max(320, Math.min(maxW, wrapW - padX));
+
+// On small screens, ignore header/footer height so the canvas can go full-bleed
+// On small screens, ignore header/footer height so the canvas can go full-bleed
+IS_SMALL = window.innerWidth <= MOBILE_BREAKPOINT;  // update the global
+const chromeH = IS_SMALL ? 0 : (
+  (header ? header.offsetHeight : 0) +
+  (footer ? footer.offsetHeight : 0) + 16
+);
+
+const availH = Math.max(220, Math.floor(window.innerHeight - chromeH));
+
+
+  // Compute canvas dimensions based on orientation.  In landscape we
+  // constrain the width first; in portrait we constrain the height first.
+  let cssW, cssH;
+  if (isLandscape) {
+    cssW = Math.min(availW, Math.floor(availH * ratio));
+    cssH = Math.floor(cssW / ratio);
+  } else {
+    cssH = Math.min(availH, Math.floor(availW / ratio));
+    cssW = Math.floor(cssH * ratio);
+  }
+
+  const rawDPR = window.devicePixelRatio || 1;
+  DPR = Math.max(1, Math.min(3, rawDPR)); // allow up to 3x on phones for sharper text
+
+  const wPx = Math.max(1, Math.floor(cssW * DPR));
+  const hPx = Math.max(1, Math.floor(cssH * DPR));
+
+  canvas.width = wPx;
+  canvas.height = hPx;
+  canvas.style.width = cssW + "px";
+  canvas.style.height = cssH + "px";
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  console.log("[resize] css:", cssW, cssH, "px:", wPx, hPx, "DPR:", DPR);
+  
+  W = cssW;
+  H = cssH;
+if (IS_SMALL) {
+  RIVER_Y1 = H * 0.04;
+  RIVER_Y2 = H * 0.96;   // more vertical room for the bridge
+} else {
+  RIVER_Y1 = H * 0.12;
+  RIVER_Y2 = H * 0.86;
+}
+
+  console.log("[resize] W,H:", W, H, "river:", RIVER_Y1.toFixed(1), "→", RIVER_Y2.toFixed(1));
+
+  // Re-seed critters so pads/flowers fit new river/meadow bounds
+  if (crittersReady && typeof initCritters === "function") initCritters();
+
+  // Regenerate stars, birds and mountains whenever the layout changes.  They
+  // depend on W, H and RIVER_Y1.  These functions are safe to call even
+  // before their arrays are used.
+  if(typeof initStars === 'function') initStars();
+  if(typeof initBirds === 'function') initBirds();
+  // Initialise the chosen backdrop (mountains or temple).  This function
+  // internally calls initMountains() when appropriate.
+  if (typeof initBackdrops === 'function') initBackdrops();
+
+ // Recompute bridge geometry only after game is ready
+if (gameReady && phase === PHASE_BRIDGES) {
+  loadBridge(level, true);
+}
+}
+
+// Debounced resize for Android/iOS browsers
+window.addEventListener("resize", ()=>{
+  if (_rzRAF) cancelAnimationFrame(_rzRAF);
+  _rzRAF = requestAnimationFrame(resize);
+}, {passive:true});
+
+// iOS sometimes misses resize on rotation—nudge it
+window.addEventListener("orientationchange", ()=>{
+  setTimeout(resize, 250);
+}, {passive:true});
+
+resize();
+
+/***********************
+ * UI
+ ***********************/
+const uiLevel = document.getElementById("level");
+const uiLives = document.getElementById("lives");
+const uiTime  = document.getElementById("time");
+const uiBest  = document.getElementById("best");
+document.getElementById("restartBtn").addEventListener("click", () => { phase=PHASE_BRIDGES; restartRun(); });
+// Clear all unlockables and stats when the reset button is clicked.  This
+// removes data from localStorage and resets in‑memory structures.  A
+// toast message confirms the action and a new run begins.
+document.getElementById('clearUnlocksBtn').addEventListener('click', () => {
+  try{
+    unlocks = {};
+    stats = { streak: 0, totalRuns: 0 };
+    localStorage.removeItem('latinFrogUnlocks');
+    localStorage.removeItem('latinFrogStats');
+    // Reset avatar cosmetics
+    nextAvatar.accessory = null;
+    nextAvatar.skin = null;
+    saveUnlocks();
+    saveStats();
+    showToast('Unlockables reset');
+    // Start a fresh run
+    phase = PHASE_BRIDGES;
+    prepareNewRun();
+  } catch(err){ console.error('Error resetting unlocks', err); }
+});
+
+/*
+ * === Practice Mode Setup ===
+ *
+ * Practice mode allows players to tailor their runs by selecting which
+ * declensions (levels) and grammatical cases (rows) they wish to practise.
+ * When practice mode is active only the selected declensions are used
+ * and any unselected cases are covered and automatically skipped by
+ * the frog.  Unlocks and achievements persist across practice mode.
+ */
+let practiceMode = false;
+let practiceCases = Array(10).fill(true);      // whether each case (0..9) is enabled
+let practiceDeclensions = Array(8).fill(true); // whether each declension (0..7) is enabled
+let practiceLevelIndices = [];                 // maps practice level index to actual declension index
+const CASE_LABELS = [
+  "Nom. Sg","Gen. Sg","Dat. Sg","Acc. Sg","Abl. Sg",
+  "Nom. Pl","Gen. Pl","Dat. Pl","Acc. Pl","Abl. Pl"
+];
+
+// Track whether the skip cheat has been used in the current run.  When
+// true we treat the run like practice mode for scoring purposes,
+// meaning no unlocks are awarded and no best times are recorded.
+let skipCheatUsed = false;
+
+// Populate the practice overlay with checkboxes reflecting current
+// selections.  Attach change listeners to update the practice arrays
+// when players check or uncheck boxes.
+function initPracticeOverlay(){
+  const declContainer = document.getElementById('practiceDeclensionOptions');
+  const caseContainer = document.getElementById('practiceCaseOptions');
+  // Clear any previous content
+  declContainer.innerHTML = '';
+  caseContainer.innerHTML = '';
+  // Build declension checkbox list
+  DECLENSION_LABELS.forEach((label, idx) => {
+    const wrap = document.createElement('label');
+    wrap.style.marginRight = '8px';
+    wrap.style.fontSize = '14px';
+    wrap.style.display = 'flex';
+    wrap.style.alignItems = 'center';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.className = 'practice-decl-checkbox';
+    cb.checked = practiceDeclensions[idx];
+    cb.addEventListener('change', () => {
+      practiceDeclensions[idx] = cb.checked;
+    });
+    wrap.appendChild(cb);
+    const txt = document.createTextNode(' ' + label);
+    wrap.appendChild(txt);
+    declContainer.appendChild(wrap);
+  });
+  // Build case checkbox list
+  CASE_LABELS.forEach((label, idx) => {
+    const wrap = document.createElement('label');
+    wrap.style.marginRight = '8px';
+    wrap.style.fontSize = '14px';
+    wrap.style.display = 'flex';
+    wrap.style.alignItems = 'center';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.className = 'practice-case-checkbox';
+    cb.checked = practiceCases[idx];
+    cb.addEventListener('change', () => {
+      practiceCases[idx] = cb.checked;
+    });
+    wrap.appendChild(cb);
+    const txt = document.createTextNode(' ' + label);
+    wrap.appendChild(txt);
+    caseContainer.appendChild(wrap);
+  });
+}
+
+// Build the level index mapping based on the currently enabled
+// declensions.  This mapping translates the practice mode level
+// number to the actual declension index used by makeBridge().
+function buildPracticeSequence(){
+  practiceLevelIndices = [];
+  for(let i=0; i<practiceDeclensions.length; i++){
+    if(practiceDeclensions[i]) practiceLevelIndices.push(i);
+  }
+}
+
+// Display the practice overlay and initialise its checkboxes.  The
+// overlay is displayed as a flex container so it centers itself.
+function showPracticeOverlay(){
+  initPracticeOverlay();
+  const overlay = document.getElementById('practiceOverlay');
+  overlay.style.display = 'flex';
+}
+
+// Hide the practice overlay.
+function hidePracticeOverlay(){
+  const overlay = document.getElementById('practiceOverlay');
+  overlay.style.display = 'none';
+}
+
+// Skip over any disabled rows (cases) at the start of the run or after
+// a correct selection.  When practice mode is active this helper
+// advances targetRow until it lands on an enabled case.  If the next
+// enabled row lies outside the bridge, finishBridge() is invoked to
+// complete the level automatically.
+function skipDisabledRows(){
+  if(!practiceMode || !bridge) return;
+  // Determine the direction of progression through the rows.  In
+  // Jake mode rows are traversed from bottom to top (decreasing
+  // row index), otherwise from top to bottom.
+  const direction = jakeModeActive ? -1 : 1;
+  // Fetch the mapping of case order for the current bridge.  Each
+  // position in caseOrder corresponds to a row index; caseOrder[r]
+  // yields the original case index (0..9).  A row is disabled if the
+  // corresponding case index is unchecked in practiceCases.
+  while(targetRow >= 0 && targetRow < TILE_ROWS && !practiceCases[caseOrder[targetRow]]){
+    targetRow += direction;
+  }
+  // If we ran past the first/last row then end the bridge.  The
+  // second argument is ignored because finishBridge() handles
+  // advancing to the next level itself.
+  if(targetRow < 0 || targetRow >= TILE_ROWS){
+    finishBridge(true);
+  }
+}
+
+// Attach event handlers to the practice mode button and confirm
+// button.  Toggling practice mode on shows the overlay; toggling
+// it off exits practice mode and starts a normal run.  Confirming
+// selections builds the practice sequence and restarts the run.
+const practiceBtn = document.getElementById('practiceBtn');
+practiceBtn.addEventListener('click', () => {
+  if(!practiceMode){
+    // Enter practice mode: reset selections to all true by default
+    practiceMode = true;
+    practiceCases = Array(10).fill(true);
+    practiceDeclensions = Array(8).fill(true);
+    practiceBtn.textContent = 'Exit Practice';
+    showPracticeOverlay();
+  } else {
+    // Exit practice mode: hide overlay and restart normally
+    practiceMode = false;
+    practiceBtn.textContent = 'Practice Mode';
+    hidePracticeOverlay();
+    // Start a normal run from the beginning
+    phase = PHASE_BRIDGES;
+    restartRun();
+  }
+});
+document.getElementById('practiceConfirmBtn').addEventListener('click', () => {
+  // Build the sequence of enabled declensions
+  buildPracticeSequence();
+  hidePracticeOverlay();
+  // If no declensions are selected, exit practice mode entirely
+  if(practiceLevelIndices.length === 0){
+    practiceMode = false;
+    practiceBtn.textContent = 'Practice Mode';
+    // Immediately end the run
+    phase = PHASE_BRIDGES;
+    restartRun();
+    return;
+  }
+  // Remain in practice mode; update button text accordingly
+  practiceBtn.textContent = 'Exit Practice';
+  // Start a practice run from the beginning
+  phase = PHASE_BRIDGES;
+  restartRun();
+});
+const winOverlay = document.getElementById("winOverlay");
+const finalTimeEl = document.getElementById("finalTime");
+const playAgainBtn = document.getElementById("playAgainBtn");
+playAgainBtn.addEventListener("click", ()=>{
+  // choose a random meadow frog (not the player) as the next avatar
+  if(meadow.players.length>1){
+    const pick = meadow.players[1 + Math.floor(Math.random()*(meadow.players.length-1))];
+    nextAvatar = {
+      color: pick.color,
+      pattern: pick.pattern,
+      rainbow: nextAvatar.rainbow,
+      // Preserve any unlocked accessory and skin across runs so that
+      // achievements remain visible on the player frog.
+      accessory: nextAvatar.accessory,
+      skin: nextAvatar.skin
+    };
+  }
+// increment runs and unlock rainbow after 5 (session-only)
+playthroughs += 1;
+if (playthroughs >= 5) {
+  nextAvatar.rainbow = true; // no persistence; lost on refresh
+}
+
+  winOverlay.style.display = "none";
+  // Prepare a new run.  Players will select an accessory if multiple
+  // options are available.  Restarting the run happens after the
+  // selection is confirmed.
+  phase = PHASE_BRIDGES;
+  prepareNewRun();
+});
+function showToast(msg, ms=2500){ const el=document.getElementById("toast"); el.textContent=msg; el.style.display="block"; clearTimeout(showToast._t); showToast._t=setTimeout(()=>{el.style.display="none";}, ms); }
+
+/***********************
+ * AUDIO — gentler sounds
+ ***********************/
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+const ac = new AudioCtx();
+function beep(freq, dur=0.12, type="sine", gain=0.08){
+  const o = ac.createOscillator(); const g = ac.createGain();
+  o.type = type; o.frequency.value = freq; g.gain.value = gain;
+  o.connect(g).connect(ac.destination);
+  const t = ac.currentTime;
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(gain, t+0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+  o.start(); o.stop(t+dur);
+}
+function chime(){ // pleasant triad
+  beep(880,0.14,"sine",0.06); setTimeout(()=>beep(1174,0.12,"sine",0.05),60); setTimeout(()=>beep(1320,0.10,"sine",0.04),110);
+}
+function plop(){ // soft down-swoop
+  const o = ac.createOscillator(); const g = ac.createGain();
+  o.type="triangle"; g.gain.value=0.08; o.connect(g).connect(ac.destination);
+  const t = ac.currentTime;
+  o.frequency.setValueAtTime(340,t);
+  o.frequency.exponentialRampToValueAtTime(120,t+0.22);
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.linearRampToValueAtTime(0.08,t+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+0.25);
+  o.start(); o.stop(t+0.26);
+}
+
+/***********************
+ * INPUT: keyboard + touch + click
+ ***********************/
+function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+
+// selection controls (bridges)
+window.addEventListener("keydown", (e)=>{
+  if(phase!==PHASE_BRIDGES) return;
+  const k=e.key;
+  if(["ArrowLeft","a","A"].includes(k)){
+    if(jakeModeActive){
+      // Reverse controls: left arrow moves right in Jake mode
+      selectedCol = clamp(selectedCol + 1, 0, TILE_COLS-1);
+    } else {
+      selectedCol = clamp(selectedCol - 1, 0, TILE_COLS-1);
+    }
+    e.preventDefault();
+  }
+  if(["ArrowRight","d","D"].includes(k)){
+    if(jakeModeActive){
+      // Reverse controls: right arrow moves left in Jake mode
+      selectedCol = clamp(selectedCol - 1, 0, TILE_COLS-1);
+    } else {
+      selectedCol = clamp(selectedCol + 1, 0, TILE_COLS-1);
+    }
+    e.preventDefault();
+  }
+  if(k==="Enter" || k===" "){ e.preventDefault(); confirmSelection(); }
+});
+
+// Global cheat code listener.  Captures typed letters and checks
+// for secret codes.  "cornish" toggles neon mode for the next run;
+// "skip" advances to the next bridge level when on a bridge.  The
+// buffer resets after a code is detected.
+window.addEventListener('keydown', (e) => {
+  // Ignore modifier keys or non‑character input
+  if(e.key && e.key.length === 1 && /[a-zA-Z]/.test(e.key)){
+    cheatBuffer += e.key.toLowerCase();
+    if(cheatBuffer.length > 10){ cheatBuffer = cheatBuffer.slice(-10); }
+    if(cheatBuffer.endsWith('cornish')){
+      // Toggle psychedelic mode.  If it is already active, revert to a
+      // normal seasonal palette; otherwise, activate the neon palette and
+      // overlay.  Reset neonMode so that the effect never carries
+      // implicitly into future runs.  Reinitialise critters when
+      // switching palettes so colours update.
+      if(psychedelicRunActive){
+        psychedelicRunActive = false;
+        applySeasonTheme();
+        // Refresh critters so lily pads and flowers use new colours
+        if(typeof initCritters === 'function') initCritters();
+        showToast('Psychedelic mode deactivated');
+      } else {
+        applyNeonTheme();
+        psychedelicRunActive = true;
+        neonMode = false;
+        // Reinitialise critters to reflect neon palette
+        if(typeof initCritters === 'function') initCritters();
+        showToast('Psychedelic mode activated!');
+      }
+      cheatBuffer = '';
+    } else if(cheatBuffer.endsWith('skip')){
+      if(phase === PHASE_BRIDGES){ skipLevel(); }
+      cheatBuffer = '';
+    } else if(cheatBuffer.endsWith('jake')){
+      // Toggle Jake mode.  This flips the bridge orientation and
+      // reverses the left/right controls.  Start a new run immediately
+      // to apply the new orientation.  Completing a run in Jake mode
+      // will unlock the upside‑down skin.  A second invocation of the
+      // code deactivates the mode.
+      jakeModeActive = !jakeModeActive;
+      if(jakeModeActive){
+        showToast('Jake mode activated!');
+      } else {
+        showToast('Jake mode deactivated');
+      }
+      // Start a new run so the new orientation takes effect and flags
+      // (currentRunJake/currentRunHard) update correctly.
+      startRun();
+      cheatBuffer = '';
+    } else if (cheatBuffer.endsWith('cerberus')) {
+      cerberusModeActive = !cerberusModeActive;
+      showToast(cerberusModeActive ? 'Cerberus mode activated!' : 'Cerberus mode deactivated');
+      cheatBuffer = '';
+    } else if (cheatBuffer.endsWith('hard')){
+  // Toggle Hard mode. Scramble singular (0..4) independently from plural (5..9)
+  // so Sg never mixes with Pl.
+  hardModeActive = !hardModeActive;
+
+  if (hardModeActive){
+    // Fisher–Yates on each half
+    const singular = [0,1,2,3,4];
+    const plural   = [5,6,7,8,9];
+
+    for (let i = singular.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [singular[i], singular[j]] = [singular[j], singular[i]];
+    }
+    for (let i = plural.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [plural[i], plural[j]] = [plural[j], plural[i]];
+    }
+
+    caseOrder = singular.concat(plural);
+    showToast('Hard mode activated (singular/plural scrambled separately)!');
+  } else {
+    caseOrder = DEFAULT_CASE_ORDER.slice();
+    showToast('Hard mode deactivated');
+  }
+
+  if (typeof updateCaseOrderLegend === 'function') updateCaseOrderLegend();
+  startRun();
+  cheatBuffer = '';
+  }
+}
+});// click confirm on row
+canvas.addEventListener("click", (e)=>{
+  if(phase!==PHASE_BRIDGES || !bridge) return;
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left);
+  const y = (e.clientY - rect.top);
+  for(let c=0;c<TILE_COLS;c++){
+    const {x:xc,y:yc, half} = getTileCenter(targetRow,c,true);
+    if(Math.abs(x - xc) <= half && Math.abs(y - yc) <= half){ selectedCol=c; confirmSelection(); return; }
+  }
+});
+
+// touch for selection & meadow nudges + jump
+let touchStart=null;
+canvas.addEventListener("touchstart", e=>{
+  if(ac.state==="suspended") ac.resume();
+  const t = e.changedTouches[0];
+  touchStart = {x:t.clientX, y:t.clientY, time:performance.now()};
+},{passive:false});
+canvas.addEventListener("touchend", e=>{
+  const t = e.changedTouches[0]; if(!touchStart) return;
+  const dx = t.clientX - touchStart.x; const dy = t.clientY - touchStart.y;
+  const adx = Math.abs(dx), ady = Math.abs(dy);
+  const dt = performance.now()-touchStart.time;
+  const SWIPE = 24;
+  if(phase===PHASE_BRIDGES){
+    if(adx>ady && adx>SWIPE){ selectedCol = clamp(selectedCol + (dx>0?1:-1), 0, TILE_COLS-1); }
+    else if(adx<10 && ady<10 && dt<300){ confirmSelection(); }
+  } else if(phase===PHASE_MEADOW){
+    if(adx<12 && ady<12){ bigRandomJump(meadow.players[0]); } else if(adx>ady){ meadow.input.dx = Math.sign(dx); meadow.input.dy=0; } else { meadow.input.dy = Math.sign(dy); meadow.input.dx=0; }
+  }
+  touchStart=null;
+},{passive:false});
+
+/***********************
+ * WORLD & CRITTERS & RIVER DECOR
+ ***********************/
+const bugs=[]; const flowers=[]; const BUG_COUNT=24; // more lively
+const lilyPads=[]; const LILY_COUNT=14;
+const fishes=[]; // fish jump animations
+
+// Ripple effects for water disturbance.  Each ripple has an expanding radius and fading
+// alpha.  They are drawn as radial gradients and updated every frame.
+const ripples = [];
+
+// meadow extras
+const bees=[]; const BEE_COUNT=14; // cheerful meadow bees
+const sparkles=[]; // little drifting pollen
+// drifting clouds across the sky
+crittersReady = true;
+
+function initCritters(){
+  bugs.length=0; flowers.length=0; lilyPads.length=0; fishes.length=0; bees.length=0; sparkles.length=0;
+  // Clear ripple animations whenever the world resets.
+  ripples.length = 0;
+  for(let i=0;i<BUG_COUNT;i++) bugs.push({x:Math.random()*W,y:Math.random()*H,spd:0.3+Math.random()*0.6,ang:Math.random()*6.28,wob:Math.random()*6.28,r:2+Math.random()*2});
+  for(let i=0;i<LILY_COUNT;i++){ const y = RIVER_Y1 + 20 + Math.random()*(RIVER_Y2-RIVER_Y1-40); lilyPads.push({x:Math.random()*W, y, r:12+Math.random()*10, phase:Math.random()*6.28, drift:0.2+Math.random()*0.4}); }
+  for(let i=0;i<48;i++) flowers.push({x:Math.random()*W,y:Math.random()*(RIVER_Y1-24),c:[COLORS.flower1,COLORS.flower2,COLORS.flower3,COLORS.flower4][i%4],s:4+Math.random()*5,t:Math.random()*6.28});
+  for(let i=0;i<48;i++) flowers.push({x:Math.random()*W,y:RIVER_Y2+20+Math.random()*(H-(RIVER_Y2+20)),c:[COLORS.flower1,COLORS.flower2,COLORS.flower3,COLORS.flower4][i%4],s:4+Math.random()*5,t:Math.random()*6.28});
+  for(let i=0;i<BEE_COUNT;i++) bees.push({x:Math.random()*W,y:Math.random()*H,a:Math.random()*6.28,sp:0.8+Math.random()*1.2});
+  for(let i=0;i<60;i++) sparkles.push({x:Math.random()*W,y:Math.random()*H,t:Math.random()*6.28});
+  // Decorative logs drifting across the river
+  initLogs();
+  // Choose a new weather pattern for this run.  Weather only occurs on
+  // bridge phases and enhances immersion without affecting gameplay.
+  initWeather();
+  // Assign a ripple timer to each lily pad so that ripples appear at random
+  // intervals.  This property is decremented in updateLilyPads().
+  for(const p of lilyPads){
+    p.rippleTime = 1 + Math.random() * 3;
+  }
+  // Initialize clouds after other critters; see initClouds() below for details.
+  if (typeof initClouds === 'function') initClouds();
+
+  // Initialize parallax layers (hills and mythical creatures) and ambient
+  // effects such as fog, pollen and lightning.  These functions add new
+  // visual depth and atmosphere when present.  They are defined below
+  // and are optional so the game can still run if omitted.
+  if (typeof initParallax === 'function') initParallax();
+  if (typeof initAmbientEffects === 'function') initAmbientEffects();
+}
+
+// fish spawner
+let fishTimer = 0;
+function maybeSpawnFish(dt){ fishTimer -= dt; if( fishTimer <= 0){ fishTimer = 2 + Math.random()*4; const y = RIVER_Y1 + 30 + Math.random()*(RIVER_Y2-RIVER_Y1-60); const x = Math.random()*W*0.8 + W*0.1; const dir = Math.random()<0.5?-1:1; const amp = 40 + Math.random()*50; const dur = 1 + Math.random()*0.6; fishes.push({t:0,dur,x0:x,y0:y,dir,amp}); } }
+function updateFishes(dt){ for(let i=fishes.length-1;i>=0;i--){ const f=fishes[i]; f.t+=dt; if(f.t>f.dur){ addRing(f.x0 + f.dir*60, f.y0, 14); fishes.splice(i,1);} } }
+function drawFishes(){
+  // Draw each fish with a gradient body and a small eye for extra charm.  The
+  // fish swim left or right based on their direction value.  A gradient
+  // highlights the fish body, using a lighter tone at the tail and a darker
+  // tone near the head to convey depth.
+  for (const f of fishes) {
+    const t = f.t / f.dur;
+    const x = f.x0 + f.dir * (t * 120);
+    const y = f.y0 - Math.sin(Math.PI * t) * f.amp;
+    ctx.save();
+    ctx.translate(x, y);
+    // Rotate fish so that they face the direction of travel
+    ctx.rotate(f.dir > 0 ? 0 : Math.PI);
+    // Determine gradient colours using shadeColor if available; fallback to the base colour.
+    const base = COLORS.fish;
+    let light, dark;
+    try {
+      light = shadeColor(base, 0.4);
+      dark = shadeColor(base, -0.3);
+    } catch (_) {
+      light = base;
+      dark = base;
+    }
+    const bodyGrad = ctx.createLinearGradient(-10, 0, 10, 0);
+    bodyGrad.addColorStop(0, dark);
+    bodyGrad.addColorStop(0.4, base);
+    bodyGrad.addColorStop(1, light);
+    // Draw the fish body (ellipse)
+    ctx.fillStyle = bodyGrad;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 10, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Draw the triangular tail using the same gradient so it blends smoothly.
+    ctx.beginPath();
+    ctx.moveTo(-10, 0);
+    ctx.lineTo(-16, 4);
+    ctx.lineTo(-16, -4);
+    ctx.closePath();
+    ctx.fill();
+    // Eye: draw a white circle with a dark pupil on top for better definition.
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(4, -1.5, 1.4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#222222';
+    ctx.beginPath();
+    ctx.arc(4.3, -1.5, 0.6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+function updateLilyPads(dt){
+  for(const p of lilyPads){
+    // Animate the gentle bobbing and drifting of each pad.
+    p.phase += dt * 1.2;
+    p.x += Math.sin(p.phase * 0.6) * p.drift * 0.4;
+    if(p.x < -20) p.x = W + 20;
+    if(p.x > W + 20) p.x = -20;
+    // Countdown the ripple timer.  When it expires, spawn a ripple ring
+    // emanating from the pad and reset the timer to a new random interval.
+    if (p.rippleTime !== undefined) {
+      p.rippleTime -= dt;
+      if (p.rippleTime <= 0) {
+        addRing(p.x, p.y, 12);
+        // New ripple time between 2 and 5 seconds
+        p.rippleTime = 2 + Math.random() * 3;
+      }
+    }
+  }
+}
+function drawLilyPads(){
+  // Render lily pads with depth using a radial gradient, notch, and subtle highlight.
+  // Each pad gently bobs on the water surface and features a notch to resemble
+  // real lily leaves.
+  for (const p of lilyPads) {
+    const bob = Math.sin(p.phase) * 2;
+    ctx.save();
+    ctx.translate(p.x, p.y + bob);
+    // Create a radial gradient for the pad: lighter in the centre, darker at the edges.
+    const innerCol = "#89cd83";
+    const outerCol = COLORS.pad;
+    const grad = ctx.createRadialGradient(0, 0, p.r * 0.2, 0, 0, p.r);
+    grad.addColorStop(0, innerCol);
+    grad.addColorStop(1, outerCol);
+    ctx.fillStyle = grad;
+    // Draw an ellipse with a small notch by skipping a slice of the ellipse.  The notch
+    // adds realism without affecting gameplay.  The path starts slightly offset
+    // from 0 to leave a gap.
+    const notchAngle = Math.PI * 0.2; // size of the notch
+    ctx.beginPath();
+    ctx.ellipse(0, 0, p.r, p.r * 0.8, 0, notchAngle, Math.PI * 2 - notchAngle);
+    ctx.lineTo(0, 0);
+    ctx.closePath();
+    ctx.fill();
+    // Subtle highlight to simulate a water sheen on the leaf.
+    ctx.globalAlpha = 0.15;
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.ellipse(-p.r * 0.3, -p.r * 0.2, p.r * 0.45, p.r * 0.25, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    // Outline for definition.  The outline follows the pad shape but does not
+    // include the notch for a cleaner edge.
+    ctx.strokeStyle = "rgba(0,0,0,0.15)";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, p.r * 0.7, p.r * 0.56, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+/***********************
+ * WEATHER SYSTEM
+ *
+ * Adds atmospheric effects like rain and snow.  Weather events are
+ * selected randomly when a run begins.  Each event lasts for a fixed
+ * duration and automatically stops.  Weather particles are updated
+ * every frame.  They are purely decorative and have no effect on
+ * gameplay.
+ ***********************/
+function initWeather(){
+  // Choose a random weather pattern.  Rain and snow occur less often
+  // than clear conditions.
+  const options = ['none','none','rain','snow'];
+  currentWeather = options[Math.floor(Math.random() * options.length)];
+  // Reset particle arrays and timers.
+  raindrops.length = 0;
+  snowflakes.length = 0;
+  rainSpawnTimer = 0;
+  snowSpawnTimer = 0;
+  if(currentWeather === 'rain' || currentWeather === 'snow'){
+    // Weather lasts between 20 and 40 seconds
+    weatherDuration = 20 + Math.random() * 20;
+    weatherTimer = weatherDuration;
+  } else {
+    weatherDuration = 0;
+    weatherTimer = 0;
+  }
+}
+
+function updateWeather(dt){
+  if(currentWeather === 'rain'){
+    // Spawn raindrops at a regular rate
+    rainSpawnTimer -= dt;
+    while(rainSpawnTimer <= 0){
+      rainSpawnTimer += 0.04; // new drop every 0.04s
+      const x = Math.random() * W;
+      const y = Math.random() * RIVER_Y1 * 0.9; // spawn within the sky region
+      const speed = 240 + Math.random() * 160;
+      raindrops.push({x, y, speed});
+    }
+    // Update raindrop positions
+    for(let i=raindrops.length-1;i>=0;i--){
+      const d = raindrops[i];
+      d.y += d.speed * dt;
+      // When a drop hits the river surface, it creates a splash and is removed
+      if(d.y > RIVER_Y2){
+        // Small ripple effect
+        addRing(d.x, RIVER_Y2, 6);
+        raindrops.splice(i, 1);
+      }
+    }
+  } else if(currentWeather === 'snow'){
+    // Spawn snowflakes at a slower rate
+    snowSpawnTimer -= dt;
+    while(snowSpawnTimer <= 0){
+      snowSpawnTimer += 0.08; // new flake every 0.08s
+      const x = Math.random() * W;
+      const y = Math.random() * RIVER_Y1 * 0.9;
+      const speed = 40 + Math.random() * 40;
+      const drift = (Math.random() * 2 - 1) * 30; // horizontal drift
+      const radius = 1.5 + Math.random() * 2;
+      snowflakes.push({x, y, speed, drift, r: radius});
+    }
+    // Update snowflake positions
+    for(let i=snowflakes.length-1;i>=0;i--){
+      const f = snowflakes[i];
+      f.y += f.speed * dt;
+      f.x += f.drift * dt;
+      if(f.y > RIVER_Y2 || f.x < -20 || f.x > W + 20){
+        snowflakes.splice(i,1);
+      }
+    }
+  }
+  // Countdown weather timer.  When it expires, end the current event.
+  if(weatherTimer > 0){
+    weatherTimer -= dt;
+    if(weatherTimer <= 0){
+      currentWeather = 'none';
+      raindrops.length = 0;
+      snowflakes.length = 0;
+    }
+  }
+}
+
+function drawWeather(){
+  ctx.save();
+  if(currentWeather === 'rain'){
+    ctx.strokeStyle = 'rgba(200,200,255,0.5)';
+    ctx.lineWidth = 1;
+    ctx.lineCap = 'round';
+    for(const d of raindrops){
+      ctx.beginPath();
+      // draw small slanted line for raindrop
+      ctx.moveTo(d.x, d.y);
+      ctx.lineTo(d.x + 0, d.y + 6);
+      ctx.stroke();
+    }
+  } else if(currentWeather === 'snow'){
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    for(const f of snowflakes){
+      ctx.beginPath();
+      ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  ctx.restore();
+}
+
+/***********************
+ * LOGS: Decorative floating logs
+ *
+ * Logs drift horizontally across the river.  They provide additional
+ * visual interest without interacting with gameplay.  Logs are
+ * initialised along with other critters and reset whenever the run
+ * restarts.
+ ***********************/
+function initLogs(){
+  logs.length = 0;
+  const count = 5;
+  for(let i=0;i<count;i++){
+    const width = 40 + Math.random() * 60;
+    const x = Math.random() * W;
+    const y = RIVER_Y1 + 30 + Math.random() * (RIVER_Y2 - RIVER_Y1 - 60);
+    const speed = 20 + Math.random() * 40;
+    const dir = Math.random() < 0.5 ? 1 : -1;
+    logs.push({x, y, w: width, h: 6, speed, dir});
+  }
+}
+
+function updateLogs(dt){
+  for(const log of logs){
+    log.x += log.speed * log.dir * dt;
+    if(log.dir > 0 && log.x - log.w > W + 50){
+      log.x = -log.w - 50;
+    } else if(log.dir < 0 && log.x + log.w < -50){
+      log.x = W + 50;
+    }
+  }
+}
+
+function drawLogs(){
+  ctx.save();
+  for(const log of logs){
+    ctx.save();
+    // Translate to the log's position so we can draw relative to (0,0)
+    ctx.translate(log.x, log.y);
+    const w = log.w;
+    const h = log.h;
+    // Build a horizontal gradient across the log to simulate rounded wood with a lighter centre and darker edges.
+    const base = '#a67845';
+    const highlight = shadeColor(base, 0.25);
+    const shadow = shadeColor(base, -0.25);
+    const lg = ctx.createLinearGradient(0, 0, w, 0);
+    lg.addColorStop(0, shadow);
+    lg.addColorStop(0.25, base);
+    lg.addColorStop(0.5, highlight);
+    lg.addColorStop(0.75, base);
+    lg.addColorStop(1, shadow);
+    ctx.fillStyle = lg;
+    // Draw the main body of the log
+    ctx.beginPath();
+    ctx.rect(0, -h/2, w, h);
+    ctx.fill();
+    // Add subtle wood grain lines across the log.  Use semi‑transparent dark strokes
+    // spaced at irregular intervals for a natural look.
+    ctx.strokeStyle = shadeColor(base, -0.35);
+    ctx.lineWidth = 0.8;
+    ctx.globalAlpha = 0.3;
+    for(let x=4; x<w; x+=8){
+      const offset = (Math.random()-0.5)*2;
+      ctx.beginPath();
+      ctx.moveTo(x + offset, -h/2 + 1);
+      ctx.lineTo(x + offset, h/2 - 1);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    // Draw rounded caps at each end using ellipses for a softer look
+    ctx.fillStyle = lg;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, h/2, h/2, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(w, 0, h/2, h/2, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  }
+  ctx.restore();
+}
+
+/***********************
+ * ACHIEVEMENTS & UNLOCKS
+ *
+ * Evaluate performance after each run to determine if any achievements
+ * have been earned.  Achievements unlock cosmetic accessories for
+ * the player's frog.  Unlocks persist in localStorage under the
+ * key "latinFrogUnlocks".  When new items are unlocked, a
+ * celebration banner is displayed similar to the rainbow frog unlock.
+ ***********************/
+
+function loadUnlocks(){
+  try{
+    const raw = localStorage.getItem('latinFrogUnlocks');
+    unlocks = raw ? JSON.parse(raw) : {};
+  } catch(err){
+    console.error('Error loading unlocks', err);
+    unlocks = {};
+  }
+  // If there is a saved unlock, set the nextAvatar accessory so it
+  // immediately appears when the game is restarted.  Prioritise
+  // achievements in a consistent order (crown > bandana) so that
+  // players see the most prestigious item if multiple are unlocked.
+  // Apply the most prestigious unlocked accessory or skin to nextAvatar.
+  // Prioritise crown > bandana > seasonal items.  If the mythical skin
+  // is unlocked, set the skin property (which overrides colours) and
+  // leave accessory unchanged until the player chooses.
+  if(unlocks.mythicalSkin){
+    nextAvatar.skin = 'mythicalSkin';
+  }
+  // Determine a default accessory based on priority.  Order:
+  // crown > bandana > seasonal items > laurel > backpack
+  if(unlocks.noMistakes){ nextAvatar.accessory = 'crown'; }
+  else if(unlocks.fastRun){ nextAvatar.accessory = 'bandana'; }
+  else if(unlocks.seasonSpring){ nextAvatar.accessory = 'flowerCrown'; }
+  else if(unlocks.seasonSummer){ nextAvatar.accessory = 'sunglasses'; }
+  else if(unlocks.seasonAutumn){ nextAvatar.accessory = 'acornCap'; }
+  else if(unlocks.seasonWinter){ nextAvatar.accessory = 'scarf'; }
+  else if(unlocks.persistentScholar){ nextAvatar.accessory = 'laurelWreath'; }
+  else if(unlocks.enduranceFrog){ nextAvatar.accessory = 'backpack'; }
+}
+
+function saveUnlocks(){
+  try{
+    localStorage.setItem('latinFrogUnlocks', JSON.stringify(unlocks));
+  } catch(err){
+    console.error('Error saving unlocks', err);
+  }
+}
+
+// Load player statistics from localStorage.  If no stats are found,
+// initialise the counters.  Catch JSON parsing errors to avoid
+// crashing on corrupt data.
+function loadStats(){
+  try{
+    const raw = localStorage.getItem('latinFrogStats');
+    stats = raw ? JSON.parse(raw) : { streak: 0, totalRuns: 0 };
+    // Ensure properties exist
+    if(typeof stats.streak !== 'number') stats.streak = 0;
+    if(typeof stats.totalRuns !== 'number') stats.totalRuns = 0;
+  } catch(err){
+    console.error('Error loading stats', err);
+    stats = { streak: 0, totalRuns: 0 };
+  }
+}
+
+// Save player statistics to localStorage.
+function saveStats(){
+  try{
+    localStorage.setItem('latinFrogStats', JSON.stringify(stats));
+  } catch(err){
+    console.error('Error saving stats', err);
+  }
+}
+
+function evaluateAchievements(){
+  // Use a separate object for the current run's results so we don't shadow
+  // the global stats variable.  runResult holds only per‑run fields.
+  const runResult = { mistakes, time: lastRunElapsed };
+  const newlyUnlocked = [];
+  for(const key in ACHIEVEMENTS){
+    if(!unlocks[key]){
+      const ach = ACHIEVEMENTS[key];
+      // define conditions here rather than referencing functions in ACHIEVEMENTS
+      let achieved = false;
+      if(key === 'noMistakes'){
+        achieved = (runResult.mistakes === 0);
+      } else if(key === 'fastRun'){
+        // Bandana unlock: finish a full run in under 85 seconds
+        achieved = (runResult.time < 85);
+      } else if(key === 'seasonSpring'){
+        achieved = (window.currentSeason === 'spring');
+      } else if(key === 'seasonSummer'){
+        achieved = (window.currentSeason === 'summer');
+      } else if(key === 'seasonAutumn'){
+        achieved = (window.currentSeason === 'autumn');
+      } else if(key === 'seasonWinter'){
+        achieved = (window.currentSeason === 'winter');
+      } else if(key === 'mythicalSkin'){
+        // Mythical skin unlocks only if all other achievements are complete
+        achieved = Object.keys(ACHIEVEMENTS).every(k => k === 'mythicalSkin' || unlocks[k]);
+      } else if(key === 'persistentScholar'){
+        // Persistent Scholar unlocks after three consecutive runs with no mistakes
+        achieved = (stats.streak >= 3);
+      } else if(key === 'enduranceFrog'){
+        // Endurance Frog unlocks after 10 total runs across sessions
+        achieved = (stats.totalRuns >= 10);
+      }
+      if(achieved){
+        unlocks[key] = true;
+        newlyUnlocked.push(ach.unlock);
+      }
+    }
+  }
+  // Jake mode unlock: if the run was started in Jake mode and the
+  // unlock has not yet been earned, grant the upside‑down skin.
+  // We use currentRunJake to capture the mode at the start of the run
+  // so that players cannot toggle Jake off before the end and still get
+  // the unlock.
+  // Evaluate cheat mode unlocks.  We base these on whether the run
+  // began or ended with Jake/Hard modes active.  currentRunJake and
+  // currentRunHard capture the state at the start of the run.  In
+  // practice players may toggle modes during a run, so we also
+  // consider the current active flags to ensure the unlock is granted
+  // if the mode remained enabled throughout the run.
+  const runJake = currentRunJake || jakeModeActive;
+  const runHard = currentRunHard || hardModeActive;
+  // Jake mode unlock: beat a run with Jake mode enabled.
+  if(!unlocks.jakeMode && runJake){
+    unlocks.jakeMode = true;
+    newlyUnlocked.push('upsideDown');
+  }
+  // Hard mode unlock: beat a run with Hard mode enabled.  When
+  // Unstoppable is unlocked the hard unlock will also be awarded.
+  if(!unlocks.hardMode && runHard){
+    unlocks.hardMode = true;
+    newlyUnlocked.push('metalSkin');
+  }
+  // Unstoppable unlock: beat a run with both Hard and Jake modes
+  // enabled.  This awards the brick skin and implicitly unlocks
+  // hardMode if it wasn't already.
+  if(!unlocks.unstoppable && runHard && runJake){
+    unlocks.unstoppable = true;
+    newlyUnlocked.push('brickSkin');
+    // Ensure the hardMode unlock is set as well
+    if(!unlocks.hardMode){
+      unlocks.hardMode = true;
+      newlyUnlocked.push('metalSkin');
+    }
+  }
+  if(newlyUnlocked.length > 0){
+    saveUnlocks();
+    // Assign the last unlocked item as the default cosmetic for the
+    // next run.  Skins such as mythicalSkin or upsideDown are
+    // distinguished from accessories.  This will be overwritten by
+    // the player's selection via the accessory chooser.
+    const last = newlyUnlocked[newlyUnlocked.length - 1];
+    if(last === 'mythicalSkin' || last === 'upsideDown' || last === 'metalSkin' || last === 'brickSkin'){
+      nextAvatar.skin = last;
+      nextAvatar.accessory = null;
+    } else {
+      nextAvatar.accessory = last;
+      nextAvatar.skin = null;
+    }
+    /*
+     * Show each unlocked item with its own banner.  Queue banners
+     * sequentially so players see individual celebrations rather than
+     * only the last item.  Update the current player frog's
+     * cosmetic to reflect the last unlocked item for the remainder
+     * of the meadow phase.
+     */
+    if (phase === PHASE_MEADOW && meadow && meadow.players && meadow.players.length > 0) {
+      if(last === 'mythicalSkin' || last === 'upsideDown' || last === 'metalSkin' || last === 'brickSkin'){
+        meadow.players[0].skin = last;
+        meadow.players[0].accessory = null;
+      } else {
+        meadow.players[0].accessory = last;
+        meadow.players[0].skin = null;
+      }
+    }
+    for(const acc of newlyUnlocked){
+      queueUnlockBanner(acc);
+    }
+  }
+}
+
+// Display an unlock banner celebrating a newly earned accessory.  The
+// effect is similar to the rainbow unlock banner but uses a customised
+// message and confetti colours.  After the banner finishes, it hides
+// automatically.
+// Queue a banner to celebrate a newly unlocked item.  The banner
+// displays sequentially with others.  Confetti and sounds are
+// configured when the banner begins.
+function queueUnlockBanner(accessory){
+  pendingUnlocks.push(accessory);
+  // If no banner is currently showing, immediately start the next one.
+  if(!unlockBanner.show){
+    startNextUnlockBanner();
+  }
+}
+
+// Begin the next unlock banner from the queue.  This sets up
+// confetti and resets timing.  Called automatically when a banner
+// finishes or when a new banner is queued while none is showing.
+function startNextUnlockBanner(){
+  if(pendingUnlocks.length === 0){
+    return;
+  }
+  const accessory = pendingUnlocks.shift();
+  // Reset confetti and configure colours
+  confetti.length = 0;
+  for(let i=0; i<180; i++){
+    const colourPool = [COLORS.confetti1, COLORS.confetti2, COLORS.confetti3, COLORS.confetti4, COLORS.confetti5, COLORS.confetti6];
+    const c = colourPool[i % colourPool.length];
+    confetti.push({ x: Math.random()*W, y: -30 - Math.random()*40, vx: (Math.random()*2-1)*80, vy: 120 + Math.random()*160, rot: Math.random()*6.28, vr: (Math.random()*2-1)*3, color: c, life: 3 + Math.random()*2, t: 0, sz: 2 + Math.random()*3 });
+  }
+  // Play a short triumphant tone (reuse beep/chime functions if desired)
+  // beep(880,0.2,"sine",0.08); setTimeout(() => beep(1174,0.18,"sine",0.07), 140);
+  // setTimeout(() => beep(1568,0.16,"sine",0.06), 280);
+  unlockBanner.show = true;
+  unlockBanner.t = 0;
+  unlockBanner.dur = 4.0;
+  unlockBanner.accessory = accessory;
+}
+
+// Unlock banner state
+const unlockBanner = { show: false, t: 0, dur: 4.0, accessory: null };
+// Queue of pending unlock banners.  When multiple items are unlocked
+// in one run, they are stored here and shown sequentially.
+const pendingUnlocks = [];
+
+function drawUnlockBanner(){
+  if(!unlockBanner.show) return;
+  unlockBanner.t += 1/60;
+  const a = Math.min(1, unlockBanner.t / 0.6);
+  ctx.save();
+  ctx.globalAlpha = a;
+  // Semi-transparent veil
+  ctx.fillStyle = 'rgba(0,0,0,0.35)';
+  ctx.fillRect(0, 0, W, H);
+  // Banner box
+  const bw = W * 0.75;
+  const bh = 100;
+  ctx.fillStyle = 'rgba(255,255,255,0.97)';
+  ctx.fillRect((W - bw)/2, H * 0.25, bw, bh);
+  // Message
+  ctx.fillStyle = COLORS.ui;
+  ctx.font = '900 32px ui-sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('NEW ACCESSORY UNLOCKED!', W/2, H*0.25 + bh*0.35);
+  // Subtext with accessory name
+  ctx.font = '600 20px ui-sans-serif';
+  ctx.fillText('Unlocked: ' + unlockBanner.accessory.toUpperCase(), W/2, H*0.25 + bh*0.70);
+  ctx.restore();
+  // Draw confetti
+  updateConfetti(1/60);
+  drawConfetti();
+  if(unlockBanner.t > unlockBanner.dur){
+    unlockBanner.show = false;
+    // Start the next queued banner, if any
+    startNextUnlockBanner();
+  }
+}
+
+/***********************
+ * ACCESSORY SELECTION
+ *
+ * When a new run begins and multiple accessories are unlocked, the
+ * player is presented with a simple choice overlay.  The available
+ * options include all unlocked items plus "none".  Once a choice
+ * is confirmed, the run begins.  This mechanism allows for future
+ * expansion to additional unlockables without modifying the main
+ * gameplay loop.
+ ***********************/
+
+// Show the accessory selection overlay.  Build clickable option
+// buttons based on the available accessories and attach event
+// listeners for selection and confirmation.
+function showAccessorySelectOverlay(options){
+  const overlay = document.getElementById('accOverlay');
+  const optsEl = document.getElementById('accOptions');
+  const confirmBtn = document.getElementById('accConfirmBtn');
+  // Clear previous options
+  optsEl.innerHTML = '';
+  // Track selected value
+  let selected = nextAvatar.accessory || 'none';
+  // Build each option as a button.  Highlight the currently
+  // selected accessory.  Use simple text labels; icons could be
+  // added here if desired.
+  options.forEach((acc) => {
+    const btn = document.createElement('button');
+    btn.dataset.acc = acc;
+    btn.textContent = acc === 'none' ? 'None' : acc.charAt(0).toUpperCase() + acc.slice(1);
+    btn.style.padding = '6px 10px';
+    btn.style.borderRadius = '8px';
+    btn.style.border = '2px solid #cfe9ff';
+    btn.style.cursor = 'pointer';
+    btn.style.background = (selected === acc) ? '#e0f0ff' : '#f5fbff';
+    btn.style.color = '#16324f';
+    btn.style.fontWeight = '600';
+    btn.addEventListener('click', () => {
+      selected = acc;
+      // Update highlighting
+      Array.from(optsEl.children).forEach((child) => {
+        child.style.background = (child.dataset.acc === selected) ? '#e0f0ff' : '#f5fbff';
+      });
+    });
+    optsEl.appendChild(btn);
+  });
+  // Confirm button: when clicked, hide overlay and start run
+  function confirmHandler(){
+    overlay.style.display = 'none';
+    confirmBtn.removeEventListener('click', confirmHandler);
+    // Apply selection to nextAvatar; decide between accessory and skin.
+    if(selected === 'none'){
+      nextAvatar.accessory = null;
+      nextAvatar.skin = null;
+    } else if(selected === 'mythicalSkin' || selected === 'upsideDown' || selected === 'metalSkin' || selected === 'brickSkin'){
+      // Treat these unlocks as skins
+      nextAvatar.skin = selected;
+      nextAvatar.accessory = null;
+    } else {
+      nextAvatar.accessory = selected;
+      nextAvatar.skin = null;
+    }
+    // Begin run
+    startRun();
+  }
+  confirmBtn.addEventListener('click', confirmHandler);
+  // Display overlay
+  overlay.style.display = 'flex';
+
+    // Populate hints for locked items.  Show a list of items that are
+    // currently unavailable with a brief description.  Hints help
+    // players understand how to unlock new cosmetics.
+    const hintsEl = document.getElementById('accHints');
+    if(hintsEl){
+      const locked = [];
+      for(const key in ACHIEVEMENTS){
+        if(!unlocks[key]){
+          const ach = ACHIEVEMENTS[key];
+          // Derive a user‑friendly label from the unlock name
+          const label = ach.unlock.charAt(0).toUpperCase() + ach.unlock.slice(1);
+          locked.push(`${label}: ${ach.description}`);
+        }
+      }
+      if(locked.length > 0){
+        hintsEl.innerHTML = locked.map(item => `<div>🔒 ${item}</div>`).join('');
+      } else {
+        hintsEl.innerHTML = '';
+      }
+    }
+}
+
+// Determine which accessories are available based on unlocked
+// achievements and show the selection overlay if appropriate.  If
+// there are no options or only one option (including "none") the
+// run begins immediately without a prompt.
+function prepareNewRun(){
+  // Build a list of unlocked accessories.  Always include 'none'.
+  const options = [];
+  // Gather unlocked items.  Each unlocked achievement adds its cosmetic
+  // item to the list.  Mythical skin is treated like an accessory here
+  // so that players can choose it.  If nothing is unlocked the only
+  // option will be 'none'.
+  if(unlocks.noMistakes){ options.push('crown'); }
+  if(unlocks.fastRun){ options.push('bandana'); }
+  if(unlocks.seasonSpring){ options.push('flowerCrown'); }
+  if(unlocks.seasonSummer){ options.push('sunglasses'); }
+  if(unlocks.seasonAutumn){ options.push('acornCap'); }
+  if(unlocks.seasonWinter){ options.push('scarf'); }
+  if(unlocks.mythicalSkin){ options.push('mythicalSkin'); }
+  if(unlocks.persistentScholar){ options.push('laurelWreath'); }
+  if(unlocks.enduranceFrog){ options.push('backpack'); }
+  if(unlocks.jakeMode){ options.push('upsideDown'); }
+  if(unlocks.hardMode){ options.push('metalSkin'); }
+  if(unlocks.unstoppable){ options.push('brickSkin'); }
+  // Always include 'none'
+  options.push('none');
+  const unique = [...new Set(options)];
+  if(unique.length > 1){
+    showAccessorySelectOverlay(unique);
+  } else {
+    // Only one option; assign it then start the run.  Determine whether
+    // it is a skin or accessory.
+    const only = unique[0];
+    if(only === 'none'){
+      nextAvatar.accessory = null;
+      nextAvatar.skin = null;
+    } else if(only === 'mythicalSkin'){
+      nextAvatar.skin = 'mythicalSkin';
+      nextAvatar.accessory = null;
+    } else {
+      nextAvatar.accessory = only;
+      nextAvatar.skin = null;
+    }
+    startRun();
+  }
+}
+
+// Start a run immediately.  This wraps restartRun() so that
+// prepareNewRun() can decide whether to prompt or start directly.
+function startRun(){
+  // Apply neon theme if activated; otherwise pick a seasonal palette.
+  // When a neon cheat is detected for the upcoming run, neonMode is true.
+  // We apply the neon palette and mark the run as psychedelic.  The flag
+  // is then consumed so that subsequent runs revert to normal palettes.
+  if(neonMode){
+    applyNeonTheme();
+    neonMode = false;
+    psychedelicRunActive = true;
+  } else {
+    applySeasonTheme();
+    psychedelicRunActive = false;
+  }
+  // Record whether this run is a Jake mode run for achievement
+  currentRunJake = jakeModeActive;
+  // Record whether this run uses Hard mode for achievement
+  currentRunHard = hardModeActive;
+  // Update the case order legend whenever a run begins.  This
+  // ensures the UI reflects the currently active case order.
+  if(typeof updateCaseOrderLegend === 'function') updateCaseOrderLegend();
+  // Reinitialize critters so flower and pad colours update to the new
+  // theme.  Then reset the run.
+  if(typeof initCritters === 'function') initCritters();
+  restartRun();
+}
+
+// Draw an accessory on a frog entity.  Accessories are simple
+// decorations positioned relative to the frog's coordinates.  Add
+// additional accessories by extending this function.  Accessories are
+// supported for both the bridge frog and meadow frogs.
+function drawAccessory(f){
+  if(!f.accessory) return;
+  ctx.save();
+  ctx.translate(f.x, f.y);
+  // Determine drawing parameters based on accessory type
+  switch(f.accessory){
+    case 'crown': {
+      // Draw a crown above the frog's head.  Use the frog's radius to
+      // scale the accessory so it remains visible on different screen
+      // sizes and device pixel ratios.  The crown sits above the
+      // frog's eyes at a distance proportional to its size.
+      const size = f.r || 18;
+      const width = size * 1.4;
+      const height = size * 0.5;
+      const baseY = -size * 1.4;
+      ctx.fillStyle = '#ffd700';
+      ctx.strokeStyle = '#cfa500';
+      ctx.lineWidth = Math.max(1, size * 0.07);
+      // Crown base
+      ctx.beginPath();
+      ctx.rect(-width/2, baseY, width, height);
+      ctx.fill();
+      ctx.stroke();
+      // Three spikes
+      for(let i=-1;i<=1;i++){
+        const spikeX = i * width/3;
+        ctx.beginPath();
+        ctx.moveTo(spikeX - width*0.15, baseY);
+        ctx.lineTo(spikeX, baseY - height*1.0);
+        ctx.lineTo(spikeX + width*0.15, baseY);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      }
+      break;
+    }
+    case 'bandana': {
+      // Draw a bandana across the frog's forehead.  Scale based on the
+      // frog's radius so it fits snugly around the head.
+      const size = f.r || 18;
+      const bandWidth = size * 1.6;
+      const bandHeight = size * 0.25;
+      const yOff = -size * 0.9;
+      ctx.fillStyle = '#c0392b';
+      ctx.strokeStyle = '#8e2b20';
+      ctx.lineWidth = Math.max(1, size * 0.05);
+      ctx.beginPath();
+      ctx.rect(-bandWidth/2, yOff, bandWidth, bandHeight);
+      ctx.fill();
+      ctx.stroke();
+      // Small knot on right side
+      ctx.beginPath();
+      ctx.rect(bandWidth/2 - bandHeight, yOff + bandHeight * 0.5 - bandHeight * 0.3, bandHeight * 1.2, bandHeight * 0.6);
+      ctx.fill();
+      ctx.stroke();
+      break;
+    }
+  }
+  ctx.restore();
+}
+
+// Draw a cosmetic accessory on a frog while the drawing context is
+// already translated to the frog's center and scaled appropriately.
+// This helper assumes the coordinate system is local to the frog
+// (0,0 at the frog's center) and uses the frog's `r` property to
+// determine relative sizes.  Accessories are ignored if none is set.
+function drawAccessoryOnFrog(f){
+  if(!f.accessory) return;
+  const size = f.r || 18;
+  switch(f.accessory){
+    case 'crown': {
+      const width = size * 1.4;
+      const height = size * 0.5;
+      const baseY = -size * 1.4;
+      ctx.fillStyle = '#ffd700';
+      ctx.strokeStyle = '#cfa500';
+      ctx.lineWidth = Math.max(1, size * 0.07);
+      // Base rectangle
+      ctx.beginPath();
+      ctx.rect(-width/2, baseY, width, height);
+      ctx.fill();
+      ctx.stroke();
+      // Spikes
+      for(let i=-1;i<=1;i++){
+        const spikeX = i * width / 3;
+        ctx.beginPath();
+        ctx.moveTo(spikeX - width*0.15, baseY);
+        ctx.lineTo(spikeX, baseY - height);
+        ctx.lineTo(spikeX + width*0.15, baseY);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      }
+      break;
+    }
+    case 'bandana': {
+      const bandWidth = size * 1.6;
+      const bandHeight = size * 0.25;
+      const yOff = -size * 0.9;
+      ctx.fillStyle = '#c0392b';
+      ctx.strokeStyle = '#8e2b20';
+      ctx.lineWidth = Math.max(1, size * 0.05);
+      ctx.beginPath();
+      ctx.rect(-bandWidth/2, yOff, bandWidth, bandHeight);
+      ctx.fill();
+      ctx.stroke();
+      // Knot on right side
+      ctx.beginPath();
+      ctx.rect(bandWidth/2 - bandHeight, yOff + bandHeight * 0.2, bandHeight * 1.2, bandHeight * 0.6);
+      ctx.fill();
+      ctx.stroke();
+      break;
+    }
+    case 'flowerCrown': {
+      // Draw a simple ring of flowers across the top of the frog's head.
+      const radius = size * 0.6;
+      const yOff = -size * 1.1;
+      const colors = ['#ff77aa', '#ffd24f', '#88ddff', '#ff9de1'];
+      const petals = 5;
+      for (let i = 0; i < 6; i++) {
+        const angle = (i / 6) * Math.PI * 2;
+        const cx = Math.cos(angle) * radius * 0.6;
+        const cy = yOff + Math.sin(angle) * radius * 0.3;
+        const col = colors[i % colors.length];
+        ctx.fillStyle = col;
+        ctx.beginPath();
+        ctx.arc(cx, cy, size * 0.18, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      break;
+    }
+    case 'sunglasses': {
+      // Draw sunglasses across the eyes
+      const lensW = size * 0.6;
+      const lensH = size * 0.25;
+      const yOff = -size * 0.85;
+      // left lens
+      ctx.fillStyle = '#111';
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = Math.max(1, size * 0.05);
+      ctx.beginPath();
+      ctx.rect(-lensW - size * 0.1, yOff, lensW, lensH);
+      ctx.fill();
+      ctx.stroke();
+      // right lens
+      ctx.beginPath();
+      ctx.rect(size * 0.1, yOff, lensW, lensH);
+      ctx.fill();
+      ctx.stroke();
+      // bridge
+      ctx.beginPath();
+      ctx.moveTo(-size * 0.1, yOff + lensH * 0.5);
+      ctx.lineTo(size * 0.1, yOff + lensH * 0.5);
+      ctx.stroke();
+      break;
+    }
+    case 'acornCap': {
+      // Draw a small acorn cap on top of the frog's head.
+      const capW = size * 1.2;
+      const capH = size * 0.5;
+      const yOff = -size * 1.3;
+      // cap body
+      ctx.fillStyle = '#8b5a2b';
+      ctx.strokeStyle = '#6d451f';
+      ctx.lineWidth = Math.max(1, size * 0.05);
+      ctx.beginPath();
+      ctx.ellipse(0, yOff, capW * 0.5, capH * 0.5, 0, Math.PI, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      // stem
+      ctx.beginPath();
+      ctx.moveTo(0, yOff - capH * 0.5);
+      ctx.lineTo(0, yOff - capH);
+      ctx.stroke();
+      break;
+    }
+    case 'scarf': {
+      // Draw a scarf around the frog's neck.
+      const width = size * 1.6;
+      const height = size * 0.3;
+      const yOff = size * 0.4;
+      ctx.fillStyle = '#c0392b';
+      ctx.strokeStyle = '#8e2b20';
+      ctx.lineWidth = Math.max(1, size * 0.05);
+      ctx.beginPath();
+      ctx.rect(-width / 2, yOff, width, height);
+      ctx.fill();
+      ctx.stroke();
+      // tail hanging down
+      ctx.beginPath();
+      ctx.rect(-width * 0.4, yOff + height, height * 0.6, height * 1.2);
+      ctx.fill();
+      ctx.stroke();
+      break;
+    }
+    case 'laurelWreath': {
+      // Draw a laurel wreath of green leaves around the top of the head.
+      const radius = size * 0.7;
+      const yOff = -size * 1.1;
+      const leaves = 8;
+      for(let i=0;i<leaves;i++){
+        const angle = (i / leaves) * Math.PI * 2;
+        const lx = Math.cos(angle) * radius * 0.6;
+        const ly = yOff + Math.sin(angle) * radius * 0.35;
+        ctx.fillStyle = '#5cb85c';
+        ctx.beginPath();
+        ctx.ellipse(lx, ly, size * 0.18, size * 0.08, angle, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      break;
+    }
+    case 'backpack': {
+      // Draw a backpack on the frog's back.  Since we can't render
+      // behind the body, place it slightly above the back and draw
+      // straps across the body.
+      const packW = size * 0.8;
+      const packH = size * 0.9;
+      const yOff = size * 0.2;
+      ctx.fillStyle = '#795548';
+      ctx.strokeStyle = '#5d4037';
+      ctx.lineWidth = Math.max(1, size * 0.05);
+      // Pack body
+      ctx.beginPath();
+      ctx.rect(-packW/2, yOff, packW, packH);
+      ctx.fill();
+      ctx.stroke();
+      // Flap
+      ctx.beginPath();
+      ctx.rect(-packW/2, yOff, packW, packH * 0.25);
+      ctx.fillStyle = '#6d4c41';
+      ctx.fill();
+      ctx.stroke();
+      // Straps across front
+      ctx.fillStyle = '#5d4037';
+      ctx.beginPath();
+      ctx.rect(-size * 0.1, yOff - size * 0.4, size * 0.2, size * 0.8);
+      ctx.fill();
+      break;
+    }
+  }
+}
+
+// Draw two side frog-like heads (left/right). Draw using the current fillStyle set by caller.
+// 'base' is a size reference (e.g., baseX for bridge frog; f.r for meadow frogs).
+function drawCerberusHeads(base){
+  const size = Math.max(12, base * 0.33);
+  const y = -base * 0.40;
+  const xOff = base * 0.95;
+
+  for(const dir of [-1, 1]){
+    const cx = dir * xOff;
+
+    ctx.save();
+    ctx.translate(cx, y);
+    ctx.rotate(dir * Math.PI * 0.06);
+
+    const w = size * 1.25;
+    const h = size * 0.90;
+
+    ctx.beginPath();
+    ctx.ellipse(0, 0, w, h, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+    ctx.lineWidth = Math.max(1, base * 0.05);
+    ctx.stroke();
+
+    const eyeY = -h * 0.25;
+    const eyeX = w * 0.38;
+    const eyeR = Math.max(1.5, size * 0.18);
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(-eyeX, eyeY, eyeR, 0, Math.PI * 2);
+    ctx.arc( eyeX, eyeY, eyeR, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#000';
+    const pupilR = Math.max(1, eyeR * 0.45);
+    ctx.beginPath();
+    ctx.arc(-eyeX, eyeY, pupilR, 0, Math.PI * 2);
+    ctx.arc( eyeX, eyeY, pupilR, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(0,0,0,0.55)';
+    const nostY = h * 0.05;
+    const nostX = w * 0.20;
+    const nostR = Math.max(0.8, size * 0.06);
+    ctx.beginPath();
+    ctx.arc(-nostX, nostY, nostR, 0, Math.PI * 2);
+    ctx.arc( nostX, nostY, nostR, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = '#111';
+    ctx.lineWidth = Math.max(1, base * 0.04);
+    ctx.beginPath();
+    ctx.arc(0, h * 0.22, w * 0.60, 0, Math.PI);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+}
+
+
+
+/***********************
+ * STARFIELD: sparkling night sky
+ *
+ * Stars are only visible at night.  Each star has a fixed position in the
+ * upper portion of the canvas and twinkles by modulating its alpha.  The
+ * global variable `starAlpha` controls their overall brightness, and is
+ * derived from the day/night cycle.  Call `initStars()` whenever the
+ * canvas size or river position changes (e.g. inside `resize()`).
+ ***********************/
+function initStars(){
+  stars.length = 0;
+  // Place stars in the region above the river (sky)
+  const count = 80;
+  for(let i=0; i<count; i++){
+    const x = Math.random() * W;
+    // limit stars to upper portion of the sky (80% of the distance to the river)
+    const y = Math.random() * RIVER_Y1 * 0.8;
+    const twinkle = Math.random() * Math.PI * 2;
+    stars.push({x, y, twinkle});
+  }
+}
+
+function drawStars(time){
+  if(starAlpha <= 0 || stars.length === 0) return;
+  ctx.save();
+  // Stars fade in and out according to starAlpha
+  for(const s of stars){
+    // Twinkling effect: oscillate brightness between 0.5 and 1
+    const phase = (Math.sin(s.twinkle + time * 0.002) + 1) * 0.5;
+    const alpha = starAlpha * (0.5 + 0.5 * phase);
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(s.x, s.y, 2, 2);
+  }
+  ctx.restore();
+}
+
+/***********************
+ * BIRDS: simple silhouettes gliding across the sky
+ *
+ * Birds add life to the sky.  Each bird travels in a straight line at a
+ * constant speed and wraps around the canvas when it exits the bounds.  The
+ * flapping motion is simulated by adjusting the curvature of their wings
+ * using a sinusoid.
+ ***********************/
+function initBirds(){
+  birds.length = 0;
+  const count = 4;
+  for(let i=0; i<count; i++){
+    const dir = Math.random() < 0.5 ? 1 : -1;
+    const speed = 40 + Math.random() * 40;
+    const x = dir > 0 ? -60 - Math.random() * 120 : W + 60 + Math.random() * 120;
+    const y = Math.random() * RIVER_Y1 * 0.4 + RIVER_Y1 * 0.1;
+    const flap = Math.random() * Math.PI * 2;
+    birds.push({x, y, speed: speed * dir, flap, dir});
+  }
+}
+
+function updateBirds(dt){
+  for(const b of birds){
+    b.x += b.speed * dt;
+    b.flap += dt * 6; // controls wing oscillation
+    // Wrap birds around the screen
+    if(b.speed > 0 && b.x > W + 80){
+      b.x = -80;
+      b.y = Math.random() * RIVER_Y1 * 0.4 + RIVER_Y1 * 0.1;
+    } else if(b.speed < 0 && b.x < -80){
+      b.x = W + 80;
+      b.y = Math.random() * RIVER_Y1 * 0.4 + RIVER_Y1 * 0.1;
+    }
+  }
+}
+
+function drawBirds(){
+  if(birds.length === 0) return;
+  ctx.save();
+  ctx.strokeStyle = "#444";
+  ctx.lineWidth = 2;
+  for(const b of birds){
+    const size = 10;
+    const wingScale = Math.sin(b.flap) * 0.5 + 0.5; // 0..1
+    ctx.save();
+    ctx.translate(b.x, b.y);
+    ctx.scale(b.dir, 1);
+    // Left wing
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(-size * wingScale, -size * 0.6, -size * 2, 0);
+    // Right wing
+    ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(size * wingScale, -size * 0.6, size * 2, 0);
+    ctx.stroke();
+    ctx.restore();
+  }
+  ctx.restore();
+}
+
+/***********************
+ * MOUNTAINS: distant silhouettes behind the river
+ *
+ * Mountains are generated based on the current canvas width and river height.
+ * Each mountain consists of a triangular peak and two base points.  The
+ * heights vary randomly to create a natural skyline.  Mountains do not
+ * animate, but they are re‑initialised whenever the canvas is resized.
+ ***********************/
+function initMountains(){
+  mountains.length = 0;
+  // Determine number of peaks based on the width of the canvas
+  const peaks = 5 + Math.floor(Math.random() * 3);
+  const baseHeight = RIVER_Y1 * 0.5; // maximum height relative to river
+  const widthPerPeak = W / peaks;
+  for(let i=0; i<peaks; i++){
+    const xStart = i * widthPerPeak;
+    const xEnd = xStart + widthPerPeak;
+    const peakX = xStart + widthPerPeak * (0.3 + Math.random() * 0.4);
+    const height = baseHeight * (0.5 + Math.random() * 0.5);
+    mountains.push({xStart, xEnd, peakX, height});
+  }
+}
+
+function drawMountains(){
+  if(mountains.length === 0) return;
+  ctx.save();
+  ctx.fillStyle = "rgba(34,64,34,0.6)";
+  for(const m of mountains){
+    ctx.beginPath();
+    ctx.moveTo(m.xStart, RIVER_Y1);
+    ctx.lineTo(m.peakX, RIVER_Y1 - m.height);
+    ctx.lineTo(m.xEnd, RIVER_Y1);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+/***********************
+ * BACKDROP INITIALISATION & DRAWING
+ *
+ * The backdrop can be either a range of mountains (default) or a
+ * stylised Roman temple silhouette.  A backdrop type is chosen when
+ * the layout is initialised (see resize()) and persists for the
+ * duration of the run.  Calling initBackdrops() resets the current
+ * backdrop and prepares any necessary structures.
+ ***********************/
+function initBackdrops(){
+  // Randomly pick between mountains (70%) and temple (30%).
+  backdropType = (Math.random() < 0.7) ? 'mountains' : 'temple';
+  if(backdropType === 'mountains'){
+    if(typeof initMountains === 'function') initMountains();
+  } else {
+    // For temples we don't need to precompute shapes; drawing is done
+    // procedurally in drawTemple().  However, we still clear the
+    // mountains array so that stale data is not drawn inadvertently.
+    mountains.length = 0;
+  }
+}
+
+// Draw the selected backdrop.  Delegates to drawMountains() or
+// drawTemple() depending on `backdropType`.  If `backdropType` is
+// unknown, falls back to mountains.
+function drawBackdrop(){
+  if(backdropType === 'temple'){
+    drawTemple();
+  } else {
+    drawMountains();
+  }
+}
+
+// Render a simplified Roman temple silhouette along the horizon.  The
+// silhouette consists of a base platform, evenly spaced columns, and a
+// triangular pediment.  Colours and opacities mirror those used for
+// mountains to blend naturally with the scene.  This function does not
+// depend on any precomputed arrays.
+function drawTemple(){
+  ctx.save();
+  // Determine the overall dimensions relative to the width and river
+  // height.  The temple occupies 60% of the canvas width and 40% of
+  // the vertical distance above the river.  It is centred horizontally.
+  const templeWidth = W * 0.6;
+  const templeHeight = RIVER_Y1 * 0.4;
+  const baseHeight = templeHeight * 0.15;
+  const columnHeight = templeHeight * 0.55;
+  const roofHeight = templeHeight * 0.30;
+  const startX = (W - templeWidth) / 2;
+  const baseY = RIVER_Y1;
+  // Draw base platform
+  ctx.fillStyle = 'rgba(34,64,34,0.6)';
+  ctx.beginPath();
+  ctx.rect(startX, baseY - baseHeight, templeWidth, baseHeight);
+  ctx.fill();
+  // Determine columns: 5 evenly spaced
+  const colCount = 5;
+  const colWidth = templeWidth / (colCount * 2);
+  const gap = (templeWidth - colCount * colWidth) / (colCount + 1);
+  for(let i=0;i<colCount;i++){
+    const cx = startX + gap + i * (colWidth + gap);
+    ctx.beginPath();
+    ctx.rect(cx, baseY - baseHeight - columnHeight, colWidth, columnHeight);
+    ctx.fill();
+  }
+  // Draw roof (pediment) as a triangle
+  ctx.beginPath();
+  ctx.moveTo(startX, baseY - baseHeight - columnHeight);
+  ctx.lineTo(startX + templeWidth / 2, baseY - baseHeight - columnHeight - roofHeight);
+  ctx.lineTo(startX + templeWidth, baseY - baseHeight - columnHeight);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+/***********************
+ * CLOUDS: drifting across the sky
+ * These functions create, update, and render fluffy clouds that move across
+ * the canvas, adding a layer of depth and whimsy. Clouds are drawn as a
+ * handful of overlapping circles to approximate soft edges. They appear in
+ * the sky region above the river. Adjust the count, speed, and sizing
+ * constants to suit the desired aesthetic.
+ ***********************/
+
+function initClouds(){
+  clouds.length = 0;
+  const count = 6;
+  for (let i = 0; i < count; i++) {
+    // Position clouds in the upper portion of the scene (above the river)
+    const y = Math.random() * RIVER_Y1 * 0.6;
+    const scale = 0.5 + Math.random() * 0.6; // relative size multiplier
+    const speed = 10 + Math.random() * 20;    // pixels per second
+    clouds.push({ x: Math.random() * W, y, scale, speed });
+  }
+}
+
+function updateClouds(dt){
+  for (const c of clouds) {
+    c.x += c.speed * dt;
+    // Each cloud wraps around when it has fully drifted beyond the right edge.
+    const maxW = 200 * c.scale;
+    if (c.x - maxW > W + 50) {
+      c.x = -maxW;
+    }
+  }
+}
+
+function drawClouds(){
+  // Draw each cloud using a series of overlapping circles for a soft look.
+  ctx.save();
+  ctx.globalAlpha = 0.6;
+  ctx.fillStyle = '#ffffff';
+  for (const c of clouds) {
+    const w = 120 * c.scale;
+    const h = 40 * c.scale;
+    // Base position for the cloud
+    const baseX = c.x;
+    const baseY = c.y + 20; // offset down slightly for better composition
+    // Draw central ellipse
+    ctx.beginPath();
+    ctx.ellipse(baseX, baseY, w * 0.6, h * 0.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Draw additional puffs to the left and right
+    ctx.beginPath();
+    ctx.ellipse(baseX - w * 0.4, baseY + h * 0.1, w * 0.4, h * 0.35, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(baseX + w * 0.5, baseY + h * 0.2, w * 0.5, h * 0.4, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+/***
+ * PARALLAX BACKGROUND & AMBIENT EFFECTS
+ *
+ * To enhance the sense of depth, additional layers (hills and mythical
+ * creatures) drift across the sky at different speeds.  Ambient effects
+ * such as fog, drifting pollen and occasional lightning flashes add
+ * subtle atmospheric variation without changing gameplay.  These
+ * functions are optional; if omitted the game falls back to the
+ * existing sky rendering.
+ */
+// Arrays for parallax layers and ambient particles
+let hills = [];
+let mythCreatures = [];
+let fogPatches = [];
+let pollenParticles = [];
+let lightningTimer = 0;
+// Initialise parallax layers.  Hills are distant silhouettes near the
+// horizon; mythical creatures drift higher in the sky.  Each object
+// stores its position, size and speed.
+function initParallax(){
+  hills = [];
+  mythCreatures = [];
+  // Create a handful of hills.  Hills are drawn as wide ellipses
+  // positioned near the river horizon.  They move slowly to imply
+  // distance.  Width and height vary per hill for a natural look.
+  const hillCount = 4;
+  for(let i=0;i<hillCount;i++){
+    const width = 300 + Math.random() * 200;
+    const height = 40 + Math.random() * 40;
+    const x = Math.random() * W;
+    const y = RIVER_Y1 - height; // base of hill near the waterline
+    const speed = 2 + Math.random() * 3;
+    hills.push({x, y, width, height, speed});
+  }
+  // Create a few mythical creature silhouettes.  These shapes drift
+  // across the upper sky and are drawn with simple ellipses and
+  // triangles to evoke birds or dragons.  Their slower speed makes
+  // them feel distant.
+  const creatureCount = 3;
+  for(let i=0;i<creatureCount;i++){
+    const size = 30 + Math.random() * 30;
+    const x = Math.random() * W;
+    const y = Math.random() * RIVER_Y1 * 0.5;
+    const speed = 5 + Math.random() * 5;
+    mythCreatures.push({x, y, size, speed});
+  }
+}
+
+// Update the horizontal positions of parallax objects.  Hills and
+// creatures wrap around when fully off screen.
+function updateParallax(dt){
+  for(const h of hills){
+    h.x += h.speed * dt;
+    if(h.x - h.width > W + 50){
+      h.x = -h.width;
+    }
+  }
+  for(const m of mythCreatures){
+    m.x += m.speed * dt;
+    if(m.x - m.size > W + 50){
+      m.x = -m.size;
+      // relocate vertical position for variety
+      m.y = Math.random() * RIVER_Y1 * 0.5;
+    }
+  }
+}
+
+// Render parallax layers.  Hills are drawn first (farthest) and
+// creatures afterwards so they layer above the hills but below
+// clouds.  Colours are muted and semi‑transparent to integrate
+// naturally with the existing palette.
+function drawParallax(){
+  // Draw hills
+  ctx.save();
+  ctx.fillStyle = '#2d5731'; // dark green for distant hills
+  ctx.globalAlpha = 0.5;
+  for(const h of hills){
+    ctx.beginPath();
+    ctx.ellipse(h.x, h.y + h.height/2, h.width, h.height, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+  // Draw mythical creatures
+  ctx.save();
+  ctx.fillStyle = '#7d4c9e';
+  ctx.globalAlpha = 0.6;
+  for(const m of mythCreatures){
+    const x = m.x;
+    const y = m.y;
+    const s = m.size;
+    // Body
+    ctx.beginPath();
+    ctx.ellipse(x, y, s, s * 0.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Wing or head extension
+    ctx.beginPath();
+    ctx.moveTo(x + s * 0.4, y);
+    ctx.lineTo(x + s * 1.2, y - s * 0.3);
+    ctx.lineTo(x + s * 1.2, y + s * 0.3);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+// Initialise ambient effects.  Spawns no particles initially; they
+// accumulate over time.  Lightning timer begins at zero (no flash).
+function initAmbientEffects(){
+  fogPatches = [];
+  pollenParticles = [];
+  lightningTimer = 0;
+}
+
+// Spawn and update ambient particles.  Fog patches drift slowly
+// across the sky; pollen particles drift gently in various
+// directions.  Occasional lightning flashes brighten the whole
+// scene briefly.  dt is the frame time in seconds.
+function updateAmbientEffects(dt){
+  // Spawn fog patches at random intervals.  Restrict to at most one
+  // patch and lower the spawn probability and opacity further so fog
+  // never dominates the scene.  Each patch drifts slowly across the
+  // horizon.  The alpha range is narrow and low for subtlety.
+  if(fogPatches.length < 1 && Math.random() < dt * 0.015){
+    // Generate a smaller and more translucent fog patch.  Reduce size
+    // variability and opacity so that the patch is noticeable but not
+    // distracting.  The width range is narrower and alpha is kept low.
+    const width = 150 + Math.random() * 150;
+    const height = 60 + Math.random() * 40;
+    const x = -width;
+    const y = Math.random() * RIVER_Y1 * 0.5;
+    const speed = 5 + Math.random() * 10;
+    const alpha = 0.01 + Math.random() * 0.02;
+    fogPatches.push({x, y, width, height, speed, alpha});
+  }
+  // Update fog positions and remove off‑screen patches
+  for(let i=fogPatches.length-1; i>=0; i--){
+    const f = fogPatches[i];
+    f.x += f.speed * dt;
+    if(f.x - f.width > W + 50){
+      fogPatches.splice(i,1);
+    }
+  }
+  // Spawn pollen particles; keep count modest for performance
+  if(pollenParticles.length < 50 && Math.random() < dt * 0.3){
+    const x = Math.random() * W;
+    const y = Math.random() * H;
+    const speedX = (Math.random() - 0.5) * 10;
+    const speedY = -5 - Math.random() * 15;
+    const radius = 0.8 + Math.random() * 1.2;
+    pollenParticles.push({x, y, speedX, speedY, radius});
+  }
+  for(let i=pollenParticles.length-1; i>=0; i--){
+    const p = pollenParticles[i];
+    p.x += p.speedX * dt;
+    p.y += p.speedY * dt;
+    // wrap around horizontally and vertically when off screen
+    if(p.x < -10) p.x = W + 10;
+    if(p.x > W + 10) p.x = -10;
+    if(p.y < -10) p.y = H + 10;
+    if(p.y > H + 10) p.y = -10;
+  }
+  // Lightning effects disabled.  Previously, lightningTimer would
+  // occasionally be set to a positive value and then fade over time,
+  // producing a full‑screen flash.  Users found this distracting, so
+  // the timer is never triggered and always reset to zero.
+  lightningTimer = 0;
+}
+
+// Draw ambient effects on top of the background but beneath weather
+// overlays.  Fog is rendered as translucent white ovals.  Pollen
+// particles are small circles.  Lightning draws a full‑screen white
+// flash with an intensity proportional to the remaining timer.
+function drawAmbientEffects(){
+  // Fog
+  ctx.save();
+  for(const f of fogPatches){
+    ctx.globalAlpha = f.alpha;
+    ctx.fillStyle = '#d6dfe2';
+    ctx.beginPath();
+    ctx.ellipse(f.x + f.width/2, f.y + f.height/2, f.width, f.height, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+  // Pollen
+  ctx.save();
+  ctx.fillStyle = '#f5e6a7';
+  ctx.globalAlpha = 0.6;
+  for(const p of pollenParticles){
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+  // Lightning flash overlay
+  if(lightningTimer > 0){
+    const intensity = Math.min(1, lightningTimer * 5);
+    ctx.save();
+    ctx.globalAlpha = intensity * 0.6;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, W, H);
+    // Optionally draw a jagged bolt in the sky region
+    ctx.globalAlpha = intensity;
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
+    const boltX = Math.random() * W;
+    const boltY0 = 0;
+    const boltY1 = RIVER_Y1 * 0.6;
+    ctx.beginPath();
+    ctx.moveTo(boltX, boltY0);
+    let currentX = boltX;
+    let currentY = boltY0;
+    for(let i=0; i<5; i++){
+      currentX += (Math.random() - 0.5) * 60;
+      currentY += (boltY1 - boltY0) / 5;
+      ctx.lineTo(currentX, currentY);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+// Simple bloom pass.  After all scene elements are drawn, calling
+// applyBloom() will blur the current frame and blend it back using
+// additive (lighter) blending.  This produces a subtle glow around
+// bright areas.  Adjust the blur radius and alpha for different
+// intensities.  Using a single drawImage of the canvas avoids an
+// extra offscreen buffer for performance.
+function applyBloom(){
+  // Bloom effect disabled.  Previously this function blurred and blended the
+  // canvas to create a glow around bright areas, but this made the bridge
+  // letters appear fuzzy.  Returning immediately keeps the scene sharp.
+  return;
+}
+
+/***********************
+ * BRIDGE GEN
+ ***********************/
+const TILE_SPACING_BASE = 8;
+gameReady = true;
+function makeBridge(levelIdx){
+  // Build the sequence of endings for this declension according to
+  // the current case order.  In normal mode caseOrder is [0..9]; in
+  // Hard mode it is a random permutation.  Each index refers to a
+  // row in ENDINGS_ROWS and each column (levelIdx) refers to a declension.
+  const seq = caseOrder.map((rowIndex) => ENDINGS_ROWS[rowIndex][BRIDGE_ORDER[levelIdx]]);
+  const grid=[...Array(TILE_ROWS)].map(()=>[...Array(TILE_COLS)].map(()=>({ending:"",correct:false,glow:0,crack:0,dead:false})));
+  const path = [];
+for (let r = 0; r < TILE_ROWS; r++) {
+  const c = Math.floor(Math.random() * TILE_COLS); // 0..TILE_COLS-1, independent each row
+  path.push({ r, c });
+}
+  for(let r=0;r<TILE_ROWS;r++){ const {c}=path[r]; grid[r][c].ending=seq[r]; grid[r][c].correct=true; }
+  for(let r=0;r<TILE_ROWS;r++) for(let c=0;c<TILE_COLS;c++) if(!grid[r][c].ending){ const ex=new Set([seq[r]]); grid[r][c].ending = sampleWrongEnding(ex); }
+  const riverH = (RIVER_Y2 - RIVER_Y1) - 8;
+  const spacing = Math.max(
+  IS_SMALL ? 3 : 6,                                  // slightly tighter on phones
+  (IS_SMALL ? TILE_SPACING_BASE * 0.70 : TILE_SPACING_BASE) * (W / 980)
+);
+  const tileSize = (riverH - (TILE_ROWS-1)*spacing) / TILE_ROWS;
+  const bw = TILE_COLS*(tileSize+spacing)-spacing;
+  const x0 = (W - bw)/2;
+  const y0 = RIVER_Y1 + 4;
+  return {grid, x0, y0, tileSize, spacing, seq, declension: DECLENSION_LABELS[BRIDGE_ORDER[levelIdx]]};
+}
+function sampleWrongEnding(exclude){ const pool=[]; for(const row of ENDINGS_ROWS) for(const e of row){ if(!exclude.has(e)) pool.push(e); } return pool[Math.floor(Math.random()*pool.length)]; }
+function getTileCenter(r,c,cssCoords=false){ const s = bridge.tileSize + bridge.spacing; const x = bridge.x0 + c*s + bridge.tileSize/2; const y = bridge.y0 + r*s + bridge.tileSize/2; if(cssCoords) return {x,y,half:bridge.tileSize/2}; return {x:x*DPR,y:y*DPR,half:bridge.tileSize/2*DPR}; }
+
+/***********************
+ * FROG STATE & SELECTION FLOW (bridges)
+ ***********************/
+// Always start with default green frog each page load
+const frog = {
+  x: 0,
+  y: 0,
+  onBridge: false,
+  jumping: false,
+  jT: 0,
+  jFrom: { x: 0, y: 0 },
+  jTo: { x: 0, y: 0 },
+  lives: LIVES_PER_BRIDGE,
+  color: "green",     // default color
+  pattern: null,      // no pattern until earned
+  rainbow: false      // must be unlocked in one run
+};
+
+function confirmSelection(){
+  if(!bridge || frog.jumping || (typeof gameOverFX !== "undefined" && gameOverFX.active)) return;
+  const r = targetRow; const c = selectedCol;
+  const {x,y} = getTileCenter(r,c,true);
+  startJump(x,y, ()=>{
+    const tile = bridge.grid[r][c];
+    frog.onBridge=true;
+    if(tile.correct){
+      tile.glow=1; addGlowBurst(x,y); chime();
+      if(jakeModeActive){
+        // In Jake mode we move upwards through rows.  Finishing when
+        // we reach row 0.
+        if(r === 0){
+          finishBridge(true);
+        } else {
+          targetRow = r - 1;
+          // Skip any disabled rows when practice mode is active
+          skipDisabledRows();
+        }
+      } else {
+        // Normal progression downwards through rows
+        if(r === TILE_ROWS - 1){
+          finishBridge(true);
+        } else {
+          targetRow = r + 1;
+          // Skip any disabled rows when practice mode is active
+          skipDisabledRows();
+        }
+      }
+    } else {
+      tile.crack=1; plop(); wrongStep(x,y);
+    }
+  });
+}
+
+function startJump(x,y,cb){ frog.jumping=true; frog.jT=0; frog.jFrom={x:frog.x,y:frog.y}; frog.jTo={x,y}; frog.onJumpDone=cb; }
+// Update the frog's jump animation.  Moves the frog along a quadratic bezier
+// curve and, upon landing, spawns ripple and ring effects to visualise the
+// impact.  When the jump completes it invokes the jump completion callback.
+function updateJump(dt) {
+  if (!frog.jumping) return;
+  // Advance the jump timer (scaled to control jump duration).
+  frog.jT += dt * 3.2;
+  const t = Math.min(1, frog.jT);
+  // Ease in/out for smoother motion: quadratic easing.
+  const e = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  // Interpolate frog position.
+  frog.x = frog.jFrom.x + (frog.jTo.x - frog.jFrom.x) * e;
+  frog.y = frog.jFrom.y + (frog.jTo.y - frog.jFrom.y) * e;
+  // When the jump completes (t >= 1), reset jumping state and trigger events.
+  if (t >= 1) {
+    frog.jumping = false;
+    // Call any callback registered for the end of the jump.
+    if (typeof frog.onJumpDone === 'function') {
+      frog.onJumpDone();
+    }
+    // Create visual feedback: a ripple and a faint ring at the landing spot.
+    addRipple(frog.x, frog.y);
+    addRing(frog.x, frog.y, 8);
+  }
+}
+
+function wrongStep(x,y){
+  addSplash(x,y);
+  // Increment mistake counter for achievement tracking
+  mistakes++;
+  setTimeout(() => {
+    frog.lives--;
+    if (frog.lives <= 0) {
+      triggerGameOver();
+    } else {
+      resetToBridgeStart();
+    }
+  }, 260);
+}
+function resetToBridgeStart(){
+  frog.onBridge = false;
+  frog.x = startX;
+  frog.y = startY;
+  // Reset to the appropriate starting row depending on Jake mode
+  targetRow = jakeModeActive ? (TILE_ROWS - 1) : 0;
+  selectedCol = START_COL;
+  // If practice mode is active, skip any disabled rows from the start
+  skipDisabledRows();
+}
+
+// Skip to the next bridge level instantly.  Invoked via the cheat code
+// "skip".  Only works when on a bridge.  It marks the current bridge
+// as completed successfully.
+function skipLevel(){
+  if(phase === PHASE_BRIDGES){
+    // Mark that the skip cheat was used so that this run does not
+    // count towards unlocks or best times.  This flag will be
+    // cleared when the next run starts in restartRun().
+    skipCheatUsed = true;
+    finishBridge(true);
+  }
+}
+
+/***********************
+ * BRIDGE FLOW
+ ***********************/
+function loadBridge(levelIdx, keepTimer=false){
+  // Determine which declension index to build.  In practice mode the
+  // level index refers to the position within the practice sequence,
+  // which we map to an actual declension.  If no more practice
+  // levels remain, immediately enter the meadow.
+  let actualIdx = levelIdx;
+  let progressLevel = levelIdx;
+  if(practiceMode){
+    // If there are no active practice levels we skip the bridge entirely
+    if(practiceLevelIndices.length === 0){
+      enterMeadow();
+      return;
+    }
+    actualIdx = practiceLevelIndices[levelIdx];
+    progressLevel = levelIdx;
+    if(typeof actualIdx === 'undefined'){
+      enterMeadow();
+      return;
+    }
+  }
+  bridge = makeBridge(actualIdx);
+  frog.lives = LIVES_PER_BRIDGE;
+  frog.color = nextAvatar.color;
+  frog.pattern = nextAvatar.pattern;
+  frog.rainbow = !!nextAvatar.rainbow;
+  // Apply any unlocked accessory and skin to the frog for this run
+  frog.accessory = nextAvatar.accessory || null;
+  frog.skin = nextAvatar.skin || null;
+  startX = W/2;
+  if(jakeModeActive){
+    // In Jake mode start at the bottom of the bridge and move towards the top.
+    startY = bridge.y0 + (bridge.tileSize + bridge.spacing) * (TILE_ROWS - 1) + bridge.tileSize/2 + 18;
+    goalY = bridge.y0 - bridge.tileSize/2 - 18;
+    targetRow = TILE_ROWS - 1;
+  } else {
+    // Normal run: start above the first row and move downward.
+    startY = bridge.y0 - bridge.tileSize/2 - 18;
+    goalY = bridge.y0 + (bridge.tileSize + bridge.spacing) * TILE_ROWS + bridge.tileSize/2 + 18;
+    targetRow = 0;
+  }
+  frog.x = startX;
+  frog.y = startY;
+  frog.onBridge = false;
+  selectedCol = START_COL;
+  // In practice mode show progress through the selected declensions.  In
+  // normal mode display the current level index out of the total bridges.
+  if(practiceMode){
+    uiLevel.textContent = (progressLevel + 1);
+  } else {
+    uiLevel.textContent = (levelIdx + 1);
+  }
+  uiLives.textContent=frog.lives;
+  if(!keepTimer) runStartTime = performance.now();
+  // Rainbow unlock banner (first time only when starting a run with rainbow avatar)
+  if (((practiceMode ? progressLevel : levelIdx) === 0) && frog.rainbow && !rainbowShown) {
+      triggerRainbowBanner();
+      rainbowShown = true; // session-only
+  }
+  console.log("[bridge] built", {
+    levelIdx: (practiceMode ? progressLevel : levelIdx),
+    declension: bridge.declension,
+    tileSize: bridge.tileSize.toFixed(2),
+    spacing: bridge.spacing.toFixed(2),
+    x0: Math.round(bridge.x0),
+    y0: Math.round(bridge.y0)
+  });
+
+  // Skip over any disabled rows at the start of the bridge
+  skipDisabledRows();
+}
+function finishBridge(success){
+  if(success){
+    level++;
+    // Determine the total number of bridges for this run.  In
+    // practice mode this corresponds to the number of enabled
+    // declensions; otherwise it is the fixed TOTAL_BRIDGES.
+    const total = practiceMode ? practiceLevelIndices.length : TOTAL_BRIDGES;
+    if(level >= total){
+      enterMeadow();
+    } else {
+      loadBridge(level, true);
+    }
+  } else {
+    // On failure reload the same level (practice or normal)
+    loadBridge(level, true);
+  }
+}
+function restartRun(){
+  phase = PHASE_BRIDGES;
+  level = 0;
+  runStartTime = performance.now();
+  // Reset mistake counter at the start of a new run
+  mistakes = 0;
+  // Clear the skip cheat flag so that subsequent runs count towards
+  // achievements and best times.  If the skip cheat is used again
+  // during this new run the flag will be set by skipLevel().
+  skipCheatUsed = false;
+  // Capture current mode flags for achievement tracking.  If a run
+  // restarts outside of startRun(), ensure currentRunJake and
+  // currentRunHard reflect active modes.
+  currentRunJake = jakeModeActive;
+  currentRunHard = hardModeActive;
+  // Update the legend whenever the run restarts to reflect the case order
+  if(typeof updateCaseOrderLegend === 'function') updateCaseOrderLegend();
+  // Randomise weather and logs for the new run
+  initWeather();
+  initLogs();
+  loadBridge(0, false);
+}
+function updateTimer(){ const t=(performance.now()-runStartTime)/1000; uiTime.textContent=t.toFixed(1); uiLives.textContent=frog.lives; uiBest.textContent=(best? best.toFixed(1)+"s":"—"); }
+
+/***********************
+ * MEADOW FINALE (interactive)
+ ***********************/
+const MEADOW = { players:[], t:0, bannerT:0, input:{left:false,right:false,up:false,down:false,dx:0,dy:0}, butterflies:[] };
+let meadow = MEADOW;
+
+function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function makeFrog(x,y,opts={}){
+  return {
+    x, y,
+    vx: 0,
+    vy: 0,
+    r: 18,
+    color: opts.color || "#3aa34a",
+    pattern: opts.pattern || "none", // "spots" | "stripes" | "band"
+    skin: opts.skin || null,        // special skin types (e.g. mythical)
+    ai: opts.ai || false,
+    accessory: opts.accessory || null,
+    hop: 0,
+    hopDur: 0,
+    hopLeft: 0,
+    hopH: 0
+  };
+}
+
+const FROG_COLORS = ["#3aa34a","#60c060","#7dbb3f","#4db6ac","#9575cd","#ff8a65","#f06292"];
+const FROG_PATTERNS = ["none","spots","stripes","band"];
+
+function enterMeadow(){
+  phase = PHASE_MEADOW;
+  lastRunElapsed = (performance.now()-runStartTime)/1000;
+  // Update persistent scholar and endurance stats.  A mistake‑free run
+  // increments the streak; otherwise the streak resets.  Every completed
+  // run increments the total run counter.  Persist stats to
+  // localStorage so achievements can be earned across sessions.
+  try{
+    // In practice mode or if the skip cheat was used do not update
+    // persistent stats so that achievements tied to streaks or
+    // total runs remain unaffected.
+    if(!practiceMode && !skipCheatUsed){
+      if(mistakes === 0){
+        stats.streak = (stats.streak || 0) + 1;
+      } else {
+        stats.streak = 0;
+      }
+      stats.totalRuns = (stats.totalRuns || 0) + 1;
+      saveStats();
+    }
+  } catch(e){ console.error('Error updating stats', e); }
+  // Do not update the best time in practice mode so that personal
+  // records reflect full runs only.
+  if(!practiceMode && !skipCheatUsed){
+    if(!best || lastRunElapsed < best){
+      best = lastRunElapsed;
+      localStorage.setItem("latinFrogBest", String(best));
+    }
+  }
+  meadow = { players:[], t:0, bannerT:0, input:{left:false,right:false,up:false,down:false,dx:0,dy:0}, butterflies:[] };
+  const player = makeFrog(-40, H*0.7, { color: nextAvatar.color, pattern: nextAvatar.pattern, accessory: nextAvatar.accessory, skin: nextAvatar.skin });
+  player.vx = 180; meadow.players.push(player);
+  const aiCount = 8; // more frogs for joy
+  for(let i=0;i<aiCount;i++){
+    const f = makeFrog(W*0.3 + Math.random()*W*0.6, H*0.50 + Math.random()*H*0.35, {
+      color: rand(FROG_COLORS), pattern: rand(FROG_PATTERNS), ai:true
+    });
+    f.vx = (Math.random()*2-1)*160; f.vy=(Math.random()*2-1)*160; meadow.players.push(f);
+  }
+  for(let i=0;i<28;i++) meadow.butterflies.push({x:Math.random()*W,y:Math.random()*H, a:Math.random()*6.28, sp:0.9+Math.random()*1.2});
+  winOverlay.style.display = "none";
+  // Evaluate achievements for this run.  In practice mode we do not
+  // unlock new items so that cosmetic rewards remain exclusive to
+  // full runs.  Otherwise, award achievements normally.
+  if(!practiceMode && !skipCheatUsed){
+    evaluateAchievements();
+  }
+
+  // Save run statistics to Firebase when the run counts toward official
+  // records (i.e. not in practice mode and skip cheat was not used).
+  // Compute the number of unlocks and Easter eggs unlocked.  The
+  // unlocks object stores achievements that have been earned; count
+  // how many values are truthy.  Easter egg tracking is not built
+  // into the base game, so default to 0 here.  The updateUserStats
+  // function (defined in the login script) will ignore the call when
+  // the player is a guest or not signed in.
+  if(!practiceMode && !skipCheatUsed){
+    try {
+      const unlockCount = Object.values(unlocks || {}).filter(Boolean).length;
+      const easterCount = 0; // adjust if your game tracks Easter eggs
+      if (typeof updateUserStats === 'function') {
+        updateUserStats(lastRunElapsed, unlockCount, easterCount);
+      }
+    } catch (err) {
+      console.error('Error updating remote stats', err);
+    }
+  }
+}
+
+// keyboard for meadow: Enter = big jump
+const held = new Set();
+window.addEventListener("keydown", (e)=>{
+  if(phase!==PHASE_MEADOW) return; const k=e.key.length===1? e.key.toLowerCase(): e.key; held.add(k);
+  if(k==="Enter"||k===" "){ bigRandomJump(meadow.players[0]); e.preventDefault(); }
+});
+window.addEventListener("keyup", (e)=>{ if(phase!==PHASE_MEADOW) return; const k=e.key.length===1? e.key.toLowerCase(): e.key; held.delete(k); });
+
+function bigRandomJump(f){ if(!f) return; const a = Math.random()*Math.PI*2; const sp = 360 + Math.random()*180; f.vx = Math.cos(a)*sp; f.vy = Math.sin(a)*sp; f.hopDur = 0.6 + Math.random()*0.2; f.hopLeft = f.hopDur; f.hopH = 36 + Math.random()*28; addRing(f.x,f.y,18); addGlowBurst(f.x,f.y,"#ffffff"); }
+
+function updateMeadow(dt){
+  meadow.t += dt;
+  const p = meadow.players[0];
+  if(p){
+    const ax = (held.has("ArrowRight")||held.has("d")||meadow.input.dx>0) - (held.has("ArrowLeft")||held.has("a")||meadow.input.dx<0);
+    const ay = (held.has("ArrowDown")||held.has("s")||meadow.input.dy>0) - (held.has("ArrowUp")||held.has("w")||meadow.input.dy<0);
+    const speed = 240;
+    if(meadow.t>0.8){ p.vx += ax*speed*dt; p.vy += ay*speed*dt; } else { p.vx = 180; }
+    p.vx *= 0.90; p.vy *= 0.90;
+    p.x += p.vx*dt; p.y += p.vy*dt;
+    p.x = clamp(p.x, 20, W-20); p.y = clamp(p.y, 20, H-20);
+    p.hop += (Math.abs(p.vx)+Math.abs(p.vy))*0.02*dt + 3.2*dt;
+    if(p.hopLeft>0) p.hopLeft -= dt;
+  }
+  // AI frogs: frequent bouncy impulses
+  for(let i=1;i<meadow.players.length;i++){
+    const f = meadow.players[i];
+    if(f.hopLeft<=0 && Math.random()<0.08){ f.hopDur = 0.45 + Math.random()*0.25; f.hopLeft = f.hopDur; f.hopH = 28 + Math.random()*24; const a = Math.random()*Math.PI*2; const sp = 180 + Math.random()*220; f.vx += Math.cos(a)*sp; f.vy += Math.sin(a)*sp; addRing(f.x,f.y,12); }
+    f.vx *= 0.90; f.vy *= 0.90; f.x += f.vx*dt; f.y += f.vy*dt; f.x=clamp(f.x,20,W-20); f.y=clamp(f.y,20,H-20);
+    f.hop += (Math.abs(f.vx)+Math.abs(f.vy))*0.02*dt + 2.8*dt; if(f.hopLeft>0) f.hopLeft-=dt;
+  }
+  // soft collisions
+  for(let i=0;i<meadow.players.length;i++) for(let j=i+1;j<meadow.players.length;j++){
+    const A = meadow.players[i], B = meadow.players[j];
+    const dx = B.x-A.x, dy = B.y-A.y; const dist = Math.hypot(dx,dy); const minD = A.r + B.r;
+    if(dist>0 && dist < minD){ const nx = dx/dist, ny = dy/dist; const overlap = (minD - dist); A.x -= nx*overlap*0.6; A.y -= ny*overlap*0.6; B.x += nx*overlap*0.6; B.y += ny*overlap*0.6; const avn = A.vx*nx + A.vy*ny; const bvn = B.vx*nx + B.vy*ny; const diff = bvn - avn; A.vx += diff*nx; A.vy += diff*ny; B.vx -= diff*nx; B.vy -= diff*ny; }
+  }
+  // butterflies drift
+  for(const bt of meadow.butterflies){ bt.a += (0.9+Math.random()*0.4)*dt; bt.x += Math.cos(bt.a)*bt.sp*20*dt; bt.y += Math.sin(bt.a*1.3)*bt.sp*18*dt; if(bt.x<0) bt.x=W; if(bt.x>W) bt.x=0; if(bt.y<0) bt.y=H; if(bt.y>H) bt.y=0; }
+  // bees figure-eight
+  for(const b of bees){ b.a += b.sp*dt; const R=18; const x0=b.x, y0=b.y; b.x = x0 + Math.cos(b.a)*R*1.4; b.y = y0 + Math.sin(2*b.a)*R*0.8; }
+  // pollen sparkles
+  for(const s of sparkles){ s.t+=dt; s.y += Math.sin(s.t*2)*0.3; s.x += Math.cos(s.t*1.7)*0.2; if(s.x<0) s.x=W; if(s.x>W) s.x=0; if(s.y<0) s.y=H; if(s.y>H) s.y=0; }
+  if(meadow.t>18){ meadow.bannerT = Math.min(1, meadow.bannerT + dt*0.3); finalTimeEl.textContent = lastRunElapsed.toFixed(1) + "s"; winOverlay.style.display = "inline-flex"; }
+}
+
+function drawMeadowBackground(time){
+  const g1 = ctx.createLinearGradient(0,0,0,H); g1.addColorStop(0,COLORS.meadow1); g1.addColorStop(1,COLORS.meadow2);
+  ctx.fillStyle=g1; ctx.fillRect(0,0,W,H);
+  // Draw drifting clouds behind meadow elements
+  drawClouds();
+  // wind bands
+  ctx.save(); ctx.globalAlpha=0.12; ctx.fillStyle="#fff"; for(let y=20;y<H;y+=24){ const off=Math.sin(time*0.0013 + y*0.02)*10; ctx.fillRect(off,y,W-2*Math.abs(off),2);} ctx.restore();
+  // flowers carpet
+  for(const f of flowers){ const sway=Math.sin(time*0.003+f.t)*2; ctx.save(); ctx.translate(f.x,f.y); ctx.rotate(sway*0.03); ctx.strokeStyle="#2f6"; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,10+f.s*2); ctx.stroke(); ctx.fillStyle=f.c; ctx.beginPath(); ctx.arc(0,0,f.s,0,Math.PI*2); ctx.fill(); ctx.restore(); }
+  // sparkles (pollen or fireflies).  At night the sparkles dim slightly to
+  // allow stars to stand out.
+  ctx.save();
+  const pollenAlpha = 0.6 * (1 - 0.5 * starAlpha);
+  ctx.globalAlpha = pollenAlpha;
+  ctx.fillStyle = "rgba(255,255,255,0.8)";
+  for(const s of sparkles){ ctx.fillRect(s.x, s.y, 1.5, 1.5); }
+  ctx.restore();
+  // bees
+  for(const b of bees){ ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(Math.sin(b.a)*0.6); ctx.fillStyle="#ffe066"; ctx.beginPath(); ctx.ellipse(0,0,6,4,0,0,Math.PI*2); ctx.fill(); ctx.fillStyle="#000"; ctx.fillRect(-3,-1,6,2); ctx.restore(); }
+}
+
+function drawButterflies(){
+  ctx.save();
+  for(const bt of meadow.butterflies){
+    ctx.translate(bt.x,bt.y); ctx.rotate(Math.sin(bt.a)*0.3);
+    ctx.fillStyle="rgba(255,255,255,0.9)";
+    ctx.beginPath(); ctx.ellipse(-3,0,4,2,0,0,Math.PI*2); ctx.ellipse(3,0,4,2,0,0,Math.PI*2); ctx.fill();
+    ctx.setTransform(1,0,0,1,0,0);
+  }
+  ctx.restore();
+}
+
+function drawFrogEntity(f){
+  const hopPhase = (f.hopDur>0) ? (1 - Math.max(0,f.hopLeft)/f.hopDur) : 0; // 0..1
+  const hopLift = Math.sin(hopPhase*Math.PI) * (f.hopH||0);
+  const hop = (Math.sin(f.hop*6)+1)*0.5; // idle bounce
+  let sx = 1 + hop*0.18;
+  let sy = 1 - hop*0.18;
+  // Flip vertically for upsideDown skin
+  if(f.skin === 'upsideDown'){
+    sy = -sy;
+  }
+  ctx.save(); ctx.translate(f.x, f.y - hopLift); ctx.scale(sx,sy);
+  ctx.globalAlpha=0.25; ctx.fillStyle="#000"; 
+  // Cerberus side heads for meadow player frog (draw behind main body by painting first)
+  if (cerberusModeActive && !f.ai) {
+    ctx.save();
+    ctx.fillStyle = f.color || '#3aa34a';
+    drawCerberusHeads(f.r || 20);
+    ctx.restore();
+  }
+ctx.beginPath(); ctx.ellipse(0,12,18,6,0,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+  ctx.strokeStyle="#2b7c35"; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(-14,8); ctx.lineTo(-20,16); ctx.moveTo(14,8); ctx.lineTo(20,16); ctx.stroke();
+  // Determine body fill: special skins > rainbow > plain colour
+  if (f.skin === 'metalSkin') {
+    // Metal skin: cool grey gradient across the body.  Use the frog's radius
+    // to determine gradient length so that AI frogs of various sizes are
+    // consistently shaded.
+    const r = f.r || 20;
+    const mg = ctx.createLinearGradient(-r, -r * 0.8, r, r * 0.8);
+    mg.addColorStop(0, '#d1d6da');
+    mg.addColorStop(0.5, '#aeb4b9');
+    mg.addColorStop(1, '#8b9296');
+    ctx.fillStyle = mg;
+  } else if (f.skin === 'brickSkin') {
+    // Brick skin: warm gradient reminiscent of bricks.
+    const r = f.r || 20;
+    const bg = ctx.createLinearGradient(-r, -r * 0.8, r, r * 0.8);
+    bg.addColorStop(0, '#8b4513');
+    bg.addColorStop(0.5, '#b22222');
+    bg.addColorStop(1, '#5a0d0d');
+    ctx.fillStyle = bg;
+  } else if (f.skin === 'mythicalSkin') {
+    const rg = ctx.createRadialGradient(0, 0, 0, 0, 0, 20);
+    rg.addColorStop(0, '#7b2cbf');
+    rg.addColorStop(0.5, '#0cc0df');
+    rg.addColorStop(1, '#f5c542');
+    ctx.fillStyle = rg;
+  } else if (f.rainbow) {
+    const g = ctx.createLinearGradient(-20, 0, 20, 0);
+    g.addColorStop(0, '#ff5f6d');
+    g.addColorStop(0.2, '#ffc371');
+    g.addColorStop(0.4, '#fff176');
+    g.addColorStop(0.6, '#7cf6a3');
+    g.addColorStop(0.8, '#64b5f6');
+    g.addColorStop(1, '#ba68c8');
+    ctx.fillStyle = g;
+  } else {
+    // Default frog skin: apply a radial gradient so the frog body has a
+    // subtle highlight towards the head.  We derive a lighter tint from the
+    // base colour using the shadeColor helper and blend it towards the
+    // centre of the frog.  This improves depth while preserving the
+    // chosen palette.  If shadeColor isn't defined in this scope, the
+    // gradient will gracefully fall back to the base colour.
+    try {
+      const baseCol = f.color;
+      const lightCol = shadeColor(baseCol, 0.3);
+      const grad = ctx.createRadialGradient(0, -4, 4, 0, 0, 20);
+      grad.addColorStop(0, lightCol);
+      grad.addColorStop(1, baseCol);
+      ctx.fillStyle = grad;
+    } catch(_){
+      ctx.fillStyle = f.color;
+    }
+  }
+  ctx.beginPath();
+  ctx.ellipse(0,0,20,14,0,0,Math.PI*2);
+  ctx.fill();
+  // Add a subtle specular highlight and shadow on the frog body to enhance
+  // the 3D appearance.  A soft white ellipse near the head simulates
+  // reflected light, while a darker ellipse towards the bottom hints at
+  // volume.  These overlays use reduced opacity so as not to overpower
+  // the underlying skin or patterns.
+  ctx.save();
+  try {
+    ctx.globalAlpha = 0.15;
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.ellipse(0, -6, 12, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 0.08;
+    ctx.fillStyle = '#000000';
+    ctx.beginPath();
+    ctx.ellipse(0, 5, 18, 6, 0, 0, Math.PI * 2);
+    ctx.fill();
+  } catch(_e) {
+    /* If fill operations fail, skip highlight gracefully. */
+  }
+  ctx.restore();
+  ctx.globalAlpha=0.5; ctx.fillStyle="#000";
+  if(f.pattern==="spots"){ for(let i=-1;i<=1;i++) for(let j=-1;j<=1;j++){ ctx.beginPath(); ctx.arc(i*7 + (j%2?3:0), j*5, 3, 0, Math.PI*2); ctx.fill(); } }
+  else if(f.pattern==="stripes"){ for(let i=-16;i<=16;i+=6){ ctx.fillRect(i,-14,3,28); } }
+  else if(f.pattern==="band"){ ctx.beginPath(); ctx.ellipse(0,0,20,14,0,0,Math.PI*2); ctx.clip(); ctx.globalAlpha=0.35; ctx.fillRect(-22,-4,44,8); }
+  ctx.globalAlpha=1;
+  ctx.fillStyle="#fff"; ctx.beginPath(); ctx.arc(-8,-10,4,0,Math.PI*2); ctx.arc(8,-10,4,0,Math.PI*2); ctx.fill(); ctx.fillStyle="#111"; ctx.beginPath(); ctx.arc(-8,-10,1.8,0,Math.PI*2); ctx.arc(8,-10,1.8,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(-12,6-hop*4); ctx.lineTo(-18,10-hop*2); ctx.moveTo(12,6-hop*4); ctx.lineTo(18,10-hop*2); ctx.stroke();
+  // Draw accessory within the frog's local coordinate system
+  drawAccessoryOnFrog(f);
+  // After filling and patterning the frog, draw a subtle outline around
+  // its body.  This helps separate the frog from the background and
+  // improves readability when multiple frogs overlap.  We draw the
+  // outline in a temporary save/restore block so stroke settings do not
+  // interfere with subsequent drawing operations.
+  ctx.save();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 20, 14, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+  ctx.restore();
+}
+
+function drawMeadowOverlay(){
+  if(meadow.bannerT>0){
+    ctx.save(); ctx.globalAlpha=meadow.bannerT; ctx.fillStyle="rgba(255,255,255,0.9)"; ctx.fillRect(W*0.22,H*0.06,W*0.56,66); ctx.fillStyle="#234"; ctx.font="bold 28px ui-sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText("You Win! Enjoy the meadow 🏆", W/2, H*0.06+33); ctx.restore();
+  }
+}
+
+/***********************
+ * CELEBRATION: Rainbow Unlock Banner + Confetti
+ ***********************/
+let rainbowBanner = {show:false, t:0, dur:4.2};
+const confetti=[];
+function triggerRainbowBanner(){
+  rainbowBanner.show=true; rainbowBanner.t=0; confetti.length=0; // reset
+  // Burst of confetti
+  for(let i=0;i<220;i++){
+    const c = [COLORS.confetti1,COLORS.confetti2,COLORS.confetti3,COLORS.confetti4,COLORS.confetti5,COLORS.confetti6][i%6];
+    confetti.push({x:Math.random()*W, y:-20-Math.random()*40, vx:(Math.random()*2-1)*80, vy:120+Math.random()*160, rot:Math.random()*6.28, vr:(Math.random()*2-1)*4, color:c, life:3+Math.random()*2, t:0, sz:2+Math.random()*3});
+  }
+  // sparkle burst
+  for(let i=0;i<40;i++) addGlowBurst(Math.random()*W, Math.random()*H*0.5+H*0.2, "#ffffff");
+  beep(880,0.2,"sine",0.08); setTimeout(()=>beep(1174,0.18,"sine",0.07),140); setTimeout(()=>beep(1568,0.16,"sine",0.06),280);
+}
+function updateConfetti(dt){
+  for(let i=confetti.length-1;i>=0;i--){ const p=confetti[i]; p.t+=dt; p.x += p.vx*dt; p.y += p.vy*dt; p.vy += 240*dt; p.rot += p.vr*dt; if(p.t>p.life){ confetti.splice(i,1);} }
+}
+function drawConfetti(){
+  for(const p of confetti){ ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.color; ctx.fillRect(-p.sz,-p.sz,p.sz*2,p.sz*2); ctx.restore(); }
+}
+function drawRainbowBanner(){
+  if(!rainbowBanner.show) return;
+  rainbowBanner.t += 1/60; // roughly frame-based; dt not critical for text fade
+  updateConfetti(1/60);
+  const a = Math.min(1, rainbowBanner.t/0.6);
+  ctx.save(); ctx.globalAlpha=a; ctx.fillStyle="rgba(0,0,0,0.35)"; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle="rgba(255,255,255,0.96)"; const bw=W*0.8, bh=100; ctx.fillRect((W-bw)/2, H*0.2, bw, bh);
+  const g=ctx.createLinearGradient(W*0.1,0,W*0.9,0); g.addColorStop(0,"#ff5f6d"); g.addColorStop(0.2,"#ffc371"); g.addColorStop(0.4,"#fff176"); g.addColorStop(0.6,"#7cf6a3"); g.addColorStop(0.8,"#64b5f6"); g.addColorStop(1,"#ba68c8");
+  ctx.fillStyle=g; ctx.font="900 36px ui-sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+  ctx.fillText("YOU UNLOCKED RAINBOW FROG!", W/2, H*0.2 + bh/2);
+  ctx.restore();
+  drawConfetti();
+  if(rainbowBanner.t>rainbowBanner.dur){ rainbowBanner.show=false; }
+}
+/***********************
+ * GAME OVER FADE (fade out → hold → fade in) with zooming text
+ ***********************/
+let gameOverFX = { active: false, t: 0, phase: "idle" };
+
+function triggerGameOver() {
+  gameOverFX.active = true;
+  gameOverFX.t = 0;
+  gameOverFX.phase = "fadeout";
+}
+
+function updateGameOver(dt) {
+  if (!gameOverFX.active) return;
+  gameOverFX.t += dt;
+
+  if (gameOverFX.phase === "fadeout" && gameOverFX.t >= 0.8) {
+    gameOverFX.phase = "hold";
+    gameOverFX.t = 0;
+  } else if (gameOverFX.phase === "hold" && gameOverFX.t >= 0.8) {
+    // Start a new run after the hold.  Use accessory selection so
+    // players can pick their preferred unlocked item.  Do not
+    // restart immediately; prepareNewRun() will call restartRun().
+    prepareNewRun();
+    gameOverFX.phase = "fadein";
+    gameOverFX.t = 0;
+  } else if (gameOverFX.phase === "fadein" && gameOverFX.t >= 0.8) {
+    gameOverFX.active = false;
+    gameOverFX.phase = "idle";
+    gameOverFX.t = 0;
+  }
+}
+
+function drawGameOver() {
+  if (!gameOverFX.active) return;
+
+  let alpha = 0, scale = 1;
+  if (gameOverFX.phase === "fadeout") {
+    const k = Math.min(1, gameOverFX.t / 0.8);
+    alpha = k;
+    scale = 1 + 0.5 * k; // zoom to 1.5x while fading out
+  } else if (gameOverFX.phase === "hold") {
+    alpha = 1;
+    scale = 1.5;
+  } else if (gameOverFX.phase === "fadein") {
+    const k = Math.min(1, gameOverFX.t / 0.8);
+    alpha = 1 - k;        // fade back to gameplay
+    scale = 1.5;          // keep the text at max scale while fading
+  }
+
+  // Dark veil
+  ctx.save();
+  ctx.fillStyle = `rgba(0,0,0,${alpha * 0.85})`;
+  ctx.fillRect(0, 0, W, H);
+
+  // Big zooming title
+  ctx.translate(W / 2, H / 2);
+  ctx.scale(scale, scale);
+  if (alpha > 0.1) {
+    ctx.fillStyle = "#fff";
+    ctx.font = "900 64px ui-sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("GAME OVER", 0, 0);
+  }
+  ctx.restore();
+}
+
+  
+/***********************
+ * PARTICLES & RENDER (shared)
+ ***********************/
+const particles=[];
+function addSplash(x,y,color=COLORS.splash){ for(let i=0;i<12;i++) particles.push({x,y,vx:(Math.random()*2-1)*1.6,vy:-Math.random()*2-1,g:0.08,life:0.8,t:0,color}); addRing(x,y,10); }
+function addGlowBurst(x,y,color=COLORS.tileGlow){ for(let i=0;i<10;i++){ const a=Math.random()*6.28, sp=1+Math.random()*2; particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,g:0.02,life:0.5,t:0,color}); }}
+function addRing(x,y,r0){ particles.push({ring:true,x,y,r:r0,life:0.6,t:0}); }
+function drawParticles(dt){ for(let i=particles.length-1;i>=0;i--){ const p=particles[i]; p.t+=dt; if(p.ring){ const a=Math.max(0,1-p.t/p.life); ctx.save(); ctx.globalAlpha=a; ctx.strokeStyle=COLORS.splash; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(p.x,p.y,p.r+p.t*30,0,Math.PI*2); ctx.stroke(); ctx.restore(); if(p.t>=p.life) particles.splice(i,1); continue; } p.x+=p.vx; p.y+=p.vy; p.vy+=p.g; const a=Math.max(0,1-p.t/p.life); ctx.globalAlpha=a; ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(p.x,p.y,2.4,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1; if(p.t>=p.life) particles.splice(i,1);} }
+
+/*
+ * Ripple effects
+ *
+ * When the frog, fish or splash events occur on the river, we push a
+ * ripple object into the ripples array.  Each ripple has a current
+ * radius and opacity that decay over time.  We draw them as faint
+ * radial gradients to simulate rings spreading across the water.
+ */
+function addRipple(x, y) {
+  // Only allow ripples within the river bounds to avoid drawing in the meadow.
+  ripples.push({ x, y, r: 0, alpha: 0.8 });
+}
+
+function updateRipples(dt) {
+  for (let i = ripples.length - 1; i >= 0; i--) {
+    const rp = ripples[i];
+    // Expand at ~120 pixels per second
+    rp.r += dt * 120;
+    // Fade out gradually
+    rp.alpha -= dt * 0.7;
+    if (rp.alpha <= 0) ripples.splice(i, 1);
+  }
+}
+
+function drawRipples() {
+  ctx.save();
+  for (const rp of ripples) {
+    const maxRadius = rp.r;
+    // Create radial gradient from semi‑transparent white at the inner edge
+    // fading to fully transparent at the outer edge.  The alpha is tied
+    // to the ripple's remaining life.
+    const grad = ctx.createRadialGradient(rp.x, rp.y, maxRadius * 0.6, rp.x, rp.y, maxRadius);
+    grad.addColorStop(0, `rgba(255,255,255,${rp.alpha * 0.15})`);
+    grad.addColorStop(1, `rgba(255,255,255,0)`);
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(rp.x, rp.y, maxRadius, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+/*
+ * Dynamic lighting overlay
+ *
+ * To give the scene more depth, we draw a radial gradient around the frog
+ * that darkens the periphery of the screen.  This simulates a soft
+ * spotlight that follows the frog.  We use the multiply blend mode to
+ * darken colours without affecting saturation.  The effect is subtle
+ * enough to enhance contrast without impacting gameplay readability.
+ */
+function drawLighting(x, y, radius) {
+  // Draw a subtle spotlight around the player's frog.  The original
+  // implementation darkened the periphery using multiply blending, which
+  // overwhelmed colours and text.  This version uses a light radial
+  // gradient to gently brighten the area around the frog without blurring
+  // or washing out details.
+  // Determine light source position.  Use provided coordinates if
+  // available; otherwise, fall back to the main frog's position.
+  let lx, ly;
+  if (typeof x === 'number' && typeof y === 'number') {
+    lx = x;
+    ly = y;
+  } else if (frog) {
+    lx = frog.x;
+    ly = frog.y - 10;
+  } else {
+    return;
+  }
+  // Determine the inner radius based on the supplied radius or derive
+  // from the frog's size.  A default ensures the spotlight has a
+  // reasonable size even if no frog is present.
+  const innerR = (typeof radius === 'number' && radius > 0)
+    ? radius
+    : (frog && frog.r ? frog.r * 4 : 80);
+  // Set the outer radius proportional to the inner radius.  This
+  // controls how far the light fades into the background; keeping it
+  // relatively small limits how much of the bridge is affected.
+  const outerR = innerR * 1.5;
+  ctx.save();
+  // Create a radial gradient that starts bright at the centre and
+  // fades to transparent at the outer edge.  Use low opacity to avoid
+  // overwhelming the scene; the brightest point has an alpha of 0.18.
+  const grad = ctx.createRadialGradient(lx, ly, 0, lx, ly, outerR);
+  grad.addColorStop(0, 'rgba(255,255,255,0.18)');
+  grad.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(lx - outerR, ly - outerR, outerR * 2, outerR * 2);
+  ctx.restore();
+}
+
+/*
+ * drawPsychedelicOverlay(time)
+ *
+ * When the neon cheat has been activated, this function paints a
+ * kaleidoscopic rainbow overlay over the entire scene.  It draws a
+ * series of pie‑shaped wedges radiating from the centre of the
+ * canvas, with hues rotating slowly over time.  The overlay is
+ * partially transparent so that the underlying game remains visible.
+ */
+function drawPsychedelicOverlay(time){
+  // Only draw if a psychedelic run is active.  The calling code
+  // should check psychedelicRunActive, but guard here as well.
+  if(!psychedelicRunActive) return;
+  ctx.save();
+  // Use additive blending so colours accumulate.  This yields a
+  // brighter, trippier effect when wedges overlap.
+  ctx.globalCompositeOperation = 'lighter';
+  // Overall opacity for the overlay.  Higher values obscure more of
+  // the underlying scene; adjust to taste.
+  ctx.globalAlpha = 0.25;
+  const cx = W * 0.5;
+  const cy = H * 0.5;
+  // Radius large enough to cover entire canvas.
+  const radius = Math.sqrt(W*W + H*H);
+  const segments = 20; // number of colour wedges
+  // The hue offset slowly rotates over time.  Increase multiplier
+  // for faster colour cycling.
+  const hueOffset = (time * 0.02) % 360;
+  for(let i=0; i<segments; i++){
+    const startAngle = (i / segments) * Math.PI * 2 + time * 0.0007;
+    const endAngle = startAngle + (Math.PI * 2 / segments);
+    const hue = (hueOffset + i * (360 / segments)) % 360;
+    ctx.fillStyle = `hsla(${hue}, 80%, 60%, 1)`;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, radius, startAngle, endAngle);
+    ctx.closePath();
+    ctx.fill();
+  }
+  // Restore default compositing.
+  ctx.restore();
+  ctx.globalCompositeOperation = 'source-over';
+}
+
+/***********************
+ * DRAW — BRIDGES SCENE
+ ***********************/
+function drawRiver(time){
+  const grad = ctx.createLinearGradient(0,RIVER_Y1,0,RIVER_Y2); grad.addColorStop(0,COLORS.river1); grad.addColorStop(1,COLORS.river2);
+  ctx.fillStyle=grad; ctx.fillRect(0,RIVER_Y1,W,RIVER_Y2-RIVER_Y1);
+  ctx.fillStyle="rgba(0,0,0,.08)"; ctx.fillRect(0,RIVER_Y1-2,W,2); ctx.fillRect(0,RIVER_Y2,W,2);
+  ctx.save(); ctx.globalAlpha=0.15; ctx.fillStyle="#fff"; for(let y=RIVER_Y1+10;y<RIVER_Y2-10;y+=22){ const off=Math.sin(performance.now()*0.0009 + y*0.002)*7; ctx.fillRect(off,y,W-2*Math.abs(off),2);} ctx.restore();
+}
+function drawFlowers(time){ for(const f of flowers){ const sway=Math.sin(time*0.003+f.t)*2; ctx.save(); ctx.translate(f.x,f.y); ctx.rotate(sway*0.03); ctx.strokeStyle="#2f6"; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,10+f.s*2); ctx.stroke(); ctx.fillStyle=f.c; ctx.beginPath(); ctx.arc(0,0,f.s,0,Math.PI*2); ctx.fill(); ctx.restore(); } }
+function drawBugs(time){ for(const b of bugs){ b.wob+=0.04; b.ang+=(Math.random()*0.5-0.25)*0.2; b.x+=Math.cos(b.ang)*b.spd; b.y+=Math.sin(b.ang)*b.spd + Math.sin(b.wob)*0.2; if(b.x<0) b.x=W; if(b.x>W) b.x=0; if(b.y<0) b.y=H; if(b.y>H) b.y=0; ctx.fillStyle=COLORS.bug; ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=0.3; ctx.beginPath(); ctx.arc(b.x,b.y,b.r+2,0,Math.PI*2); ctx.fillStyle = "#fffaad"; ctx.fill(); ctx.globalAlpha=1; } }
+
+function drawBridge(){
+  if(!bridge) return;
+  const pad=18;
+  const bw=TILE_COLS*(bridge.tileSize+bridge.spacing)-bridge.spacing;
+  const bh=TILE_ROWS*(bridge.tileSize+bridge.spacing)-bridge.spacing;
+  const bx=bridge.x0-pad, by=bridge.y0-pad;
+  ctx.fillStyle=COLORS.bridgeShadow; ctx.globalAlpha=0.22; ctx.fillRect(bx+6,by+8 + Math.sin(performance.now()*0.002)*2,bw+pad*2,bh+pad*2); ctx.globalAlpha=1;
+  // Draw the bridge's outer edge with a vertical gradient to give it a raised appearance.
+  {
+    const edgeGrad = ctx.createLinearGradient(0, by, 0, by + bh + pad * 2);
+    // Lighter at the top and darker at the bottom for depth, but with a
+    // smaller contrast to prevent the top from appearing blown out.
+    // Keep the bridge edge colour consistent throughout to avoid a bright
+    // band at the top.  Only slightly darken the bottom edge.
+    edgeGrad.addColorStop(0, shadeColor(COLORS.bridgeEdge, 0));
+    edgeGrad.addColorStop(1, shadeColor(COLORS.bridgeEdge, -0.1));
+    ctx.fillStyle = edgeGrad;
+    ctx.fillRect(bx, by, bw + pad * 2, bh + pad * 2);
+  }
+  // Draw the bridge's interior with its own gradient to suggest thickness.
+  {
+    const innerGrad = ctx.createLinearGradient(0, by + 6, 0, by + 6 + (bh + pad * 2 - 12));
+    // Reduce the contrast of the inner gradient to soften the brightness at
+    // the top of the bridge.  A smaller positive/negative offset makes the
+    // plank surface less reflective.
+    // Minimise contrast in the inner gradient for a flatter look.  Do
+    // not lighten the top at all and only slightly darken the bottom.
+    innerGrad.addColorStop(0, shadeColor(COLORS.bridge, 0));
+    innerGrad.addColorStop(1, shadeColor(COLORS.bridge, -0.05));
+    ctx.fillStyle = innerGrad;
+    ctx.fillRect(bx + 6, by + 6, bw + pad * 2 - 12, bh + pad * 2 - 12);
+  }
+  // Draw posts with individual gradients to appear cylindrical.
+  const postW = 10, postH = 18;
+  for (let r = 0; r <= TILE_ROWS; r += 2) {
+    const y = bridge.y0 + r * (bridge.tileSize + bridge.spacing) - bridge.spacing / 2;
+    // Left post
+    {
+      const g = ctx.createLinearGradient(0, y, 0, y + postH);
+      g.addColorStop(0, shadeColor(COLORS.post, 0.25));
+      g.addColorStop(1, shadeColor(COLORS.post, -0.25));
+      ctx.fillStyle = g;
+      ctx.fillRect(bx - 6, y, postW, postH);
+    }
+    // Right post
+    {
+      const g = ctx.createLinearGradient(0, y, 0, y + postH);
+      g.addColorStop(0, shadeColor(COLORS.post, 0.25));
+      g.addColorStop(1, shadeColor(COLORS.post, -0.25));
+      ctx.fillStyle = g;
+      ctx.fillRect(bx + bw + pad * 2 - postW + 6, y, postW, postH);
+    }
+  }
+  ctx.strokeStyle=COLORS.rope; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(bx+4,by+6); ctx.quadraticCurveTo(bx+bw/2,by-16,bx+bw+pad*2-4,by+6); ctx.moveTo(bx+4,by+bh+pad*2-6); ctx.quadraticCurveTo(bx+bw/2,by+bh+pad*2+16,bx+bw+pad*2-4,by+bh+pad*2-6); ctx.stroke();
+  ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.font=`${Math.max(18, bridge.tileSize*0.46)}px ui-sans-serif`;
+  for(let r=0;r<TILE_ROWS;r++) for(let c=0;c<TILE_COLS;c++){
+    const tile=bridge.grid[r][c]; const x=bridge.x0 + c*(bridge.tileSize+bridge.spacing); const y=bridge.y0 + r*(bridge.tileSize+bridge.spacing);
+    // Fill the plank: use a vertical gradient on intact tiles to simulate
+    // wood grain, and a solid grey for collapsed (dead) tiles.
+    if(tile.dead){
+      ctx.fillStyle = "#999";
+      ctx.fillRect(x, y, bridge.tileSize, bridge.tileSize);
+
+      // Draw side edges on the plank for a subtle 3D effect.  Darker shades on the right and bottom edges
+      // create the illusion of depth, while lighter shades on the top and left edges act as highlights.
+      try {
+        const edgeDark = shadeColor(COLORS.plank, -0.35);
+        const edgeLight = shadeColor(COLORS.plank, 0.35);
+        // Right edge (vertical strip)
+        ctx.fillStyle = edgeDark;
+        ctx.fillRect(x + bridge.tileSize - 2, y + 1, 2, bridge.tileSize - 2);
+        // Bottom edge (horizontal strip)
+        ctx.fillRect(x + 1, y + bridge.tileSize - 2, bridge.tileSize - 2, 2);
+        // Top highlight
+        ctx.fillStyle = edgeLight;
+        ctx.fillRect(x + 1, y, bridge.tileSize - 2, 1);
+        // Left highlight
+        ctx.fillRect(x, y + 1, 1, bridge.tileSize - 2);
+      } catch (_e) {
+        /* If shadeColor isn't available, skip edge drawing gracefully. */
+      }
+    } else {
+      const grad = ctx.createLinearGradient(x, y, x, y + bridge.tileSize);
+      // Lighten the top and darken the bottom for depth, but use a
+      // reduced contrast to avoid overly bright highlights.  Smaller
+      // positive/negative offsets produce a gentler transition.
+      // Reduce contrast on each plank.  Only gently lighten the top and
+      // gently darken the bottom so the planks do not appear overly bright.
+      grad.addColorStop(0, shadeColor(COLORS.plank, 0.05));
+      grad.addColorStop(1, shadeColor(COLORS.plank, -0.05));
+      ctx.fillStyle = grad;
+      ctx.fillRect(x, y, bridge.tileSize, bridge.tileSize);
+    }
+    ctx.strokeStyle=COLORS.plankLine; ctx.lineWidth=1; for(let i=1;i<=3;i++){ const py=y+i*(bridge.tileSize/4); ctx.beginPath(); ctx.moveTo(x+2,py); ctx.lineTo(x+bridge.tileSize-2,py); ctx.stroke(); }
+    ctx.fillStyle="rgba(0,0,0,.15)"; ctx.beginPath(); ctx.arc(x+6,y+6,1.6,0,Math.PI*2); ctx.arc(x+bridge.tileSize-6,y+6,1.6,0,Math.PI*2); ctx.arc(x+6,y+bridge.tileSize-6,1.6,0,Math.PI*2); ctx.arc(x+bridge.tileSize-6,y+bridge.tileSize-6,1.6,0,Math.PI*2); ctx.fill();
+    const padIn = 6; const panelR = 8; ctx.fillStyle=COLORS.tilePanel; roundRect(x+padIn,y+padIn,bridge.tileSize-padIn*2,bridge.tileSize-padIn*2,panelR,true,false);
+    if(tile.glow>0){ ctx.save(); ctx.shadowColor=COLORS.tileGlow; ctx.shadowBlur=18*tile.glow; ctx.fillStyle="rgba(255,255,255,.01)"; ctx.fillRect(x,y,bridge.tileSize,bridge.tileSize); ctx.restore(); tile.glow=Math.max(0,tile.glow-0.02); }
+    if(tile.crack>0){ const k=tile.crack; ctx.strokeStyle="#333"; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x+bridge.tileSize*0.2,y+bridge.tileSize*0.2); ctx.lineTo(x+bridge.tileSize*0.8,y+bridge.tileSize*0.8); ctx.moveTo(x+bridge.tileSize*0.8,y+bridge.tileSize*0.2); ctx.lineTo(x+bridge.tileSize*0.2,y+bridge.tileSize*0.8); ctx.stroke(); tile.crack=Math.max(0,k-0.03); if(tile.crack===0) tile.dead=true; }
+    // text is large/high contrast for readability
+    // If practice mode is active and this row's case is disabled, overlay
+    // the tile with a semi‑transparent cover and skip drawing the text.
+    const disabledRow = practiceMode && !practiceCases[caseOrder[r]];
+    if(disabledRow){
+      ctx.fillStyle = 'rgba(50,50,50,0.5)';
+      ctx.fillRect(x, y, bridge.tileSize, bridge.tileSize);
+    } else {
+      ctx.fillStyle=COLORS.tileText;
+      // Add a subtle drop shadow to improve contrast of text on tiles.
+      ctx.shadowColor = "rgba(0,0,0,0.35)";
+      ctx.shadowBlur = 4;
+      ctx.shadowOffsetY = 2;
+      fitText(tile.ending, x+bridge.tileSize/2, y+bridge.tileSize/2, bridge.tileSize*0.8);
+      // Reset shadow so other drawings aren’t affected.
+      ctx.shadowColor = "transparent";
+    }
+  }
+  if(targetRow>=0 && targetRow<TILE_ROWS){ const {x,y,half} = getTileCenter(targetRow, selectedCol, true); ctx.save(); ctx.strokeStyle = COLORS.accent; ctx.lineWidth = 4; ctx.setLineDash([10,6]); ctx.strokeRect(x-half-2, y-half-2, (half*2)+4, (half*2)+4); ctx.setLineDash([]); ctx.restore(); }
+  ctx.fillStyle=COLORS.tileText; ctx.font=`bold ${Math.max(18, bridge.tileSize*0.48)}px ui-sans-serif`; ctx.fillText(bridge.declension+" Declension", W/2, bridge.y0-32);
+}
+
+function roundRect(x,y,w,h,r,fill,stroke){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); if(fill) ctx.fill(); if(stroke) ctx.stroke(); }
+function fitText(text, x, y, maxW){
+  // Base size from tile, boosted on phones
+  const base = bridge ? bridge.tileSize : 22;
+  // Increase starting and minimum font sizes for better legibility.
+  const start = Math.floor(base * (IS_SMALL ? 0.70 : 0.55));  // bigger on phones and desktop
+  const minSize = Math.max(IS_SMALL ? 20 : 18, Math.floor(base * (IS_SMALL ? 0.58 : 0.46)));
+
+  let size = start;
+  ctx.font = `${size}px ui-sans-serif`;
+  while (ctx.measureText(text).width > maxW && size > minSize) {
+    size--; ctx.font = `${size}px ui-sans-serif`;
+  }
+
+  // subtle outline for contrast
+  ctx.lineWidth = Math.max(1, Math.round(size * 0.10));
+  ctx.strokeStyle = "rgba(0,0,0,0.28)";
+  ctx.strokeText(text, x, y);
+
+  ctx.fillText(text, x, y);
+}
+
+function drawFrog(){
+  const hop = frog.jumping ? Math.sin(Math.min(1,frog.jT)*Math.PI) : 0;
+  let sx = 1 + hop*0.12;
+  let sy = 1 - hop*0.22;
+  // Flip the frog vertically for the upsideDown skin
+  if(frog.skin === 'upsideDown'){
+    sy = -sy;
+  }
+
+// Size ties to tile size; smaller on phones
+const tile = bridge ? bridge.tileSize : 22;
+const frogBase = IS_SMALL ? Math.min(20, tile * 0.50) : 22; // was fixed 22
+const baseX = frogBase;
+const baseY = Math.round(frogBase * 0.73);
+
+  // Store frog radius for accessory scaling.  This allows the
+  // accessory drawing helper to size decorations relative to the frog.
+  frog.r = baseX;
+
+  ctx.save(); ctx.translate(frog.x,frog.y); ctx.scale(sx,sy);
+  // body fill prioritises special skins first, then rainbow, then plain colour
+  // Choose body fill based on special skins, rainbow state, or plain colour.
+  if (frog.skin === 'metalSkin') {
+    // Metal skin: use a cool grey gradient to suggest brushed steel.
+    const mg = ctx.createLinearGradient(-baseX, -baseY, baseX, baseY);
+    mg.addColorStop(0, '#d1d6da');
+    mg.addColorStop(0.5, '#aeb4b9');
+    mg.addColorStop(1, '#8b9296');
+    ctx.fillStyle = mg;
+  } else if (frog.skin === 'brickSkin') {
+    // Brick skin: warm brick tones fading to dark red.
+    const bg = ctx.createLinearGradient(-baseX, -baseY, baseX, baseY);
+    bg.addColorStop(0, '#8b4513');
+    bg.addColorStop(0.5, '#b22222');
+    bg.addColorStop(1, '#5a0d0d');
+    ctx.fillStyle = bg;
+  } else if (frog.skin === 'mythicalSkin') {
+    // Mythical skin: radiant gradient blending purples and teals.  Use
+    // a radial gradient centered on the frog to create a glow effect.
+    const rg = ctx.createRadialGradient(0, 0, 0, 0, 0, baseX);
+    rg.addColorStop(0, '#7b2cbf');  // deep purple
+    rg.addColorStop(0.5, '#0cc0df'); // vivid teal
+    rg.addColorStop(1, '#f5c542');  // golden
+    ctx.fillStyle = rg;
+  } else if (frog.rainbow) {
+    const g = ctx.createLinearGradient(-baseX, 0, baseX, 0);
+    g.addColorStop(0, "#ff5f6d");
+    g.addColorStop(0.2, "#ffc371");
+    g.addColorStop(0.4, "#fff176");
+    g.addColorStop(0.6, "#7cf6a3");
+    g.addColorStop(0.8, "#64b5f6");
+    g.addColorStop(1, "#ba68c8");
+    ctx.fillStyle = g;
+  } else {
+    ctx.fillStyle = frog.color;
+  }
+  
+  // Cerberus side heads for bridge frog (draw behind main body by painting first)
+  if (cerberusModeActive) {
+    ctx.save();
+    ctx.fillStyle = frog.color || '#3aa34a';
+    drawCerberusHeads(baseX);
+    ctx.restore();
+  }
+  ctx.beginPath();
+  ctx.ellipse(0, 0, baseX, baseY, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // Outline the frog body for definition.  A subtle stroke helps
+  // separate the frog from the background without altering its
+  // dimensions.  Use a semi‑transparent dark colour so the outline
+  // reads on both light and dark backgrounds.
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+  ctx.stroke();
+  // simple pattern on bridge frog
+  ctx.globalAlpha=0.35; ctx.fillStyle="#000";
+  if(frog.pattern==="spots"){ for(let i=-1;i<=1;i++) for(let j=-1;j<=1;j++){ ctx.beginPath(); ctx.arc(i*8 + (j%2?4:0), j*6, 3, 0, Math.PI*2); ctx.fill(); } }
+  else if(frog.pattern==="stripes"){ for(let i=-18;i<=18;i+=7){ ctx.fillRect(i,-14,3,28); } }
+  else if(frog.pattern==="band"){ ctx.fillRect(-24,-4,48,8); }
+  ctx.globalAlpha=1;
+  ctx.fillStyle="#fff"; ctx.beginPath(); ctx.arc(-9,-12,5,0,Math.PI*2); ctx.arc(9,-12,5,0,Math.PI*2); ctx.fill(); ctx.fillStyle="#111"; ctx.beginPath(); ctx.arc(-9,-12,2.5,0,Math.PI*2); ctx.arc(9,-12,2.5,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle="#2b7c35"; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(-14,10); ctx.lineTo(-20,18); ctx.moveTo(14,10); ctx.lineTo(20,18); ctx.stroke();
+  // Draw accessory on the frog while still in its local coordinate
+  // system so it scales and positions correctly.  This call must
+  // occur before restoring the context.
+  drawAccessoryOnFrog(frog);
+  ctx.restore();
+  // Accessories for the main frog are drawn above; nothing further
+  // needed here.
+}
+
+/***********************
+ * SELF-TESTS
+ ***********************/
+function runSelfTests(){
+  let ok = true; const errs=[];
+  if(ENDINGS_ROWS.length!==10) { ok=false; errs.push(`Expected 10 rows of endings, got ${ENDINGS_ROWS.length}`); }
+  for(let i=0;i<ENDINGS_ROWS.length;i++) if(ENDINGS_ROWS[i].length!==8){ ok=false; errs.push(`Row ${i} expected 8 declension entries, got ${ENDINGS_ROWS[i].length}`); }
+  for(let d=0; d<8; d++){ const seq = SEQS[d]; if(seq.length!==10){ ok=false; errs.push(`Declension ${d} sequence length ${seq.length} != 10`); } for(let r=0;r<10;r++){ if(typeof seq[r]!=="string"){ ok=false; errs.push(`Bad type at declension ${d}, row ${r}`);} } }
+  const tmpBridge = makeBridge(0);
+  for(let r=0;r<TILE_ROWS;r++){ const row = tmpBridge.grid[r]; const count = row.reduce((n,t)=>n+(t.correct?1:0),0); if(count!==1){ ok=false; errs.push(`Row ${r} has ${count} correct tiles (expected 1)`); } }
+  selectedCol=0; selectedCol=clamp(selectedCol-1,0,TILE_COLS-1); if(selectedCol!==0){ ok=false; errs.push("clamp/selection underflow"); }
+  selectedCol=TILE_COLS-1; selectedCol=clamp(selectedCol+1,0,TILE_COLS-1); if(selectedCol!==TILE_COLS-1){ ok=false; errs.push("clamp/selection overflow"); }
+  if(!ok){ console.group("%cSelf-tests failed","color:#b00020;font-weight:bold"); errs.forEach(e=>console.error(e)); console.groupEnd(); showToast("Self-tests failed — see console for details"); }
+  else { console.log("%cSelf-tests passed","color:#0a7a2a;font-weight:bold"); }
+}
+
+/***********************
+ * MAIN LOOP
+ ***********************/
+// Load any saved cosmetic unlocks before starting the game
+loadUnlocks();
+loadStats();
+initCritters();
+// Start the first run.  Use accessory selection if unlocked items are
+// available.  Do not call restartRun() directly; prepareNewRun() will
+// handle accessory choice and then begin the run.
+prepareNewRun();
+runSelfTests();
+// Debug: display toast on load to verify script execution
+let last=performance.now();
+function loop(now){
+  const dt=Math.min(0.033,(now-last)/1000); last=now;
+    if (!bridge && phase === PHASE_BRIDGES) {
+    console.log("[loop] bridge is null while in BRIDGES phase");
+  }
+  // Update day/night cycle each frame so colours and stars transition smoothly
+  updateDayNight(dt);
+  // Update drifting clouds and birds regardless of phase
+  updateClouds(dt);
+  updateBirds(dt);
+  // Update parallax layers and ambient effects so their motion is
+  // independent of the current phase.  These functions are no‑ops
+  // unless enabled in initCritters().
+  if (typeof updateParallax === 'function') updateParallax(dt);
+  if (typeof updateAmbientEffects === 'function') updateAmbientEffects(dt);
+  if(phase===PHASE_BRIDGES){
+    // Draw the grassy ground gradient
+    const gGrad = ctx.createLinearGradient(0, 0, 0, H);
+    gGrad.addColorStop(0, COLORS.grass1);
+    gGrad.addColorStop(1, COLORS.grass2);
+    ctx.fillStyle = gGrad;
+    ctx.fillRect(0, 0, W, H);
+    // Night sky stars
+    drawStars(now);
+    // Draw selected backdrop (mountains or temple)
+    drawBackdrop();
+    // Parallax layers (hills and mythical creatures) appear behind
+    // clouds to add depth to the sky.  Draw them after the backdrop
+    // so they sit in front of mountains/temple but behind drifting clouds.
+    if (typeof drawParallax === 'function') drawParallax();
+    // Clouds drift in front of mountains but behind birds
+    drawClouds();
+    // Flying birds
+    drawBirds();
+    // Foreground elements
+    drawFlowers(now);
+    drawRiver(now);
+    // Decorative logs drifting across the river
+    updateLogs(dt);
+    drawLogs();
+    updateLilyPads(dt);
+    drawLilyPads();
+    maybeSpawnFish(dt);
+    updateFishes(dt);
+    drawFishes();
+    drawBridge();
+    drawBugs(now);
+    updateJump(dt);
+    // Draw the frog first so ripples and lighting overlay the correct position.
+    drawFrog();
+    // Update and draw ripples caused by jumps and splashes.
+    updateRipples(dt);
+    drawRipples();
+    // Apply dynamic lighting around the frog to add depth.
+    drawLighting();
+    // Ambient effects such as fog, pollen and lightning overlay the
+    // scene before particles.  They sit above lighting but below
+    // particles for visual clarity.
+    if (typeof drawAmbientEffects === 'function') drawAmbientEffects();
+    // Draw particle effects (splash, rings) above the lighting and ambient overlays.
+    drawParticles(dt);
+    // Apply a bloom pass to the scene to create a subtle glow around bright areas.
+    if (typeof applyBloom === 'function') applyBloom();
+    // Weather overlay (rain or snow) on top of the scene
+    drawWeather();
+    // Celebrations and unlock banners
+    drawRainbowBanner();
+    drawUnlockBanner();
+    updateTimer();
+  } else if(phase===PHASE_MEADOW){
+    // Meadow phase: draw environment then entities.  Use day/night colours.
+    drawMeadowBackground(now);
+    // Draw distant mountains and sky elements behind the meadow.
+    drawStars(now);
+    drawBackdrop();
+    // Parallax layers (hills and mythical creatures) appear behind
+    // clouds and birds in the meadow as well.  Draw them after the
+    // backdrop and before clouds.
+    if (typeof drawParallax === 'function') drawParallax();
+    drawClouds();
+    drawBirds();
+    // Update game state for the meadow
+    updateMeadow(dt);
+    // Decorative butterflies fluttering around
+    drawButterflies();
+    // Render all frogs in the meadow (player and AI).  They bounce and collide.
+    for (const f of meadow.players) {
+      drawFrogEntity(f);
+    }
+    // Identify the player's frog (assumed to be the first in the list) and
+    // apply ripples and dynamic lighting around it to add depth.  Ripples
+    // update regardless of whether the frog is jumping so splashes persist.
+    if (meadow.players && meadow.players.length > 0) {
+      const pf = meadow.players[0];
+      updateRipples(dt);
+      drawRipples();
+      drawLighting(pf.x, pf.y - 10, (pf.r || 20) * 4);
+      // Ambient effects overlay the meadow similar to the bridge.  Draw
+      // them after lighting so fog, pollen and lightning sit above the
+      // dynamic light but below particles.
+      if (typeof drawAmbientEffects === 'function') drawAmbientEffects();
+      // Apply bloom to highlight bright elements before particles and weather.
+      if (typeof applyBloom === 'function') applyBloom();
+    }
+    // Render particle effects (sparkles, rings, etc.)
+    drawParticles(dt);
+    // Weather overlay also visible in meadow
+    drawWeather();
+    // Draw overlay UI (win message)
+    drawMeadowOverlay();
+    // Achievement unlock banner
+    drawUnlockBanner();
+  }
+
+  // Kaleidoscope overlay for neon cheat.  Draw this after all scene
+  // elements but before the game over overlay so that it remains
+  // visible even when weather or banners are present.
+  if(psychedelicRunActive){
+    drawPsychedelicOverlay(now);
+  }
+
+  // Game Over overlay pass (on top)
+  updateGameOver(dt);
+  drawGameOver();
+
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+addEventListener("pointerdown", ()=>{ if(ac.state==="suspended") ac.resume(); }, {once:true});
+document.addEventListener("visibilitychange", ()=>{ if(document.hidden && ac.state==="running"){ ac.suspend(); } else if(!document.hidden && ac.state==="suspended"){ ac.resume(); }});
+window.addEventListener("error", (e)=>{   console.error("Window error:", e.error || e.message || e);   showToast("Error: " + (e.message || "Unknown")); }); window.addEventListener("unhandledrejection", (e)=>{   console.error("Unhandled promise rejection:", e.reason);   const msg = e.reason && (e.reason.message || String(e.reason));   showToast("Error: " + (msg || "Promise rejection")); });
+
+</script>
+<!-- Login overlay, teacher dashboard, and logout button -->
+<div id="loginOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:flex; align-items:center; justify-content:center; z-index:10000;">
+  <div id="loginBox" style="background:#fff; padding:20px; border-radius:8px; display:flex; flex-direction:column; gap:10px; width:320px; text-align:center;">
+    <h2>Welcome to Latin Frogger</h2>
+    <input id="loginEmail" type="email" placeholder="Email" style="padding:8px;">
+    <input id="loginPassword" type="password" placeholder="Password" style="padding:8px;">
+    <button id="signInBtn" style="padding:8px;">Sign In</button>
+    <button id="signUpBtn" style="padding:8px;">Sign Up</button>
+    <button id="googleSignInBtn" style="padding:8px;">Sign in with Google</button>
+    <button id="guestBtn" style="padding:8px;">Play as Guest</button>
+    <div id="loginError" style="color:red;"></div>
+  </div>
+</div>
+<button id="teacherDashBtn" style="position:fixed; top:10px; right:10px; z-index:10001; display:none;">Dashboard</button>
+<button id="logoutBtn" style="position:fixed; top:10px; right:110px; z-index:10001; display:none;">Logout</button>
+<div id="teacherOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; align-items:center; justify-content:center; z-index:10000;">
+  <div style="background:#fff; padding:20px; border-radius:8px; width:80%; max-height:80%; overflow:auto;">
+    <h2>Teacher Dashboard</h2>
+    <table id="dashboardTable" border="1" style="width:100%; border-collapse:collapse;">
+      <tr><th>User</th><th>Best Time</th><th>Unlocks</th><th>Easter Eggs</th></tr>
+    </table>
+    <button id="closeDashboardBtn" style="margin-top:10px;">Close</button>
+  </div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script>
+  // Firebase configuration for your Latin Frogger project
+  var firebaseConfig = {
+    apiKey: "AIzaSyAYZnkbWzGIp2EY0EvJ4-_l943xJG2KXjw",
+    authDomain: "latin-frogger.firebaseapp.com",
+    projectId: "latin-frogger",
+    storageBucket: "latin-frogger.firebasestorage.app",
+    messagingSenderId: "1090179387353",
+    appId: "1:1090179387353:web:e72e9c98b85c327b9953c8",
+    measurementId: "G-STJZLX2SZL"
+  };
+  // Initialize Firebase
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const provider = new firebase.auth.GoogleAuthProvider();
+  // Teacher email constant for dashboard access
+  const teacherEmail = "acornish@gmail.com";
+  let isGuest = true;
+  let currentUser = null;
+  function showLogin(){ document.getElementById("loginOverlay").style.display = "flex"; }
+  function hideLogin(){ document.getElementById("loginOverlay").style.display = "none"; }
+  function showDashboard(){ document.getElementById("teacherOverlay").style.display = "flex"; }
+  function hideDashboard(){ document.getElementById("teacherOverlay").style.display = "none"; }
+  // Prevent game keybindings from intercepting login input
+  ["loginEmail","loginPassword"].forEach(function(id){
+    const el = document.getElementById(id);
+    el.addEventListener("keydown", function(e){
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+    });
+  });
+  // Sign in with email/password
+  document.getElementById("signInBtn").addEventListener("click", function(){
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
+    auth.signInWithEmailAndPassword(email, password).catch(function(error){
+      document.getElementById("loginError").innerText = error.message;
+    });
+  });
+  // Sign up with email/password
+  document.getElementById("signUpBtn").addEventListener("click", function(){
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
+    auth.createUserWithEmailAndPassword(email, password).catch(function(error){
+      document.getElementById("loginError").innerText = error.message;
+    });
+  });
+  // Google sign in: try popup, fallback to redirect
+  document.getElementById("googleSignInBtn").addEventListener("click", function(){
+    auth.signInWithPopup(provider).catch(function(err){
+      if (err.code === "auth/popup-blocked" || err.code === "auth/cancelled-popup-request" || err.code === "auth/popup-closed-by-user") {
+        auth.signInWithRedirect(provider);
+      } else {
+        document.getElementById("loginError").innerText = err.message;
+      }
+    });
+  });
+  // Play as guest just hides the login overlay
+  document.getElementById("guestBtn").addEventListener("click", function(){
+    isGuest = true;
+    hideLogin();
+  });
+  // Teacher dashboard button loads data from Firestore
+  document.getElementById("teacherDashBtn").addEventListener("click", function(){
+    db.collection("users").get().then(function(snapshot){
+      const table = document.getElementById("dashboardTable");
+      table.innerHTML = "<tr><th>User</th><th>Best Time</th><th>Unlocks</th><th>Easter Eggs</th></tr>";
+      snapshot.forEach(function(doc){
+        const data = doc.data();
+        const tr = document.createElement("tr");
+        tr.innerHTML = "<td>"+ (data.email || data.username || "") +"</td><td>"+ (data.bestTime || "") +"</td><td>"+ (data.unlocks || "") +"</td><td>"+ (data.easterEggs || "") +"</td>";
+        table.appendChild(tr);
+      });
+      showDashboard();
+    }).catch(function(error){ console.error("Dashboard error", error); });
+  });
+  // Close dashboard button
+  document.getElementById("closeDashboardBtn").addEventListener("click", hideDashboard);
+  // Logout button
+  document.getElementById("logoutBtn").addEventListener("click", function(){
+    auth.signOut().then(function(){
+      currentUser = null;
+      isGuest = false;
+      document.getElementById("teacherDashBtn").style.display = "none";
+      document.getElementById("logoutBtn").style.display = "none";
+      hideDashboard();
+      showLogin();
+    }).catch(function(error){
+      console.error("Logout failed", error);
+    });
+  });
+  // Handle redirect result when coming back from Google sign-in
+  auth.getRedirectResult().then(function(result){
+    if (result && result.user) {
+      currentUser = result.user;
+      isGuest = false;
+    }
+  }).catch(function(error){
+    if (error && error.message) {
+      document.getElementById("loginError").innerText = error.message;
+    }
+  });
+  // Auth state listener
+  auth.onAuthStateChanged(function(user){
+    if (user) {
+      currentUser = user;
+      isGuest = false;
+      hideLogin();
+      document.getElementById("logoutBtn").style.display = "block";
+      if (user.email === teacherEmail) {
+        document.getElementById("teacherDashBtn").style.display = "block";
+      }
+    } else {
+      currentUser = null;
+      // Always show the login overlay if no user is signed in
+      showLogin();
+      document.getElementById("logoutBtn").style.display = "none";
+      document.getElementById("teacherDashBtn").style.display = "none";
+    }
+  });
+  // Show the login overlay on initial load if no one is signed in
+  if (!auth.currentUser) {
+    showLogin();
+  }
+  // updateUserStats writes to Firestore
+window.updateUserStats = async function(runTime, unlockCount, easterCount) {
+    // Do not record stats for guests or if no user is signed in
+    if (isGuest || !currentUser) { return; }
+    try {
+      const docRef = db.collection("users").doc(currentUser.uid);
+      const doc = await docRef.get();
+      let bestTime = runTime;
+      let totalRuns = 1;
+      if (doc.exists) {
+        const data = doc.data();
+        // Preserve the fastest (smallest) best time if it already exists
+        if (data.bestTime && data.bestTime < runTime) {
+          bestTime = data.bestTime;
+        }
+        totalRuns = (data.totalRuns || 0) + 1;
+      }
+      await docRef.set({
+        email: currentUser.email || "",
+        bestTime: bestTime,
+        totalRuns: totalRuns,
+        unlocks: unlockCount,
+        easterEggs: easterCount,
+        lastRun: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+    } catch (error) {
+      console.error("Error updating stats", error);
+    }
+  };
+</script>
+
+<script>
+
+/* === Easter Egg Registry (inline v16) ===
+   Built-ins: "hard", "vesuvius"(toggle), "orator"(toggle), "speculum"(mirror toggle),
+              "retro mode"(Janus pixel mode toggle + phosphor by default),
+              "phosphor"(green CRT toggle)
+   Aliases: "retro", "phosphorus"
+*/
+(function () {
+  const DOC = document;
+  const WIN = window;
+  if (WIN.EasterEggs && WIN.EasterEggs._version === 16) return;
+
+  function shuffle(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
+  function toast(msg){ if(typeof WIN.showToast==="function") WIN.showToast(msg); else console.log("[Toast]", msg); }
+
+  const REGISTRY = new Map();
+  let enabled = true;
+  function register(code, handler){ code=String(code||"").toLowerCase().trim(); if(!code||typeof handler!=="function") return; REGISTRY.set(code, handler); }
+  function unregister(code){ REGISTRY.delete(String(code||"").toLowerCase().trim()); }
+  function setEnabled(v){ enabled=!!v; }
+
+  let buffer=""; DOC.addEventListener("keydown",(e)=>{
+    if(!enabled) return;
+    const tag=(e.target&&e.target.tagName)||"";
+    if(tag==="INPUT"||tag==="TEXTAREA"||tag==="SELECT"||e.isComposing) return;
+    if(e.key && e.key.length===1){
+      buffer+=e.key.toLowerCase();
+      if(buffer.length>64) buffer=buffer.slice(-64);
+      for(const [code,handler] of REGISTRY.entries()){
+        if(buffer.endsWith(code)){
+          try{ handler(); }catch(err){ console.error("EasterEgg error",code,err); }
+          buffer=""; break;
+        }
+      }
+    } else if (e.key==="Escape"){ buffer=""; }
+  });
+
+  const STYLE_CSS = `
+  .ash{position:fixed;top:-24px;width:8px;height:8px;background:#666;border-radius:50%;opacity:.9;pointer-events:none;animation:egg_fall linear forwards}
+  .ember{position:fixed;top:-28px;width:10px;height:10px;background: radial-gradient(circle at 30% 30%, #ffd08a, #ff5a36 60%, #aa1f09 100%);
+         border-radius:50%; box-shadow: 0 0 10px rgba(255,90,54,.8), 0 0 18px rgba(255,160,80,.6);
+         opacity:.95; pointer-events:none; animation:ember_fall linear forwards, ember_flicker 0.6s infinite}
+  .rock{position:fixed;top:-80px;width:var(--rock-size,56px);height:var(--rock-size,56px);pointer-events:none;opacity:.98;
+        background:repeating-linear-gradient(135deg, rgba(255,255,255,.05) 0 2px, rgba(0,0,0,.07) 2px 4px),linear-gradient(150deg,#888 0%,#6c6c6c 55%,#4a4a4a 100%);
+        background-blend-mode: overlay; filter: drop-shadow(0 10px 14px rgba(0,0,0,.45)); animation: rock_fall var(--rock-dur,3s) linear forwards;
+        transform: translateY(-80px) rotate(var(--rot,0deg)); clip-path: var(--clip, polygon(10% 8%, 55% 0%, 92% 20%, 84% 58%, 60% 96%, 22% 88%, 4% 52%));}
+  .rock::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 80% at 20% 15%, rgba(255,255,255,.15), transparent 40%),radial-gradient(100% 100% at 80% 80%, rgba(0,0,0,.25), transparent 50%);mix-blend-mode:soft-light;clip-path:inherit}
+  @keyframes egg_fall{from{transform:translateY(-24px);opacity:.95}to{transform:translateY(115vh);opacity:0}}
+  @keyframes ember_fall{0%{transform: translate(0,-28px) rotate(0deg);}100%{transform: translate(var(--drift, 30px), 115vh) rotate(360deg);}}
+  @keyframes ember_flicker{0%,100% { filter: brightness(1);} 50%{ filter: brightness(1.4);} }
+  @keyframes rock_fall{ to { transform: translateY(110vh) rotate(calc(var(--rot,0deg) + 540deg)); } }
+  #ciceroNPC{ position:fixed; display:none; z-index:2147483000; pointer-events:none; text-align:center; font-family:Cinzel, serif; }
+  #ciceroNPC .frog{ font-size:56px; }
+  #ciceroNPC .bubble{ position:absolute; left:40px; bottom:30px; transform-origin:left bottom; background:#fff; border:2px solid #000; padding:8px 12px; border-radius:10px; font-size:16px; box-shadow:0 2px 8px rgba(0,0,0,.25); opacity:0; transform:scale(.9); transition:opacity .2s ease, transform .2s ease; white-space:nowrap; }
+  #ciceroNPC.show .bubble{ opacity:1; transform:scale(1); }
+  #lavaVeil{ position:fixed; pointer-events:none; z-index:2147482000; opacity:.65; mix-blend-mode: color; background: linear-gradient(0deg, #a51600 0%, #c51a00 50%, #8a1200 100%); border-radius:6px; transition:opacity .25s ease; }
+  body.mirror-mode{ transform: scaleX(-1); transform-origin: 50% 50%; }
+  /* Retro overlay */
+  #retroCanvas{ position:fixed; z-index:2147482600; pointer-events:none; image-rendering: pixelated; }
+  #retroScan{ position:fixed; z-index:2147482650; pointer-events:none; background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,.12) 0 1px, rgba(0,0,0,0) 1px 3px);
+      mix-blend-mode: multiply; opacity:.38; animation: scanRoll var(--scan-speed, 6s) linear infinite; background-size: 100% 4px; }
+  #retroGrid{ position:fixed; z-index:2147482625; pointer-events:none; }
+  @keyframes scanRoll {
+    from { background-position: 0 0; }
+    to   { background-position: 0 100%; }
+  }
+  /* Phosphor overlays */
+  #phosphorTint{ position:fixed; z-index:2147482660; pointer-events:none; background:#00ff66; opacity:.18; mix-blend-mode: color; display:none; }
+  #phosphorGlow{ position:fixed; z-index:2147482665; pointer-events:none; display:none;
+    background: radial-gradient(60% 50% at 50% 50%, rgba(0,255,120,.30), rgba(0,128,64,.12) 60%, rgba(0,0,0,0) 70%);
+    mix-blend-mode: screen; }
+  #phosphorVignette{ position:fixed; z-index:2147482670; pointer-events:none; display:none;
+    background: radial-gradient(100% 100% at 50% 50%, rgba(0,0,0,0) 62%, rgba(0,0,0,.38) 100%); }
+  `;
+  function ensureStyle(){ if(document.getElementById("egg-style")) return; const el=document.createElement("style"); el.id="egg-style"; el.textContent=STYLE_CSS; document.head.appendChild(el); }
+
+  function largestCanvas(){ const list = Array.from(document.querySelectorAll("canvas")); if (!list.length) return null; list.sort((a,b)=>(b.width*b.height)-(a.width*a.height)); return list[0]; }
+  function boardRect(){ const c = largestCanvas(); if (c) return c.getBoundingClientRect(); const all = Array.from(document.querySelectorAll("main, #wrap, #game, .container, body")); let best = document.body, bestArea = 0; for(const el of all){ const r = el.getBoundingClientRect(); const area = Math.abs(r.width*r.height); if (area>bestArea){ best=el; bestArea=area; } } return best.getBoundingClientRect(); }
+
+  // ----- Frog locator (smart) -----
+  let candidateKey = null;
+  function getFrogPositionSmart(){
+    if (typeof window.getFrogPosition === "function") { try{ const p = window.getFrogPosition(); if (p && typeof p.x==="number" && typeof p.y==="number") return p; }catch{} }
+    const common = ["frog","player","hero","avatar"];
+    for(const k of common){ const v = window[k]; if (v && typeof v.x==="number" && typeof v.y==="number") { candidateKey=k; return {x:v.x, y:v.y}; } }
+    if (candidateKey && window[candidateKey]){ const v = window[candidateKey]; if (typeof v.x==="number" && typeof v.y==="number") return {x:v.x, y:v.y}; }
+    const bounds = boardRect(); const dpr = (window.DPR || window.devicePixelRatio || 1); const maxX=(bounds.width*dpr)*1.5, maxY=(bounds.height*dpr)*1.5;
+    let best=null, bestScore=-1, centerX=maxX/2, topY=maxY*0.2;
+    for (const k in window){ try{ const v=window[k]; if(!v || typeof v!=="object") continue; const x=v.x, y=v.y; if(typeof x!=="number"||typeof y!=="number") continue; if(x<-50||y<-50||x>maxX||y>maxY) continue; const score = 1000 - Math.hypot((x-centerX),(y-topY)); if(score>bestScore){ bestScore=score; best={key:k,x,y}; } }catch{} }
+    if(best){ candidateKey=best.key; return {x:best.x, y:best.y}; }
+    return null;
+  }
+
+  // ----- Lava veil helpers -----
+  let lavaVeil=null, lavaBand={ top:0.22, bottom:0.86 };
+  function ensureLavaVeil(){ if (lavaVeil) return lavaVeil; lavaVeil=document.createElement("div"); lavaVeil.id="lavaVeil"; document.body.appendChild(lavaVeil); positionLavaVeil(); window.addEventListener("resize", positionLavaVeil); return lavaVeil; }
+  function positionLavaVeil(){ if(!lavaVeil) return; const rect=boardRect(); const top = rect.top + rect.height * lavaBand.top; const height=rect.height * (lavaBand.bottom - lavaBand.top);
+    lavaVeil.style.left = rect.left + "px"; lavaVeil.style.width = rect.width + "px"; lavaVeil.style.top = top + "px"; lavaVeil.style.height = height + "px"; }
+
+  // ----- Pompeii (vesuvius) -----
+  let pompeiiTimer=null, pompeiiOn=false;
+  function spawnAshOrEmber(){ const w=window.innerWidth; const isEmber=Math.random()<0.35; const el=document.createElement("div"); el.className=isEmber?"ember":"ash"; el.style.left=(Math.random()*w)+"px";
+    if(isEmber){ el.style.setProperty("--drift",(Math.random()*160-80)+"px"); el.style.animationDuration=(1.6+Math.random()*1.2)+"s"; } else { el.style.animationDuration=(1.2+Math.random()*1.3)+"s"; }
+    document.body.appendChild(el); setTimeout(()=>el.remove(),4000); }
+  function randomPoly(){ const n=7+Math.floor(Math.random()*3); const pts=[]; for(let i=0;i<n;i++){ const a=(i/n)*Math.PI*2 + Math.random()*0.2; const r=40+Math.random()*55; const x=50+Math.cos(a)*r/2; const y=50+Math.sin(a)*r/2; pts.push(Math.max(2,Math.min(98,x)).toFixed(1)+"% "+Math.max(2,Math.min(98,y)).toFixed(1)+"%"); } return "polygon("+pts.join(",")+")"; }
+  function spawnRock(){ const w=window.innerWidth; const el=document.createElement("div"); el.className="rock"; const size=44+Math.floor(Math.random()*34); el.style.setProperty("--rock-size",size+"px"); el.style.left=(Math.random()*(w-size))+"px"; el.style.setProperty("--rock-dur",(2.4+Math.random()*1.6)+"s"); el.style.setProperty("--rot",((Math.random()<0.5?-1:1)*(20+Math.random()*120))+"deg"); el.style.setProperty("--clip",randomPoly()); document.body.appendChild(el); setTimeout(()=>el.remove(),5200); }
+  function startPompeii(){ ensureStyle(); ensureLavaVeil(); positionLavaVeil(); if(pompeiiTimer) return;
+    const tick=()=>{ const dust=8+Math.floor(Math.random()*8); for(let i=0;i<dust;i++) spawnAshOrEmber(); const rocks=Math.random()<0.7 ? (1+Math.floor(Math.random()*2)) : 0; for(let r=0;r<rocks;r++) spawnRock(); positionLavaVeil(); };
+    tick(); pompeiiTimer=setInterval(tick,220); pompeiiOn=true; lavaVeil.style.opacity=".7"; toast("🌋 Pompeii Mode ON — lava river + falling rocks"); }
+  function stopPompeii(){ if(pompeiiTimer) clearInterval(pompeiiTimer); pompeiiTimer=null; pompeiiOn=false; if(lavaVeil){ lavaVeil.style.opacity="0"; lavaVeil.remove(); lavaVeil=null; } toast("🧹 Pompeii Mode OFF"); }
+  function togglePompeii(){ if(pompeiiOn) stopPompeii(); else startPompeii(); }
+
+  // ----- Orator -----
+  let ciceroActive=false, ciceroNode=null, ciceroLoop=null, followRAF=null;
+  function ensureCiceroNode(){ ensureStyle(); if(ciceroNode) return ciceroNode; const w=document.createElement("div"); w.id="ciceroNPC"; w.innerHTML='<div class="frog">🐸🗣</div><div class="bubble">O tempora! O mores!</div>'; document.body.appendChild(w); ciceroNode=w; return ciceroNode; }
+  function placeCicero(){ if(!ciceroNode) return; const rect=boardRect(); const pos=getFrogPositionSmart(); const dpr=(window.DPR||window.devicePixelRatio||1); const offset={x:40,y:-10};
+    if(pos){ const cssX=rect.left+(pos.x/dpr); const cssY=rect.top+(pos.y/dpr); ciceroNode.style.left=(cssX+offset.x)+"px"; ciceroNode.style.top=(cssY+offset.y)+"px"; } else { ciceroNode.style.left=(rect.left+16)+"px"; ciceroNode.style.top=(rect.bottom-64)+"px"; } }
+  function startFollowing(){ if(followRAF) return; const step=()=>{ if(!ciceroActive){ followRAF=null; return;} placeCicero(); followRAF=requestAnimationFrame(step); }; followRAF=requestAnimationFrame(step); }
+  function stopFollowing(){ if(followRAF){ cancelAnimationFrame(followRAF); followRAF=null; } }
+  function ciceroSpeak(){ if(!ciceroActive) return; ensureCiceroNode(); placeCicero(); ciceroNode.style.display="block"; ciceroNode.classList.add("show"); const b=ciceroNode.querySelector(".bubble"); b.style.transition="none"; b.offsetHeight; b.style.transition="opacity .2s ease, transform .2s ease"; setTimeout(()=>{ if(ciceroNode) ciceroNode.classList.remove("show"); },1600); }
+  function startCiceroLoop(){ if(ciceroLoop) return; ciceroLoop=setInterval(ciceroSpeak,2200); ciceroSpeak(); }
+  function stopCiceroLoop(){ if(ciceroLoop) clearInterval(ciceroLoop); ciceroLoop=null; }
+  function activateCicero(){ ciceroActive=true; ensureCiceroNode(); startFollowing(); startCiceroLoop(); toast("🎙 Cicero Mode ON"); }
+  function deactivateCicero(){ ciceroActive=false; stopCiceroLoop(); stopFollowing(); if(ciceroNode) ciceroNode.style.display="none"; toast("🤫 Cicero Mode OFF"); }
+  function toggleCicero(){ if(ciceroActive) deactivateCicero(); else activateCicero(); }
+
+  // ----- Hard Mode -----
+  function activateHardMode(){ const singular=[0,1,2,3,4], plural=[5,6,7,8,9]; shuffle(singular); shuffle(plural);
+    if(Array.isArray(window.caseOrder)){ window.caseOrder.length=0; window.caseOrder.push(...singular,...plural); } else { window.caseOrder=singular.concat(plural); }
+    if(typeof window.updateCaseOrderLegend==="function") window.updateCaseOrderLegend(); if(typeof window.startRun==="function") window.startRun(); toast("💀 Hard Mode: singular & plural separately scrambled"); }
+
+  // ----- Speculum (mirror) -----
+  let mirrorOn=false;
+  function startMirror(){ ensureStyle(); if(mirrorOn) return; document.body.classList.add("mirror-mode"); mirrorOn=true; toast("🪞 Speculum: screen mirrored"); }
+  function stopMirror(){ document.body.classList.remove("mirror-mode"); mirrorOn=false; toast("🪞 Speculum: mirror off"); }
+  function toggleMirror(){ if(mirrorOn) stopMirror(); else startMirror(); }
+
+  // ----- Retro (Janus) with palette + HiDPI -----
+  let retroOn=false, retroCanvas=null, retroCtx=null, retroTmp=null, retroScan=null, retroGrid=null, retroRAF=null;
+  let retroPixelSize = 7;
+  let retroHiDPI = true; // new: scale overlay to devicePixelRatio for crispness
+  // NES-like 16-color palette (default)
+  let retroPaletteDefault = [
+    [0,0,0],[29,43,83],[0,135,81],[0,87,132],[126,37,83],[76,30,115],
+    [171,82,54],[116,47,41],[223,113,38],[247,226,107],[255,255,255],
+    [195,195,199],[155,173,183],[48,96,130],[91,110,225],[99,155,255]
+  ];
+  let retroPalette = retroPaletteDefault.slice();
+
+  // Phosphor (green CRT)
+  let phosphorOn = false;
+  let retroPaletteBeforePhosphor = null;
+  let phosphorTint=null, phosphorGlow=null, phosphorVignette=null;
+  const phosphorPalette = [[0,8,0],[16,48,16],[32,96,32],[64,140,64],[120,200,120],[200,255,200]];
+
+  function ensureRetroLayer(){
+    if (retroCanvas) return retroCanvas;
+    retroCanvas = document.createElement("canvas"); retroCanvas.id = "retroCanvas";
+    retroScan = document.createElement("div"); retroScan.id = "retroScan";
+    retroGrid = document.createElement("canvas"); retroGrid.id = "retroGrid";
+    phosphorTint = document.createElement("div"); phosphorTint.id="phosphorTint";
+    phosphorGlow = document.createElement("div"); phosphorGlow.id="phosphorGlow";
+    phosphorVignette = document.createElement("div"); phosphorVignette.id="phosphorVignette";
+    document.body.appendChild(retroCanvas); document.body.appendChild(retroGrid); document.body.appendChild(retroScan);
+    document.body.appendChild(phosphorTint); document.body.appendChild(phosphorGlow); document.body.appendChild(phosphorVignette);
+    retroCtx = retroCanvas.getContext("2d"); retroCtx.imageSmoothingEnabled = false;
+    retroTmp = document.createElement("canvas");
+    positionRetroLayer();
+    window.addEventListener("resize", positionRetroLayer);
+    window.addEventListener("scroll", positionRetroLayer, { passive: true });
+    drawGrid(); // initial
+    return retroCanvas;
+  }
+  function positionRetroLayer(){
+    if (!retroCanvas) return;
+    const rect = boardRect();
+    const dpr = retroHiDPI ? (window.devicePixelRatio || 1) : 1;
+    const assign = (el) => { el.style.left = rect.left + "px"; el.style.top = rect.top + "px"; el.style.width = rect.width + "px"; el.style.height = rect.height + "px"; };
+    assign(retroCanvas); assign(retroScan); assign(retroGrid);
+    if (phosphorTint) assign(phosphorTint);
+    if (phosphorGlow) assign(phosphorGlow);
+    if (phosphorVignette) assign(phosphorVignette);
+    // pixel buffers scale to DPR for sharpness
+    retroCanvas.width  = Math.max(1, Math.round(rect.width  * dpr));
+    retroCanvas.height = Math.max(1, Math.round(rect.height * dpr));
+    retroGrid.width  = retroCanvas.width; retroGrid.height = retroCanvas.height;
+    drawGrid();
+  }
+  function drawGrid(){
+    if (!retroGrid) return;
+    const g = retroGrid.getContext("2d");
+    const dpr = retroHiDPI ? (window.devicePixelRatio || 1) : 1;
+    g.setTransform(dpr,0,0,dpr,0,0);
+    g.clearRect(0,0,retroGrid.width/dpr, retroGrid.height/dpr);
+    const step = Math.max(4, retroPixelSize);
+    g.imageSmoothingEnabled = false;
+    g.globalAlpha = 0.12;
+    g.strokeStyle = "rgba(0,0,0,0.7)";
+    g.beginPath();
+    const w = retroGrid.width/dpr, h = retroGrid.height/dpr;
+    for(let x=0;x<w;x+=step){ g.moveTo(x+0.5,0); g.lineTo(x+0.5,h); }
+    for(let y=0;y<h;y+=step){ g.moveTo(0,y+0.5); g.lineTo(w,y+0.5); }
+    g.stroke();
+    g.globalAlpha = 1;
+  }
+  function nearestPalColor(r,g,b){
+    let best=0, bestD=1e9;
+    for(let i=0;i<retroPalette.length;i++){
+      const p=retroPalette[i]; const dr=r-p[0], dg=g-p[1], db=b-p[2];
+      const d=dr*dr+dg*dg+db*db;
+      if(d<bestD){ bestD=d; best=i; }
+    }
+    return retroPalette[best];
+  }
+  function quantizeImageData(imgData){
+    const d = imgData.data;
+    for(let i=0;i<d.length;i+=4){
+      const q = nearestPalColor(d[i], d[i+1], d[i+2]);
+      d[i]=q[0]; d[i+1]=q[1]; d[i+2]=q[2];
+    }
+    return imgData;
+  }
+  function retroStep(){
+    if (!retroOn) { retroRAF=null; return; }
+    const src = largestCanvas();
+    if (src && retroCanvas){
+      const rect = boardRect();
+      const dpr = retroHiDPI ? (window.devicePixelRatio || 1) : 1;
+      const px = Math.max(2, retroPixelSize);
+      // The game's canvas is typically in device pixels; relate to CSS px
+      const scaleX = src.width / rect.width;
+      const scaleY = src.height / rect.height;
+      // Downsample size in source pixels
+      const downW = Math.max(1, Math.floor(src.width  / (px*scaleX)));
+      const downH = Math.max(1, Math.floor(src.height / (px*scaleY)));
+      if (retroTmp.width !== downW || retroTmp.height !== downH){ retroTmp.width = downW; retroTmp.height = downH; }
+      const tctx = retroTmp.getContext("2d");
+      tctx.imageSmoothingEnabled = false;
+      tctx.clearRect(0,0,downW,downH);
+      tctx.drawImage(src, 0,0, src.width, src.height, 0,0, downW, downH);
+      // palette quantize downsampled image
+      let id = tctx.getImageData(0,0,downW,downH);
+      id = quantizeImageData(id);
+      tctx.putImageData(id, 0,0);
+      // upscale to overlay buffer (in device pixels)
+      retroCtx.imageSmoothingEnabled = false;
+      retroCtx.clearRect(0,0, retroCanvas.width, retroCanvas.height);
+      retroCtx.drawImage(retroTmp, 0,0, downW, downH, 0,0, retroCanvas.width, retroCanvas.height);
+    }
+    retroRAF = requestAnimationFrame(retroStep);
+  }
+  function startRetro(){
+    ensureStyle();
+    ensureRetroLayer();
+    if (retroOn) return;
+    retroOn = true;
+    retroCanvas.style.display = "block";
+    retroScan.style.display = "block";
+    retroGrid.style.display = "block";
+    positionRetroLayer();
+    drawGrid();
+    retroStep();
+    // New: phosphor ON by default when retro starts
+    if (!phosphorOn) startPhosphor();
+    toast("🕹 Janus/Retro MODE: pixel palette ON + phosphor");
+  }
+  function stopRetro(){
+    retroOn = false;
+    if (retroRAF) cancelAnimationFrame(retroRAF); retroRAF = null;
+    if (retroCanvas) retroCanvas.style.display="none";
+    if (retroScan) retroScan.style.display="none";
+    if (retroGrid) retroGrid.style.display="none";
+    // Hide phosphor too
+    if (phosphorOn) stopPhosphor();
+    toast("🕹 Janus/Retro MODE: off");
+  }
+  function toggleRetro(){ if(retroOn) stopRetro(); else startRetro(); }
+
+  // ----- Phosphor (green CRT) -----
+  function startPhosphor(){
+    ensureStyle(); ensureRetroLayer();
+    if (!retroOn) startRetro();
+    if (phosphorOn) return;
+    retroPaletteBeforePhosphor = retroPalette.slice();
+    retroPalette = phosphorPalette.slice();
+    phosphorTint.style.display="block";
+    phosphorGlow.style.display="block";
+    phosphorVignette.style.display="block";
+    phosphorTint.style.opacity = ".20";
+    phosphorOn = true;
+  }
+  function stopPhosphor(){
+    if (!phosphorOn) return;
+    retroPalette = retroPaletteBeforePhosphor ? retroPaletteBeforePhosphor.slice() : retroPaletteDefault.slice();
+    phosphorTint.style.display="none";
+    phosphorGlow.style.display="none";
+    phosphorVignette.style.display="none";
+    phosphorOn = false;
+  }
+  function togglePhosphor(){ if(phosphorOn) stopPhosphor(); else startPhosphor(); }
+
+  // Register built-ins
+  register("hard", activateHardMode);
+  register("vesuvius", togglePompeii);
+  register("orator", toggleCicero);
+  register("speculum", toggleMirror);
+  register("retro mode", toggleRetro); // primary trigger
+  register("retro", toggleRetro);      // alias
+  register("phosphor", togglePhosphor);
+  register("phosphorus", togglePhosphor);
+
+  // Public API
+  window.EasterEggs = {
+    register, unregister, setEnabled,
+    startPompeii, stopPompeii, togglePompeii,
+    activateCicero, deactivateCicero, toggleCicero,
+    startMirror, stopMirror, toggleMirror,
+    startRetro, stopRetro, toggleRetro,
+    startPhosphor, stopPhosphor, togglePhosphor,
+    setPositionProvider(fn){ if(typeof fn==='function'){ window.getFrogPosition=fn; toast('📍 Orator position provider set'); } },
+    setLavaBand(topFrac,bottomFrac){ if(typeof topFrac==='number'&&typeof bottomFrac==='number'){ lavaBand.top=topFrac; lavaBand.bottom=bottomFrac; positionLavaVeil(); toast('🌋 Lava band updated'); } },
+    setRetroPixelSize(v){ if(typeof v==='number' && v>1){ retroPixelSize = v; drawGrid(); toast('🕹 Retro pixel size = '+v); } },
+    setRetroPalette(name){
+      const presets = {
+        nes: [[0,0,0],[29,43,83],[0,135,81],[0,87,132],[126,37,83],[76,30,115],[171,82,54],[116,47,41],[223,113,38],[247,226,107],[255,255,255],[195,195,199],[155,173,183],[48,96,130],[91,110,225],[99,155,255]],
+        cga: [[0,0,0],[170,170,170],[255,255,255],[0,170,170],[170,0,170],[170,170,0],[0,255,255],[255,0,255],[255,255,0],[0,170,0],[0,0,170],[170,0,0]],
+        gameboy: [[15,56,15],[48,98,48],[139,172,15],[155,188,15],[222,248,222],[0,0,0]],
+        phosphor: [[0,8,0],[16,48,16],[32,96,32],[64,140,64],[120,200,120],[200,255,200]]
+      };
+      if (presets[name]){ retroPalette = presets[name]; toast('🕹 Retro palette: '+name); }
+      else { toast('🕹 Unknown palette'); }
+    },
+    setScanSpeed(seconds){
+      const s = Number(seconds)||0;
+      const el = document.getElementById('retroScan');
+      if (el){ el.style.setProperty('--scan-speed', (s>0? s: 6) + 's'); toast('📺 Scanline speed: '+(s>0? s:6)+'s'); }
+    },
+    setRetroHiDPI(flag){
+      retroHiDPI = !!flag;
+      positionRetroLayer();
+      toast('🖥 HiDPI overlay: '+(retroHiDPI?'ON':'OFF'));
+    },
+    _version: 16
+  };
+  console.log("[EasterEggs] Registry v16 installed.");
+})();
+
+</script>
+</body>
+</html>
