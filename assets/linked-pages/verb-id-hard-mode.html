@@ -124,6 +124,25 @@
       color: #fff;
       transform: scale(1.05);
     }
+    .option-button.disabled,
+    .option-button:disabled {
+      background: #e9e1d2;
+      border-color: #cfc2aa;
+      color: #9b8d78;
+      cursor: not-allowed;
+      opacity: 0.55;
+      box-shadow: none;
+      transform: none;
+      text-decoration: line-through;
+    }
+    .option-button.disabled:hover,
+    .option-button:disabled:hover,
+    .option-button.disabled:active,
+    .option-button:disabled:active {
+      background: #e9e1d2;
+      box-shadow: none;
+      transform: none;
+    }
     
     .hidden { display: none; }
     
@@ -546,8 +565,45 @@
     
     function updateScoreDisplay() { document.getElementById("scoreDisplay").textContent = "Score: " + sessionCorrectCount + " / " + (currentRound - 1); }
     const defaultHeaders = { optionPerson: "Person", optionNumber: "Number", optionTense: "Tense", optionVoice: "Voice", optionMood: "Mood" };
+    const optionFilterMap = {
+      optionPerson: () => allowedPerson,
+      optionNumber: () => allowedNumber,
+      optionTense: () => allowedTense,
+      optionVoice: () => allowedVoice,
+      optionMood: () => allowedMood
+    };
     function formatOptionValue(value) { const labels = { s: "Singular", p: "Plural", futurePerfect: "Future Perfect" }; if (labels[value]) return labels[value]; const text = String(value); return text.charAt(0).toUpperCase() + text.slice(1); }
-    function generateOptionButtons(containerId, options) { const container = document.getElementById(containerId); const headerText = defaultHeaders[containerId]; container.innerHTML = `<h3>${headerText}</h3>`; options.forEach(opt => { const btn = document.createElement("button"); btn.textContent = formatOptionValue(opt); btn.dataset.value = opt; btn.classList.add("option-button"); btn.addEventListener("click", function() { if (!answerRevealed) { Array.from(container.querySelectorAll("button")).forEach(b => b.classList.remove("selected")); btn.classList.add("selected"); } }); container.appendChild(btn); }); }
+    function isOptionAllowedBySetupFilters(containerId, value) {
+      const allowedGetter = optionFilterMap[containerId];
+      if (!allowedGetter) return true;
+      const allowedValues = allowedGetter();
+      return allowedValues.includes(value);
+    }
+    function generateOptionButtons(containerId, options) {
+      const container = document.getElementById(containerId);
+      const headerText = defaultHeaders[containerId];
+      container.innerHTML = `<h3>${headerText}</h3>`;
+      options.forEach(opt => {
+        const btn = document.createElement("button");
+        const isAllowed = isOptionAllowedBySetupFilters(containerId, opt);
+        btn.textContent = formatOptionValue(opt);
+        btn.dataset.value = opt;
+        btn.classList.add("option-button");
+        if (!isAllowed) {
+          btn.disabled = true;
+          btn.classList.add("disabled");
+          btn.title = "This option was turned off on the setup screen.";
+          btn.setAttribute("aria-disabled", "true");
+        }
+        btn.addEventListener("click", function() {
+          if (!answerRevealed && !btn.disabled) {
+            Array.from(container.querySelectorAll("button")).forEach(b => b.classList.remove("selected"));
+            btn.classList.add("selected");
+          }
+        });
+        container.appendChild(btn);
+      });
+    }
     function displayFixedValue(containerId, value) { const container = document.getElementById(containerId); const headerEl = container.querySelector("h3"); const label = defaultHeaders[containerId]; headerEl.innerHTML = `${label}: <span class="selected-value">${formatOptionValue(value)}</span>`; }
     function resetOptionHeaders() { for (const id in defaultHeaders) { const container = document.getElementById(id); if (container) { container.innerHTML = `<h3>${defaultHeaders[id]}</h3>`; } } }
     
