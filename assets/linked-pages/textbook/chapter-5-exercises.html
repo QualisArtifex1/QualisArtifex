@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chapter 5 Exercises | Latin Textbook</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #20201d;
+      --muted: #635f57;
+      --paper: #fffdf8;
+      --line: #ddd6c8;
+      --accent: #8f2f2f;
+      --accent-dark: #6f2222;
+      --sage: #566f60;
+      --blue: #295f86;
+      --soft-gold: #fbf4e5;
+      --shadow: 0 18px 42px rgba(55, 43, 28, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(255, 253, 248, 0.95), rgba(255, 253, 248, 1)),
+        repeating-linear-gradient(90deg, rgba(191, 143, 53, 0.05) 0 1px, transparent 1px 34px);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 17px;
+      line-height: 1.55;
+    }
+    a { color: var(--blue); font-weight: 700; text-underline-offset: 0.18em; }
+    .page { width: calc(100% - 32px); max-width: 1120px; margin: 0 auto; padding: 30px 0 64px; }
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 20px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 24px;
+      margin-bottom: 28px;
+    }
+    .kicker {
+      margin: 0 0 8px;
+      color: var(--accent-dark);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    h1, h2 { font-family: "Trebuchet MS", Arial, sans-serif; line-height: 1.12; letter-spacing: 0; }
+    h1 { margin: 0; font-size: clamp(2.4rem, 8vw, 5rem); }
+    .subtitle { max-width: 700px; margin: 14px 0 0; color: var(--muted); font-size: 1.08rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 9px 15px;
+      background: var(--accent);
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .button.secondary { background: transparent; color: var(--accent-dark); }
+    main { display: grid; gap: 26px; }
+    section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+    h2 { margin: 0 0 12px; color: var(--accent-dark); font-size: clamp(1.6rem, 5vw, 2.3rem); }
+    p { margin: 0 0 16px; }
+    .table-wrap { width: 100%; overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+    table { width: 100%; min-width: 720px; border-collapse: collapse; font-family: Arial, Helvetica, sans-serif; font-size: 0.98rem; line-height: 1.35; }
+    th, td { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 10px; text-align: left; vertical-align: middle; }
+    th:last-child, td:last-child { border-right: 0; }
+    tr:last-child td, tr:last-child th { border-bottom: 0; }
+    thead th { background: var(--accent-dark); color: #fff; font-weight: 800; }
+    tbody th { background: #faf6ed; font-weight: 800; }
+    .example-row td, .example-row th { background: var(--soft-gold); font-style: italic; }
+    .word-cell { width: 26%; font-style: italic; font-weight: 800; }
+    input[type="text"], textarea {
+      width: 100%;
+      border: 1px solid #cfc6b6;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      padding: 8px 10px;
+    }
+    input[type="text"] { min-height: 38px; }
+    textarea { min-height: 96px; resize: vertical; }
+    .large-textarea { min-height: 150px; }
+    .note {
+      margin: 16px 0 0;
+      border-left: 5px solid var(--sage);
+      padding: 12px 14px;
+      background: #f5f8f6;
+      color: #37463d;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+    }
+    .export-status {
+      width: 100%;
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.92rem;
+    }
+    .export-status:empty { display: none; }
+    .print-only { display: none; }
+    @media (max-width: 760px) {
+      header { grid-template-columns: 1fr; }
+      .actions { justify-content: flex-start; }
+      .page { width: calc(100% - 24px); }
+    }
+    @media print {
+      body { background: #fff; font-size: 11pt; }
+      .page { width: 100%; max-width: none; padding: 0; }
+      header, section { box-shadow: none; }
+      .actions, .note { display: none; }
+      .print-only { display: block; }
+      input[type="text"], textarea { border: 0; border-bottom: 1px solid #777; border-radius: 0; padding: 2px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <p class="kicker">Latin Textbook</p>
+        <h1>Chapter 5 Exercises</h1>
+        <p class="subtitle">Fill in your answers below. Your work is saved in this browser, and the Export Answers as PDF button will open your print dialog.</p>
+        <p class="print-only">Name: ________________________________ Date: ____________________</p>
+      </div>
+      <div class="actions">
+        <a class="button secondary" href="chapter-5.html">Back to Chapter</a>
+        <button class="button" type="button" id="printButton">Export Answers as PDF</button>
+        <p class="export-status" id="exportStatus" role="status" aria-live="polite"></p>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <h2>5.1</h2>
+        <p>For each given noun, fill in the missing form.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Nominative Singular</th><th>Dative Singular</th><th>Dative Plural</th></tr></thead>
+            <tbody>
+              <tr><th class="word-cell">aqua</th><td><input type="text" name="aqua-dative-singular"></td><td><input type="text" name="aqua-dative-plural"></td></tr>
+              <tr><td><input type="text" name="antro-nominative-singular"></td><td>antro</td><td><input type="text" name="antro-dative-plural"></td></tr>
+              <tr><td><input type="text" name="legatis-nominative-singular"></td><td><input type="text" name="legatis-dative-singular"></td><td>legatis</td></tr>
+              <tr><th class="word-cell">puer</th><td><input type="text" name="puer-dative-singular"></td><td><input type="text" name="puer-dative-plural"></td></tr>
+              <tr><td><input type="text" name="regno-nominative-singular"></td><td>regno</td><td><input type="text" name="regno-dative-plural"></td></tr>
+              <tr><td><input type="text" name="caelis-nominative-singular"></td><td><input type="text" name="caelis-dative-singular"></td><td>caelis</td></tr>
+              <tr><th class="word-cell">unda</th><td><input type="text" name="unda-dative-singular"></td><td><input type="text" name="unda-dative-plural"></td></tr>
+              <tr><td><input type="text" name="curae-nominative-singular"></td><td>curae</td><td><input type="text" name="curae-dative-plural"></td></tr>
+              <tr><td><input type="text" name="silvis-nominative-singular"></td><td><input type="text" name="silvis-dative-singular"></td><td>silvis</td></tr>
+              <tr><th class="word-cell">deus</th><td><input type="text" name="deus-dative-singular"></td><td><input type="text" name="deus-dative-plural"></td></tr>
+              <tr><td><input type="text" name="telo-nominative-singular"></td><td>telo</td><td><input type="text" name="telo-dative-plural"></td></tr>
+              <tr><td><input type="text" name="viis-nominative-singular"></td><td><input type="text" name="viis-dative-singular"></td><td>viis</td></tr>
+              <tr><th class="word-cell">puella</th><td><input type="text" name="puella-dative-singular"></td><td><input type="text" name="puella-dative-plural"></td></tr>
+              <tr><td><input type="text" name="gladio-nominative-singular"></td><td>gladio</td><td><input type="text" name="gladio-dative-plural"></td></tr>
+              <tr><td><input type="text" name="legatis-2-nominative-singular"></td><td><input type="text" name="legatis-2-dative-singular"></td><td>legatis</td></tr>
+              <tr><th class="word-cell">periculum</th><td><input type="text" name="periculum-dative-singular"></td><td><input type="text" name="periculum-dative-plural"></td></tr>
+              <tr><td><input type="text" name="undae-nominative-singular"></td><td>undae</td><td><input type="text" name="undae-dative-plural"></td></tr>
+              <tr><td><input type="text" name="curis-nominative-singular"></td><td><input type="text" name="curis-dative-singular"></td><td>curis</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>5.2</h2>
+        <p>Expand each sentence with two adjectives of your choosing. One adjective should describe the subject and one should describe another noun in the sentence. Finally translate your expanded sentence.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Short Sentence</th><th>Expanded Sentence</th><th>Translation</th></tr></thead>
+            <tbody>
+              <tr><th>Nauta puerum amat. PPAIN (poeta, pirata, agricola, incola, nauta)</th><td><textarea name="expand-nauta"></textarea></td><td><textarea name="translate-nauta"></textarea></td></tr>
+              <tr><th>Vir in via ambulat. Magnus, a, um ---- rectus, a, um</th><td><textarea name="expand-vir"></textarea></td><td><textarea name="translate-vir"></textarea></td></tr>
+              <tr><th>Luna in caelo est. candidus, a, um ---- veridus, a, um</th><td><textarea name="expand-luna"></textarea></td><td><textarea name="translate-luna"></textarea></td></tr>
+              <tr><th><textarea name="short-original-1" placeholder="Short"></textarea></th><td><textarea name="expand-original-1"></textarea></td><td><textarea name="translate-original-1"></textarea></td></tr>
+              <tr><th>Servus puero telum dat. Athleticus, a, um ----- acutus, a, um</th><td><textarea name="expand-servus"></textarea></td><td><textarea name="translate-servus"></textarea></td></tr>
+              <tr><th>Puer legatos in antrum mittit.</th><td><textarea name="expand-puer"></textarea></td><td><textarea name="translate-puer"></textarea></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>5.3</h2>
+        <p>Decline each noun in full and give the form of the given adjective that matches.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Case</th><th>Vir, viri m</th><th>Bonus, a, um</th><th></th><th>Nauta, ae m</th><th>Malus, a, um</th></tr></thead>
+            <tbody>
+              <tr><th>Nom</th><td><input type="text" name="vir-singular-nom"></td><td><input type="text" name="bonus-singular-nom"></td><td></td><td><input type="text" name="nauta-singular-nom"></td><td><input type="text" name="malus-singular-nom"></td></tr>
+              <tr><th>Gen</th><td><input type="text" name="vir-singular-gen"></td><td><input type="text" name="bonus-singular-gen"></td><td></td><td><input type="text" name="nauta-singular-gen"></td><td><input type="text" name="malus-singular-gen"></td></tr>
+              <tr><th>Dat</th><td><input type="text" name="vir-singular-dat"></td><td><input type="text" name="bonus-singular-dat"></td><td></td><td><input type="text" name="nauta-singular-dat"></td><td><input type="text" name="malus-singular-dat"></td></tr>
+              <tr><th>Acc</th><td><input type="text" name="vir-singular-acc"></td><td><input type="text" name="bonus-singular-acc"></td><td></td><td><input type="text" name="nauta-singular-acc"></td><td><input type="text" name="malus-singular-acc"></td></tr>
+              <tr><th>Abl</th><td><input type="text" name="vir-singular-abl"></td><td><input type="text" name="bonus-singular-abl"></td><td></td><td><input type="text" name="nauta-singular-abl"></td><td><input type="text" name="malus-singular-abl"></td></tr>
+              <tr class="example-row"><th colspan="6">Plural</th></tr>
+              <tr><th>Nom</th><td><input type="text" name="vir-plural-nom"></td><td><input type="text" name="bonus-plural-nom"></td><td></td><td><input type="text" name="nauta-plural-nom"></td><td><input type="text" name="malus-plural-nom"></td></tr>
+              <tr><th>Gen</th><td><input type="text" name="vir-plural-gen"></td><td><input type="text" name="bonus-plural-gen"></td><td></td><td><input type="text" name="nauta-plural-gen"></td><td><input type="text" name="malus-plural-gen"></td></tr>
+              <tr><th>Dat</th><td><input type="text" name="vir-plural-dat"></td><td><input type="text" name="bonus-plural-dat"></td><td></td><td><input type="text" name="nauta-plural-dat"></td><td><input type="text" name="malus-plural-dat"></td></tr>
+              <tr><th>Acc</th><td><input type="text" name="vir-plural-acc"></td><td><input type="text" name="bonus-plural-acc"></td><td></td><td><input type="text" name="nauta-plural-acc"></td><td><input type="text" name="malus-plural-acc"></td></tr>
+              <tr><th>Abl</th><td><input type="text" name="vir-plural-abl"></td><td><input type="text" name="bonus-plural-abl"></td><td></td><td><input type="text" name="nauta-plural-abl"></td><td><input type="text" name="malus-plural-abl"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>5.4</h2>
+        <p>Compose four original sentences. Each must be at least 4 words long. In total (not each sentence) there must be at least 1 instance of each noun case, 4 adjectives, both singular and plurals, and at least two different verb persons.</p>
+        <textarea class="large-textarea" name="original-sentence-1"></textarea>
+        <textarea class="large-textarea" name="original-sentence-2"></textarea>
+        <textarea class="large-textarea" name="original-sentence-3"></textarea>
+        <textarea class="large-textarea" name="original-sentence-4"></textarea>
+      </section>
+    </main>
+
+    <p class="note">Answers are stored only in this browser on this computer. Use Export Answers as PDF when you are ready to save or print your work.</p>
+  </div>
+
+  <script>
+    const storageKey = "chapter-5-exercises-answers";
+    const fields = Array.from(document.querySelectorAll("input, textarea"));
+
+    function loadAnswers() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
+        fields.forEach((field) => {
+          if (!field.name || !(field.name in saved)) return;
+          if (field.type === "checkbox") {
+            field.checked = Boolean(saved[field.name]);
+          } else {
+            field.value = saved[field.name];
+          }
+        });
+      } catch (error) {
+        localStorage.removeItem(storageKey);
+      }
+    }
+
+    function saveAnswers() {
+      const data = {};
+      fields.forEach((field) => {
+        if (!field.name) return;
+        data[field.name] = field.type === "checkbox" ? field.checked : field.value;
+      });
+      localStorage.setItem(storageKey, JSON.stringify(data));
+    }
+
+    fields.forEach((field) => {
+      field.addEventListener("input", saveAnswers);
+      field.addEventListener("change", saveAnswers);
+    });
+
+    const printButton = document.getElementById("printButton");
+    const exportStatus = document.getElementById("exportStatus");
+    let printStarted = false;
+
+    window.addEventListener("beforeprint", () => {
+      printStarted = true;
+      exportStatus.textContent = "Print dialog opened. Choose Save as PDF as the destination.";
+    });
+
+    window.addEventListener("afterprint", () => {
+      exportStatus.textContent = "Done. Your answers are still saved in this browser.";
+    });
+
+    printButton.addEventListener("click", () => {
+      saveAnswers();
+      printStarted = false;
+      exportStatus.textContent = "Opening the print dialog...";
+      window.focus();
+      setTimeout(() => {
+        window.print();
+        setTimeout(() => {
+          if (!printStarted) {
+            exportStatus.textContent = "If no print dialog opened, use Command+P or your browser's Print command, then choose Save as PDF.";
+          }
+        }, 800);
+      }, 50);
+    });
+
+    loadAnswers();
+  </script>
+</body>
+</html>

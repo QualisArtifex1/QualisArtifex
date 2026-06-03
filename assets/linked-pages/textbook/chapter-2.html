@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chapter 2 | Latin Textbook</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #20201d;
+      --muted: #635f57;
+      --paper: #fffdf8;
+      --panel: #ffffff;
+      --line: #ddd6c8;
+      --accent: #8f2f2f;
+      --accent-dark: #6f2222;
+      --gold: #bf8f35;
+      --sage: #566f60;
+      --blue: #295f86;
+      --soft-red: #f8eded;
+      --soft-gold: #fbf4e5;
+      --shadow: 0 20px 50px rgba(55, 43, 28, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(255, 253, 248, 0.92), rgba(255, 253, 248, 0.98)),
+        repeating-linear-gradient(90deg, rgba(191, 143, 53, 0.05) 0 1px, transparent 1px 34px);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 18px;
+      line-height: 1.65;
+    }
+
+    a {
+      color: var(--blue);
+      font-weight: 700;
+      text-underline-offset: 0.18em;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .page {
+      width: calc(100% - 32px);
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 32px 0 64px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.75fr);
+      gap: 28px;
+      align-items: stretch;
+      min-height: 430px;
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 28px;
+    }
+
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+      padding: 28px 0;
+    }
+
+    .kicker {
+      margin: 0 0 10px;
+      color: var(--accent-dark);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: "Trebuchet MS", Arial, sans-serif;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      margin: 0;
+      color: #181715;
+      font-size: clamp(3rem, 10vw, 6.5rem);
+    }
+
+    .subtitle {
+      max-width: 650px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 1.2rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 9px 15px;
+      background: var(--accent);
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .button.secondary {
+      background: transparent;
+      color: var(--accent-dark);
+    }
+
+    .hero-image {
+      min-width: 0;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #161719;
+    }
+
+    .hero-image img {
+      width: 100%;
+      height: 100%;
+      min-height: 430px;
+      object-fit: cover;
+      object-position: center top;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .toc {
+      position: sticky;
+      top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .toc h2 {
+      margin: 0 0 12px;
+      font-size: 1rem;
+    }
+
+    .toc ol {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+    }
+
+    .toc a {
+      color: var(--ink);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    main {
+      min-width: 0;
+    }
+
+    section {
+      padding: 34px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    section:first-child {
+      padding-top: 0;
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      color: var(--accent-dark);
+      font-size: clamp(2rem, 6vw, 3.2rem);
+    }
+
+    h3 {
+      margin: 26px 0 10px;
+      color: #312c25;
+      font-size: 1.35rem;
+    }
+
+    p {
+      margin: 0 0 18px;
+    }
+
+    .sentence-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font-size: 1.2rem;
+    }
+
+    .sentence-list li,
+    .callout,
+    .example {
+      border-left: 5px solid var(--gold);
+      background: #fff;
+      box-shadow: var(--shadow);
+      padding: 14px 16px;
+    }
+
+    .topic-grid,
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 18px 0 0;
+    }
+
+    .topic,
+    .info-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.86);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .topic strong,
+    .info-card strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--accent-dark);
+    }
+
+    figure.content-image {
+      margin: 24px 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    figure.content-image img {
+      width: 100%;
+      max-height: 420px;
+      object-fit: contain;
+      background: #f6f0e6;
+    }
+
+    figcaption {
+      padding: 10px 14px;
+      color: var(--muted);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.9rem;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      margin: 20px 0;
+    }
+
+    table {
+      width: 100%;
+      min-width: 660px;
+      border-collapse: collapse;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.98rem;
+      line-height: 1.35;
+    }
+
+    th,
+    td {
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 10px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th:last-child,
+    td:last-child {
+      border-right: 0;
+    }
+
+    tr:last-child td,
+    tr:last-child th {
+      border-bottom: 0;
+    }
+
+    thead th {
+      background: var(--accent-dark);
+      color: #fff;
+      font-weight: 800;
+    }
+
+    tbody th {
+      background: #faf6ed;
+      font-weight: 800;
+    }
+
+    .noun-ending {
+      color: var(--accent);
+      font-weight: 900;
+    }
+
+    .acc-ending {
+      color: var(--blue);
+      font-weight: 900;
+    }
+
+    .highlight {
+      background: var(--soft-gold);
+      font-weight: 800;
+    }
+
+    .latin {
+      font-style: italic;
+      font-weight: 800;
+    }
+
+    .vocab-table td:first-child {
+      width: 58%;
+      font-style: italic;
+      font-weight: 800;
+    }
+
+    .small-image-row {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 18px;
+      align-items: center;
+      margin: 20px 0;
+    }
+
+    .small-image-row img {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    @media (max-width: 880px) {
+      .hero,
+      .layout,
+      .small-image-row {
+        grid-template-columns: 1fr;
+      }
+
+      .toc {
+        position: static;
+      }
+
+      .hero-image img {
+        min-height: 360px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        font-size: 16px;
+      }
+
+      .page {
+        width: calc(100% - 24px);
+        padding-top: 20px;
+      }
+
+      .topic-grid,
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        min-width: 620px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Latin Textbook</p>
+        <h1>Chapter 2</h1>
+        <p class="subtitle">Transitive and intransitive sentences, the accusative case, present-tense verb person, and a new vocabulary list.</p>
+        <div class="hero-actions">
+          <a class="button" href="https://docs.google.com/forms/d/e/1FAIpQLSdEyBNd_dlLr8EJeQi8ovN9xDMfKaU6fzamcoK9bkGiL9g7Mw/viewform?usp=sf_link">Module</a>
+          <a class="button secondary" href="#vocabulary">Vocabulary</a>
+          <a class="button secondary" id="exercisesLink" href="chapter-2-exercises.html" target="_blank" rel="noopener">Exercises</a>
+        </div>
+      </div>
+      <figure class="hero-image">
+        <img src="chapter-2-image-1.png" alt="A bust of Caesar">
+      </figure>
+    </header>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Chapter sections">
+        <h2>On This Page</h2>
+        <ol>
+          <li><a href="#basic-sentences">Basic Sentences</a></li>
+          <li><a href="#topics">Topics this Chapter</a></li>
+          <li><a href="#transitive">Transitive VS Intransitive</a></li>
+          <li><a href="#accusative">The Accusative Case</a></li>
+          <li><a href="#duration">Extent of Space and Duration</a></li>
+          <li><a href="#person">Person in the Present Tense</a></li>
+          <li><a href="#sum-esse">SUM, ESSE (IRREGULAR)</a></li>
+          <li><a href="#vocabulary">Vocabulary</a></li>
+        </ol>
+      </nav>
+
+      <main>
+        <section id="basic-sentences">
+          <h2>Basic Sentences</h2>
+          <ul class="sentence-list">
+            <li><span class="latin">2.1 Caesar exercitum habet.</span></li>
+            <li><span class="latin">2.2 Ambulamus.</span></li>
+            <li><span class="latin">2.3 Punica regna vides.</span> (Punica = <a href="https://en.wikipedia.org/wiki/Ancient_Carthage">Punic/Carthaginian</a>) (Aeneid Book I)</li>
+            <li><span class="latin">2.4 Vivunt multos annos.</span></li>
+          </ul>
+        </section>
+
+        <section id="topics">
+          <h2>Topics this Chapter</h2>
+          <div class="topic-grid">
+            <div class="topic"><strong>1. Transitive VS Intransitive Sentences</strong></div>
+            <div class="topic"><strong>2. The Accusative Case</strong></div>
+            <div class="topic"><strong>3. Verb Person in the Present Tense</strong><span>SUM, ESSE (IRREGULAR)</span></div>
+            <div class="topic"><strong>4. Vocabulary</strong></div>
+          </div>
+        </section>
+
+        <section id="transitive">
+          <h2>Transitive VS Intransitive</h2>
+          <p>Transitive verbs require a direct object. For example, &ldquo;cut&rdquo; is a transitive verb and &ldquo;the rope&rdquo; is the object in the sentence &ldquo;He cut the rope&rdquo;. It doesn't make much sense to have cut without an object. &ldquo;He cut...&rdquo; is incomplete.</p>
+          <p>The tip for remembering the name is to think of transitive verbs as transferring their action to the object. Transitive and transfer both start with the prefix trans-, which means &ldquo;across&rdquo;.</p>
+
+          <div class="card-grid">
+            <div class="info-card">
+              <strong>Examples of Transitive Verbs</strong>
+              <p>They shot the basketball.</p>
+              <p>The man loves candy.</p>
+              <p>I hate broccoli.</p>
+              <p>She carried her homework.</p>
+            </div>
+            <div class="info-card">
+              <strong>Examples of Intransitive Verbs</strong>
+              <p>Intransitive verbs don't take an object. Here are some examples of intransitive verbs:</p>
+              <p>He walked.</p>
+              <p>I laughed.</p>
+              <p>The cat meowed.</p>
+              <p>Mr. Cornish winked.</p>
+            </div>
+          </div>
+
+          <p>There is an amazing video that does a great job explaining this another way as well. <a href="https://youtu.be/gox0p-gRXBw">Click here to watch it.</a></p>
+        </section>
+
+        <section id="accusative">
+          <h2>The Accusative Case</h2>
+          <p>The accusative case is used for the direct object of transitive verbs and to show extent or duration. It will be used in other ways, too, that we will learn in future chapters. In the masculine and feminine singular it always ends in -m (just like with the English words whom and him); in the masculine and feminine plural, it always ends in -s; and in the neuter plural, it always ends in -a. In English we do not have an accusative case; instead, we call it the objective case. Below you will see a familiar chart from Chapter 1. This chart will continue to show up and you would be wise to commit its content to heart. You'll notice that the accusative endings are now filled in and that I have color-coded them BLUE.</p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Feminine</th>
+                  <th>Masculine</th>
+                  <th>Neuter</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th>Singular</th>
+                  <td>1st Declension</td>
+                  <td>2nd Declension</td>
+                  <td>2nd Declension (n)</td>
+                </tr>
+                <tr>
+                  <th>Nominative</th>
+                  <td><span class="noun-ending">-a</span></td>
+                  <td><span class="noun-ending">-us/r</span></td>
+                  <td><span class="noun-ending">-um</span></td>
+                </tr>
+                <tr>
+                  <th>Genitive</th>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th>Dative</th>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th>Accusative</th>
+                  <td><span class="acc-ending">-am</span></td>
+                  <td><span class="acc-ending">-um</span></td>
+                  <td><span class="acc-ending">-um</span></td>
+                </tr>
+                <tr>
+                  <th>Ablative</th>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th>Plural</th>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th>Nominative</th>
+                  <td><span class="noun-ending">-ae</span></td>
+                  <td><span class="noun-ending">-i</span></td>
+                  <td><span class="noun-ending">-a</span></td>
+                </tr>
+                <tr>
+                  <th>Genitive</th>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th>Dative</th>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th>Accusative</th>
+                  <td><span class="acc-ending">-as</span></td>
+                  <td><span class="acc-ending">-os</span></td>
+                  <td><span class="acc-ending">-a</span></td>
+                </tr>
+                <tr>
+                  <th>Ablative</th>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p>Let's take a look at some of the Basic Sentences to see the accusative case in use.</p>
+          <p class="example"><span class="latin">2.1 Caesar exercitum habet.</span></p>
+          <p>In this sentence you can see that Caesar is the subject because his name is in the nominative case, which we learned about last chapter. The word exercitum is in the accusative case and is therefore the direct object. Then you are left with the verb at the end. This should unsettle you a bit, because you might notice in the chart above that the ending &ldquo;um&rdquo; could also be nominative! Unfortunately in Latin there will be times when a word has an ending that is ambiguous. In this example we can determine that exercitum is not nominative because the word Caesar can ONLY be nominative, which means that exercitum must be accusative. Now, you might also notice that the word order of this sentence is different from the way we would say it in Latin. The translation of this sentence is:</p>
+          <p class="example"><span class="latin">2.1 Caesar has an army.</span></p>
+          <p>So, what you are going to need to do is as you read from left to right in a Latin sentence, you can begin to fill in the pieces of the English sentence one word at a time. Just remember that the word order in Latin is not fixed the way it is in English!</p>
+        </section>
+
+        <section id="duration">
+          <h2>Extent of Space and Duration</h2>
+          <div class="small-image-row">
+            <img src="chapter-2-image-2.png" alt="A road sign that says 1000 miles">
+            <div>
+              <p>In addition to being the direct object in a transitive sentence, the accusative case can be used to show how long something took place or how far in distance something is. These uses are usually coupled with an INTRANSITIVE verb and should not be confused with a direct object. Basic Sentence 2.4 shows this very well.</p>
+              <p class="example"><span class="latin">2.4 Vivunt multos annos</span></p>
+            </div>
+          </div>
+          <p>The verb &ldquo;vivunt&rdquo; means &ldquo;They live&rdquo; which is an intransitive verb. But wait! Why is there an accusative there then?! It is because here it is showing us how long they lived.</p>
+          <p class="example"><span class="latin">2.4 They live for many years.</span></p>
+          <p>This would also work for distance if I wanted to say something like this: They traveled for many miles. &ldquo;For many miles&rdquo; would be expressed in Latin with the accusative case.</p>
+        </section>
+
+        <section id="person">
+          <h2>Person in the Present Tense</h2>
+          <div class="small-image-row">
+            <img src="chapter-2-image-3.png" alt="Simple present tense graphic">
+            <p>Let me start by referencing a video (by the same YouTube user I frequently recommend). <a href="https://youtu.be/VTl7H0WFwbE">Watch it here.</a></p>
+          </div>
+          <p>Every verb in Latin, as well as in English, has a person (1st, 2nd, and 3rd) and a number (singular and plural).</p>
+
+          <div class="card-grid">
+            <div class="info-card"><strong>1st person</strong>1st person can best be described as when the subject is closest to the speaker or doer of the action. These instances would be when I (1st person singular) or we (1st person plural) are the subjects of a verb</div>
+            <div class="info-card"><strong>2nd person</strong>2nd person is when the subject is you, the person right next to the speaker. 2nd person plural is when the subject is you all (y'all).</div>
+            <div class="info-card"><strong>3rd person</strong>Lastly, 3rd person is when the subject has moved even farther away from the speaker, so the subject is he/she/it in the singular or they in 3rd person plural.</div>
+          </div>
+
+          <p>In Latin the person and number of a verb is known just like how we identify noun case...by the ending of the word.</p>
+          <p>Take a look at these charts. The first one shows JUST the endings that will be at the end of a Latin verb. The second shows the English pronouns that are equivalent to each Latin ending. The third shows an actual Latin verb with an English translation and I have highlighted how the Latin ending and the English subject correspond to one another.</p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Latin</th><th>singular</th><th>plural</th></tr>
+              </thead>
+              <tbody>
+                <tr><th>1st person</th><td><span class="acc-ending">-o (sometimes m)</span></td><td><span class="acc-ending">-mus</span></td></tr>
+                <tr><th>2nd person</th><td><span class="acc-ending">-s</span></td><td><span class="acc-ending">-tis</span></td></tr>
+                <tr><th>3rd person</th><td><span class="acc-ending">-t</span></td><td><span class="acc-ending">-nt</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>English</th><th>singular</th><th>plural</th></tr>
+              </thead>
+              <tbody>
+                <tr><th>1st person</th><td>I</td><td>we</td></tr>
+                <tr><th>2nd person</th><td>you</td><td>you all</td></tr>
+                <tr><th>3rd person</th><td>he/she/it</td><td>they</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Both</th><th>singular</th><th>plural</th></tr>
+              </thead>
+              <tbody>
+                <tr><th>1st person</th><td><span class="latin">Vide<span class="highlight">o</span></span> &nbsp; I see</td><td><span class="latin">Vide<span class="highlight">mus</span></span> &nbsp; We see</td></tr>
+                <tr><th>2nd person</th><td><span class="latin">Vide<span class="highlight">s</span></span> &nbsp; You see</td><td><span class="latin">Vide<span class="highlight">tis</span></span> &nbsp; You all see</td></tr>
+                <tr><th>3rd person</th><td><span class="latin">Vide<span class="highlight">t</span></span> &nbsp; He sees</td><td><span class="latin">Vide<span class="highlight">nt</span></span> &nbsp; They see</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p>Now, all verbs are different, so how do you actually go about adding these new endings to a verb?! 1st person singular is easy. The 1st principal part of a dictionary entry for a verb IS the 1st person singular &ldquo;I am&rdquo; form. The last 5 forms you will need to find the stem of the verb in order to add on the endings. To find the stem, take the second principal part and chop off the &ldquo;-re&rdquo;. That's it! So, for a verb like &ldquo;do, dare, dedi, datum&rdquo; the way to say &ldquo;I give&rdquo; is just the first principal part &ldquo;do&rdquo;.</p>
+          <p class="example"><span class="latin">Do = I give.</span></p>
+          <p>If you want to say &ldquo;we give&rdquo; you are going to have to add the 1st person plural ending &ldquo;-mus&rdquo; to the stem of the verb which is &ldquo;da&rdquo;.</p>
+          <p class="example"><span class="latin">Da + mus = damus = we give.</span></p>
+          <p>Now the whole world of verbs is open to you! The only caveat you need to know is that these rules only apply to verbs in the present tense. English has many ways to express things in the present tense. I can say &ldquo;I give&rdquo;. I can also say &ldquo;I do give&rdquo; or &ldquo;I am giving&rdquo;. What you have just learned in this section will cover ALL of those instances in Latin. So...</p>
+          <p class="example"><span class="latin">Dant = they give/they do give/they are giving.</span></p>
+          <p>Use whichever interpretation fits best in context.</p>
+        </section>
+
+        <section id="sum-esse">
+          <h2>SUM, ESSE (IRREGULAR)</h2>
+          <p>One very last thing...I promise. Every time you learn something new about verbs you are likely going to have to learn a separate rule for the verb &ldquo;to be&rdquo; because the verb is irregular in Latin like it is in many languages. Think about it in English. &ldquo;I am&rdquo; becomes &ldquo;you are&rdquo; which becomes &ldquo;it is&rdquo;. You have seen this verb already in chapter 1 and have seen two out of its six forms. So, here it is. Remember them well.</p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Sum, esse, fui, futurum</th><th>singular</th><th>plural</th></tr>
+              </thead>
+              <tbody>
+                <tr><th>1st person</th><td class="latin">sum</td><td class="latin">sumus</td></tr>
+                <tr><th>2nd person</th><td class="latin">es</td><td class="latin">estis</td></tr>
+                <tr><th>3rd person</th><td class="latin">est</td><td class="latin">sunt</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p>There is a great explanation as to why these forms are irregular <a href="https://youtu.be/6fP-jHYayk0">here.</a></p>
+        </section>
+
+        <section id="vocabulary">
+          <h2>Vocabulary</h2>
+          <p><a href="https://quizlet.com/_2expp2">Flash Cards</a></p>
+          <div class="table-wrap">
+            <table class="vocab-table">
+              <thead>
+                <tr><th>Word</th><th>Definition</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Amo, amare, amavi, amatum</td><td>To love</td></tr>
+                <tr><td>Paro, parare, paravi, paratum</td><td>To prepare</td></tr>
+                <tr><td>Do, dare, dedi, datum</td><td>To give</td></tr>
+                <tr><td>Specto, spectare, spectavi, spectatum</td><td>To watch</td></tr>
+                <tr><td>Video, videre, vidi, visum</td><td>To see</td></tr>
+                <tr><td>Habeo, habere, habui, habitum</td><td>To have</td></tr>
+                <tr><td>Maneo, manere, mansi, mansum</td><td>To remain</td></tr>
+                <tr><td>Ambulo, ambulare, ambulavi, ambulatum</td><td>To walk</td></tr>
+                <tr><td>Via, ae f</td><td>road/way</td></tr>
+                <tr><td>Verbum, i n</td><td>word</td></tr>
+                <tr><td>Oculus, i m</td><td>eye</td></tr>
+                <tr><td>Annus, i m</td><td>year</td></tr>
+                <tr><td>Ager, agri m</td><td>field</td></tr>
+                <tr><td>Imperium, i n</td><td>power</td></tr>
+                <tr><td>Exercitum, i n</td><td>army</td></tr>
+                <tr><td>iam</td><td>Now, already</td></tr>
+                <tr><td>Semper</td><td>always</td></tr>
+                <tr><td>non</td><td>not</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("exercisesLink").addEventListener("click", (event) => {
+      event.preventDefault();
+      const exercisesUrl = new URL("chapter-2-exercises.html", window.location.href).href;
+      const opened = window.open(exercisesUrl, "_blank", "noopener");
+      if (!opened) {
+        window.location.href = exercisesUrl;
+      }
+    });
+  </script>
+</body>
+</html>

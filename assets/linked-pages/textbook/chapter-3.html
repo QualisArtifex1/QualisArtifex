@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chapter 3 | Latin Textbook</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #20201d;
+      --muted: #635f57;
+      --paper: #fffdf8;
+      --line: #ddd6c8;
+      --accent: #8f2f2f;
+      --accent-dark: #6f2222;
+      --gold: #bf8f35;
+      --sage: #566f60;
+      --blue: #295f86;
+      --pink: #b33b72;
+      --soft-gold: #fbf4e5;
+      --shadow: 0 20px 50px rgba(55, 43, 28, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(255, 253, 248, 0.92), rgba(255, 253, 248, 0.98)),
+        repeating-linear-gradient(90deg, rgba(191, 143, 53, 0.05) 0 1px, transparent 1px 34px);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 18px;
+      line-height: 1.65;
+    }
+    a { color: var(--blue); font-weight: 700; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; height: auto; }
+    .page { width: calc(100% - 32px); max-width: 1120px; margin: 0 auto; padding: 32px 0 64px; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(300px, 1.1fr);
+      gap: 28px;
+      align-items: stretch;
+      min-height: 430px;
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 28px;
+    }
+    .hero-copy { display: flex; flex-direction: column; justify-content: center; min-width: 0; padding: 28px 0; }
+    .kicker {
+      margin: 0 0 10px;
+      color: var(--accent-dark);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3 { font-family: "Trebuchet MS", Arial, sans-serif; line-height: 1.12; letter-spacing: 0; }
+    h1 { margin: 0; color: #181715; font-size: clamp(3rem, 10vw, 6.5rem); }
+    .subtitle { max-width: 650px; margin: 18px 0 0; color: var(--muted); font-size: 1.2rem; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 9px 15px;
+      background: var(--accent);
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .button.secondary { background: transparent; color: var(--accent-dark); }
+    .hero-image { min-width: 0; overflow: hidden; border-radius: 8px; background: #181715; }
+    .hero-image img { width: 100%; height: 100%; min-height: 430px; object-fit: cover; object-position: center; }
+    .layout { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 28px; align-items: start; }
+    .toc {
+      position: sticky;
+      top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .toc h2 { margin: 0 0 12px; font-size: 1rem; }
+    .toc ol { display: grid; gap: 8px; margin: 0; padding-left: 20px; color: var(--muted); }
+    .toc a { color: var(--ink); font-weight: 700; text-decoration: none; }
+    main { min-width: 0; }
+    section { padding: 34px 0; border-bottom: 1px solid var(--line); }
+    section:first-child { padding-top: 0; }
+    h2 { margin: 0 0 18px; color: var(--accent-dark); font-size: clamp(2rem, 6vw, 3.2rem); }
+    h3 { margin: 26px 0 10px; color: #312c25; font-size: 1.35rem; }
+    p { margin: 0 0 18px; }
+    .sentence-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; font-size: 1.1rem; }
+    .sentence-list li, .callout, .example {
+      border-left: 5px solid var(--gold);
+      background: #fff;
+      box-shadow: var(--shadow);
+      padding: 14px 16px;
+    }
+    .note { color: var(--muted); font-style: italic; }
+    .topic-grid, .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 18px 0 0;
+    }
+    .topic, .info-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.86);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .topic strong, .info-card strong { display: block; margin-bottom: 8px; color: var(--accent-dark); }
+    figure.content-image {
+      margin: 24px 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+    figure.content-image img { width: 100%; background: #f6f0e6; }
+    figcaption { padding: 10px 14px; color: var(--muted); font-family: Arial, Helvetica, sans-serif; font-size: 0.9rem; }
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      margin: 20px 0;
+    }
+    table { width: 100%; min-width: 660px; border-collapse: collapse; font-family: Arial, Helvetica, sans-serif; font-size: 0.98rem; line-height: 1.35; }
+    th, td { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 10px; text-align: left; vertical-align: middle; }
+    th:last-child, td:last-child { border-right: 0; }
+    tr:last-child td, tr:last-child th { border-bottom: 0; }
+    thead th { background: var(--accent-dark); color: #fff; font-weight: 800; }
+    tbody th { background: #faf6ed; font-weight: 800; }
+    .noun-ending { color: var(--accent); font-weight: 900; }
+    .acc-ending { color: var(--blue); font-weight: 900; }
+    .abl-ending { color: var(--pink); font-weight: 900; }
+    .latin { font-style: italic; font-weight: 800; }
+    .vocab-table td:first-child { width: 58%; font-style: italic; font-weight: 800; }
+    .mini-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    @media (max-width: 880px) {
+      .hero, .layout, .mini-grid { grid-template-columns: 1fr; }
+      .toc { position: static; }
+      .hero-image img { min-height: 320px; }
+    }
+    @media (max-width: 640px) {
+      body { font-size: 16px; }
+      .page { width: calc(100% - 24px); padding-top: 20px; }
+      .topic-grid, .card-grid { grid-template-columns: 1fr; }
+      table { min-width: 620px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Latin Textbook</p>
+        <h1>Chapter 3</h1>
+        <p class="subtitle">The ablative case, prepositional phrases, N.I.A.W.O.Ps, and the difference between 1st and 2nd conjugation verbs.</p>
+        <div class="hero-actions">
+          <a class="button" href="https://docs.google.com/forms/d/e/1FAIpQLSeuMb9RewelfCsDuPKjgQQYc8snWXTryREbuI70IWn43cesOg/viewform?usp=sf_link">Module</a>
+          <a class="button secondary" href="#vocabulary">Vocabulary</a>
+          <a class="button secondary" id="exercisesLink" href="chapter-3-exercises.html" target="_blank" rel="noopener">Exercises</a>
+        </div>
+      </div>
+      <figure class="hero-image">
+        <img src="chapter-3-image-1.png" alt="Charon, the ferryman of the River Styx, with amictus labeled">
+      </figure>
+    </header>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Chapter sections">
+        <h2>On This Page</h2>
+        <ol>
+          <li><a href="#basic-sentences">Basic Sentences</a></li>
+          <li><a href="#topics">Topics this Chapter</a></li>
+          <li><a href="#ablative">The Ablative Case</a></li>
+          <li><a href="#prepositional">Prepositional Phrases</a></li>
+          <li><a href="#niawops">N.I.A.W.O.Ps</a></li>
+          <li><a href="#conjugations">Verb Conjugations 1 and 2</a></li>
+          <li><a href="#vocabulary">Vocabulary</a></li>
+        </ol>
+      </nav>
+
+      <main>
+        <section id="basic-sentences">
+          <h2>Basic Sentences</h2>
+          <ul class="sentence-list">
+            <li><span class="latin">3.1 Gallos ab Aquitanis Garumna flumen dividit.</span> (Caesar 1.1 DBG)<br><span class="note">Flumen is a form you don't know yet. It is nominative.</span></li>
+            <li><span class="latin">3.2 Sordidus ex umeris nodo dependet amictus.</span> (Aeneid 6.301)<br><span class="note">Amictus is nominative and is in 4th declension which you will learn later. This sentence is describing how Charon looks to Aeneas in the underworld.</span></li>
+          </ul>
+          <figure class="content-image">
+            <img src="chapter-3-image-1.png" alt="Charon, the ferryman of the River Styx">
+            <figcaption>This is an image of Charon, the ferryman of the River Styx.</figcaption>
+          </figure>
+        </section>
+
+        <section id="topics">
+          <h2>Topics this Chapter</h2>
+          <div class="topic-grid">
+            <div class="topic"><strong>1. The Ablative Case</strong></div>
+            <div class="topic"><strong>2. Prepositional Phrases</strong></div>
+            <div class="topic"><strong>3. N.I.A.W.O.Ps</strong></div>
+            <div class="topic"><strong>4. Verb Conjugations 1 and 2</strong></div>
+            <div class="topic"><strong>5. Vocabulary</strong></div>
+          </div>
+        </section>
+
+        <section id="ablative">
+          <h2>The Ablative Case</h2>
+          <p>The ablative case is the 3rd case you will learn in this textbook, the first two being the nominative and accusative cases. If you recall from the first two chapters this is what we learned:</p>
+          <p class="example">Nominative = Subject/Predicate Nominative<br>Accusative = Direct Object/Duration or Extent</p>
+          <p>The ablative case is very important in Latin and using it will finally allow us to read slightly more difficult sentences. First let's see what ending we will add to a noun so that we can recognize that it is ablative to begin with.</p>
+          <p>There are a few things you should look for as you peruse and prepare to add these ending to your memory banks. The first is that the ablative case will be labeled in pink. Also, take a look at the plural forms. They are all the same. This should make your life a little bit easier. You might also see that for the first time I have added macrons/accent marks to some of the letters. This is not something you need to memorize up front. In fact, there are many more locations where macrons exist that I have not indicated. The reason I have done this is to show you that there is a difference between the ablative and nominative forms. Otherwise they would be identical! As we start to fill in the chart more completely in future chapters you will start to notice that more and more endings will overlap. The more that can be done now to separate them, the better.</p>
+
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th></th><th>Feminine</th><th>Masculine</th><th>Neuter</th></tr></thead>
+              <tbody>
+                <tr><th>Singular</th><td>1st Declension</td><td>2nd Declension</td><td>2nd Declension (n)</td></tr>
+                <tr><th>Nominative</th><td><span class="noun-ending">-a</span></td><td><span class="noun-ending">-us/r</span></td><td><span class="noun-ending">-um</span></td></tr>
+                <tr><th>Genitive</th><td></td><td></td><td></td></tr>
+                <tr><th>Dative</th><td></td><td></td><td></td></tr>
+                <tr><th>Accusative</th><td><span class="acc-ending">-am</span></td><td><span class="acc-ending">-um</span></td><td><span class="acc-ending">-um</span></td></tr>
+                <tr><th>Ablative</th><td><span class="abl-ending">-ā</span></td><td><span class="abl-ending">-o</span></td><td><span class="abl-ending">-o</span></td></tr>
+                <tr><th>Plural</th><td></td><td></td><td></td></tr>
+                <tr><th>Nominative</th><td><span class="noun-ending">-ae</span></td><td><span class="noun-ending">-i</span></td><td><span class="noun-ending">-a</span></td></tr>
+                <tr><th>Genitive</th><td></td><td></td><td></td></tr>
+                <tr><th>Dative</th><td></td><td></td><td></td></tr>
+                <tr><th>Accusative</th><td><span class="acc-ending">-as</span></td><td><span class="acc-ending">-os</span></td><td><span class="acc-ending">-a</span></td></tr>
+                <tr><th>Ablative</th><td><span class="abl-ending">-īs</span></td><td><span class="abl-ending">-īs</span></td><td><span class="abl-ending">-īs</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>On to what the ablative case can be used for...</p>
+        </section>
+
+        <section id="prepositional">
+          <h2>Prepositional Phrases</h2>
+          <p>It might be a good idea to watch this video before you continue: <a href="https://youtu.be/BB7kgyUR6u4">video</a></p>
+          <p>The main use of the ablative case is for the objects of prepositions. If you have never heard of a preposition before it is a word, usually small, that when coupled with a noun shows a relationship of place, time, location, and some other things as well.</p>
+          <p class="example">Examples of prepositions: in, from, by, to, at, under, with, etc.</p>
+          <p>In itself, a word like "in" or "by" is rather meaningless and hard to define in mere words. It is only when you add the noun after the preposition that meaning occurs.</p>
+          <p class="example">Preposition + Noun</p>
+          <p>Let's take a look at Basic Sentence 3.2 to see how this works.</p>
+          <p class="example"><span class="latin">3.2 Sordidus ex umeris nodo dependet amictus.</span></p>
+          <p>Without translating the whole sentence you can see that the word "ex" is a preposition and the word "umeris" is in the ablative case because it is the object of the preposition. This phrase means "from the shoulders".</p>
+          <p class="callout"><strong>N.B.</strong> Some prepositions take an accusative instead. These will be marked in vocabulary entries. They are usually used to describe motion.</p>
+        </section>
+
+        <section id="niawops">
+          <h2>N.I.A.W.O.Ps</h2>
+          <p>The term NIAWOP is just an acronym for Noun In Ablative WithOut a Preposition. The simplest way to describe this phenomenon is that sometimes in Latin, the prepositions are not there when you would expect them. In English we will still render the translation of that ablative as if it had a preposition. Many of these instances are given specific names in many Latin grammar books. If you would like to learn them at this time you can go <a href="http://www.thelatinlibrary.com/101/Ablative2.pdf">here</a>. For now, though, it is best just to treat a NIAWOP as an ablative in need of a preposition that YOU will supply when you read it. The most common prepositions you will use in these instance is "by/with/from/in/on". The particular preposition you select is why reading Latin is an art and not a science. Many times there is a RIGHT answer, but sometimes it might be open to interpretation. Let's take another look at Basic Sentence 3.2 to see why I selected it. It has both an ablative in a prepositional phrase AND a NIAWOP!</p>
+          <p class="example"><span class="latin">3.2 Sordidus ex umeris nodo dependet amictus.</span></p>
+          <p>You'll notice that this time I made the word nodo pink as well. That is because it is ablative. However, unlike the word umeris it is not the object of a preposition. It is floating out in the middle of the sentence with no preposition to govern it. So, what are we to do? We need to give the preposition it so badly needs, but how do we decide? Context. Let's see what might fit best.</p>
+          <p class="example">The filthy cloak hangs from his shoulders _________ a knot.</p>
+          <p>What preposition do you think might go in the blank?</p>
+          <p>"With" works well. Perhaps "in" is better? This is how you go about translating a NIAWOP when you come across one.</p>
+        </section>
+
+        <section id="conjugations">
+          <h2>Verb Conjugations 1 and 2</h2>
+          <p>We've spent a great deal of time learning about nouns the last three chapters and very little time speaking about verbs. Here I am going to elaborate a little on how to make sure verbs are spelled correctly. It will become more important later when we start to learn more verb tenses.</p>
+          <p>All verbs fit into a category or conjugation just the same way that nouns fit into declensions. In fact, many young Latin students mix these words up all the time and it is understandable why. In Latin there are 4 conjugations and here we will be talking about the first two.</p>
+          <p>Let's take two verbs that have already been learned in a previous chapter...</p>
+          <p class="example"><span class="latin">Amat</span><br><span class="latin">Habet</span></p>
+          <p>You can see that both have a "t" ending for the 3rd person singular. The biggest difference is the vowel BEFORE the ending. In the word Amat it is an "a" and in the word Habet it is an "e". These vowels form part of the stem of the word. Another easy way to tell them apart is by looking at the 2nd principal part of the dictionary entry, the infinitive or "to verb" form. If that form ends in "are" then it is 1st conjugation. If it ends in "ere" then it is 2nd conjugation.</p>
+          <div class="mini-grid">
+            <div class="info-card"><strong>1st Conjugation</strong>1st Conjugation verbs have an "a" as part of their stem</div>
+            <div class="info-card"><strong>2nd Conjugation</strong>2nd Conjugation verbs have an "e" as part of their stem</div>
+          </div>
+          <p>Compare the charts below to see what effect this has</p>
+
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Amo, amare, amavi, amatum</th><th>singular</th><th>plural</th></tr></thead>
+              <tbody>
+                <tr><th>1st person</th><td class="latin">amo</td><td class="latin">amamus</td></tr>
+                <tr><th>2nd person</th><td class="latin">amas</td><td class="latin">amatis</td></tr>
+                <tr><th>3rd person</th><td class="latin">amat</td><td class="latin">amant</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Habeo, habere, habui, habitum</th><th>singular</th><th>plural</th></tr></thead>
+              <tbody>
+                <tr><th>1st person</th><td class="latin">habeo</td><td class="latin">habemus</td></tr>
+                <tr><th>2nd person</th><td class="latin">habes</td><td class="latin">habetis</td></tr>
+                <tr><th>3rd person</th><td class="latin">habet</td><td class="latin">habent</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>You might notice that the 1st person singular is kind of an exception, but if you remember that the 1st person singular is given to you in the dictionary entry then it shouldn't be hard to remember.</p>
+          <p>Why does it even matter if I know that a verb is 1st or 2nd conjugation?! Right now, it doesn't. Just trust that in the not so distant future the difference will be important. So, right now, if you are given a verb, be able to tell if it is 1st or 2nd conjugation</p>
+        </section>
+
+        <section id="vocabulary">
+          <h2>Vocabulary</h2>
+          <p><a href="https://quizlet.com/_2expuw">Flash Cards</a></p>
+          <div class="table-wrap">
+            <table class="vocab-table">
+              <thead><tr><th>Word</th><th>Definition</th></tr></thead>
+              <tbody>
+                <tr><td>In + ablative</td><td>In/on</td></tr>
+                <tr><td>e/ex + abl</td><td>from/out of</td></tr>
+                <tr><td>a/ab + abl</td><td>by/from</td></tr>
+                <tr><td>Cum + abl</td><td>With:(along with) not by means of</td></tr>
+                <tr><td>Ad + acc</td><td>to/toward</td></tr>
+                <tr><td>Per + acc</td><td>through</td></tr>
+                <tr><td>De + abl</td><td>Down from/about</td></tr>
+                <tr><td>Subito</td><td>Suddenly</td></tr>
+                <tr><td>Nodus, i m</td><td>knot</td></tr>
+                <tr><td>Et</td><td>and</td></tr>
+                <tr><td>Sed</td><td>But</td></tr>
+                <tr><td>Nunc</td><td>Now</td></tr>
+                <tr><td>Natura, ae f</td><td>Nature</td></tr>
+                <tr><td>Ira, ae f</td><td>Anger</td></tr>
+                <tr><td>In + accusative</td><td>Into</td></tr>
+                <tr><td>Regnum, i n</td><td>Kingdom</td></tr>
+                <tr><td>Telum, i n</td><td>Spear</td></tr>
+                <tr><td>Servus, i m</td><td>Slave</td></tr>
+                <tr><td>Umerus, i m</td><td>Shoulder</td></tr>
+                <tr><td>Voco, vocare, vocavi, vocatum</td><td>To call</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("exercisesLink").addEventListener("click", (event) => {
+      event.preventDefault();
+      const exercisesUrl = new URL("chapter-3-exercises.html", window.location.href).href;
+      const opened = window.open(exercisesUrl, "_blank", "noopener");
+      if (!opened) {
+        window.location.href = exercisesUrl;
+      }
+    });
+  </script>
+</body>
+</html>

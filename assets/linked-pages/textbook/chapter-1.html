@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chapter 1 | Latin Textbook</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #20201d;
+      --muted: #635f57;
+      --paper: #fffdf8;
+      --panel: #ffffff;
+      --line: #ddd6c8;
+      --accent: #8f2f2f;
+      --accent-dark: #6f2222;
+      --gold: #bf8f35;
+      --sage: #566f60;
+      --blue: #295f86;
+      --soft-red: #f8eded;
+      --soft-gold: #fbf4e5;
+      --shadow: 0 20px 50px rgba(55, 43, 28, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(255, 253, 248, 0.92), rgba(255, 253, 248, 0.98)),
+        repeating-linear-gradient(90deg, rgba(191, 143, 53, 0.05) 0 1px, transparent 1px 34px);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 18px;
+      line-height: 1.65;
+    }
+
+    a {
+      color: var(--blue);
+      font-weight: 700;
+      text-underline-offset: 0.18em;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .page {
+      width: calc(100% - 32px);
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 32px 0 64px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
+      gap: 28px;
+      align-items: stretch;
+      min-height: 430px;
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 28px;
+    }
+
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+      padding: 28px 0;
+    }
+
+    .kicker {
+      margin: 0 0 10px;
+      color: var(--accent-dark);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: "Trebuchet MS", Arial, sans-serif;
+      line-height: 1.12;
+    }
+
+    h1 {
+      margin: 0;
+      color: #181715;
+      font-size: clamp(3rem, 10vw, 6.5rem);
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 650px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 1.2rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 9px 15px;
+      background: var(--accent);
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .button.secondary {
+      background: transparent;
+      color: var(--accent-dark);
+    }
+
+    .hero-images {
+      display: grid;
+      grid-template-columns: 0.8fr 1fr;
+      gap: 14px;
+      align-items: end;
+      min-width: 0;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+
+    .hero-images figure {
+      margin: 0;
+      min-width: 0;
+      min-height: 100%;
+      background: #e8e1d4;
+      overflow: hidden;
+    }
+
+    .hero-images img {
+      width: 100%;
+      height: 100%;
+      min-height: 430px;
+      object-fit: cover;
+    }
+
+    .hero-images figure:first-child img {
+      object-position: center top;
+    }
+
+    .hero-images figure:last-child img {
+      object-position: center;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .toc {
+      position: sticky;
+      top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .toc h2 {
+      margin: 0 0 12px;
+      font-size: 1rem;
+    }
+
+    .toc ol {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+    }
+
+    .toc a {
+      color: var(--ink);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    main {
+      min-width: 0;
+    }
+
+    section {
+      padding: 34px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    section:first-child {
+      padding-top: 0;
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      color: var(--accent-dark);
+      font-size: clamp(1.8rem, 5vw, 3rem);
+    }
+
+    h3 {
+      margin: 28px 0 10px;
+      color: var(--sage);
+      font-size: 1.3rem;
+    }
+
+    p {
+      margin: 0 0 18px;
+    }
+
+    .sentence-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .sentence-list li,
+    .callout,
+    .example-box,
+    .note {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 12px 28px rgba(55, 43, 28, 0.08);
+    }
+
+    .sentence-list li {
+      padding: 16px 18px;
+      font-size: 1.18rem;
+    }
+
+    .latin {
+      font-style: italic;
+      font-weight: 700;
+    }
+
+    .callout {
+      margin: 22px 0;
+      padding: 18px;
+      background: var(--soft-gold);
+    }
+
+    .callout strong {
+      color: var(--accent-dark);
+      font-family: Arial, Helvetica, sans-serif;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .example-box {
+      margin: 22px 0;
+      padding: 18px;
+      background: #f7faf8;
+    }
+
+    .example-box ol {
+      margin: 10px 0 0;
+      padding-left: 24px;
+    }
+
+    .grammar-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin: 22px 0;
+      border-left: 5px solid var(--accent);
+      padding: 12px 16px;
+      background: var(--soft-red);
+      font-size: 1.35rem;
+    }
+
+    .nom {
+      color: #b32626;
+      font-weight: 800;
+    }
+
+    .media-row {
+      display: grid;
+      grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.2fr);
+      gap: 22px;
+      align-items: center;
+      margin: 24px 0;
+    }
+
+    figure {
+      margin: 0;
+    }
+
+    figcaption {
+      margin-top: 8px;
+      color: var(--muted);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.86rem;
+    }
+
+    .inline-image {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      box-shadow: 0 10px 24px rgba(55, 43, 28, 0.08);
+    }
+
+    .symbol-image {
+      max-height: 220px;
+      object-fit: contain;
+      margin-inline: auto;
+    }
+
+    .columns-image {
+      max-width: 360px;
+      margin-inline: auto;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      margin: 20px 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 12px 28px rgba(55, 43, 28, 0.08);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 620px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.98rem;
+      line-height: 1.45;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      padding: 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    th:last-child,
+    td:last-child {
+      border-right: 0;
+    }
+
+    thead th {
+      background: var(--accent-dark);
+      color: #fff;
+      font-weight: 800;
+    }
+
+    tbody th {
+      width: 24%;
+      background: #faf6ed;
+      color: #38332b;
+      font-weight: 800;
+    }
+
+    .subhead th,
+    .subhead td {
+      background: #f1eadb;
+      font-weight: 800;
+    }
+
+    .empty {
+      color: #a59b8b;
+    }
+
+    .noun-ending {
+      color: #b32626;
+      font-weight: 800;
+    }
+
+    .note {
+      margin: 20px 0;
+      padding: 15px 18px;
+      background: #f4f7fa;
+      color: #2f3d48;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .vocab table {
+      min-width: 460px;
+    }
+
+    .vocab tbody td:first-child {
+      font-weight: 800;
+      font-style: italic;
+    }
+
+    .footer-note {
+      margin-top: 28px;
+      color: var(--muted);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 880px) {
+      .hero,
+      .layout,
+      .media-row {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: 0;
+      }
+
+      .hero-images img {
+        min-height: 280px;
+      }
+
+      .toc {
+        position: static;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        font-size: 16px;
+      }
+
+      .page {
+        width: calc(100% - 28px);
+        padding-top: 18px;
+      }
+
+      .sentence-list,
+      .hero-images {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-images figure:last-child {
+        display: none;
+      }
+
+      h1 {
+        font-size: 3.1rem;
+      }
+
+      .subtitle {
+        font-size: 1.06rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Latin Textbook</p>
+        <h1>Chapter 1</h1>
+        <p class="subtitle">Basic sentences, the nominative case, linking sentences, gender, first and second declension forms, and vocabulary.</p>
+        <div class="hero-actions" aria-label="Chapter resources">
+          <a class="button" href="https://docs.google.com/forms/d/e/1FAIpQLScFCYFM12niBp7myiwLuJ8YvGskaLKgmvTeMMd8mnYWVbvv2A/viewform?usp=sf_link">Module</a>
+          <a class="button secondary" href="#vocabulary">Vocabulary</a>
+          <a class="button secondary" id="exercisesLink" href="chapter-1-exercises.html" target="_blank" rel="noopener">Exercises</a>
+        </div>
+      </div>
+      <div class="hero-images" aria-label="Classical images from the chapter">
+        <figure>
+          <img src="chapter-1-image-1.png" alt="Statue of Neptune holding a trident">
+        </figure>
+        <figure>
+          <img src="chapter-1-image-2.png" alt="Classical statue on a dome">
+        </figure>
+      </div>
+    </header>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Chapter contents">
+        <h2>Topics This Chapter</h2>
+        <ol>
+          <li><a href="#nominative">The Nominative Case</a></li>
+          <li><a href="#nominative">Linking Sentences</a></li>
+          <li><a href="#gender">Gender</a></li>
+          <li><a href="#declension">1st and Second Declension--Chart</a></li>
+          <li><a href="#vocabulary">Vocabulary</a></li>
+        </ol>
+      </nav>
+
+      <main>
+        <section id="basic-sentences" aria-labelledby="basic-sentences-title">
+          <h2 id="basic-sentences-title">Basic Sentences</h2>
+          <ol class="sentence-list">
+            <li><span class="latin">1.1 Neptunus est deus.</span></li>
+            <li><span class="latin">1.2 Urbs antiqua est.</span> (Aeneid Book I)</li>
+            <li><span class="latin">1.3 Neptunus et Minerva sunt dei.</span></li>
+            <li><span class="latin">1.4 Bellum est longum.</span></li>
+          </ol>
+        </section>
+
+        <section id="nominative" aria-labelledby="nominative-title">
+          <h2 id="nominative-title">The Nominative Case and Linking Sentences</h2>
+          <p>For those students who have never heard of this term before, you’re in luck! This will help you with your studies of the English Language as well since this term is used there, too. The nominative case is the case or form that is used to show that a word is the subject of a sentence. There are other uses too, but those will be described in the next section. If you are unfamiliar with how to tell if a word is a subject, here is a description:</p>
+
+          <div class="callout">
+            <p><strong>Subject</strong> : the <strong>subject</strong> of a sentence is the noun or pronoun who does the verb, the person or thing that the sentence is mainly about. <em>My friends and I</em> went out to a party. It was too crowded and loud. The neighbors kept complaining about the noise. The police were called. The party broke up. We came home.</p>
+          </div>
+
+          <p>In most English sentences you’ll notice that the subject comes first. That often happens in Latin, too, but not necessarily . In Latin, the subject is always in the nominative case.</p>
+
+          <p>Because the subject of a Latin sentence does not necessarily come first in the sentence, there must be another way for you to know if the word is the subject and in the nominative case. In fact, there is. Every noun in Latin fits into a category which we will call a declension. These declensions provide Latin students with a convenient chart to know how a noun in the nominative case should be formed, because it is the SPELLING of the words in Latin that determine their case. For now, in order to keep your life manageable, I will only be introducing the first two declensions in this chapter. This isn’t really quite true, because the 2nd of these declensions has a brother!</p>
+
+          <p>Linking sentences are sentences that contain the words ‘is’ or ‘are”. In Latin these are the words ‘est’ and ‘sunt’. There are actually other words that can form linking sentences but we will learn about those later. These linking verbs (est/sunt) connect two words in the nominative case. In English the subject is first and the word after the verb is called a predicate nominative if it is a noun or a predicate adjective if it is an adjective. For a few chapters I will color-code these cases so you can get used to seeing them in context. I will use <span class="nom">RED</span> to denote the Nominative Case.</p>
+
+          <div class="example-box">
+            <p>Let’s try a few English sentences to illustrate the point.</p>
+            <ol>
+              <li>The dog is fat.</li>
+              <li>The students are tired.</li>
+            </ol>
+          </div>
+
+          <p>Now let’s look at Basic Sentence 1.1.</p>
+          <p class="grammar-line"><span class="nom">Neptunus</span> <span>est</span> <span class="nom">deus.</span></p>
+
+          <p>As you can see the structure is almost the same in both languages. The tricky part about Latin is that the word order is not always as regular as it is in English. What would happen if we mixed up the word order of the English sentences? “The dog fat is.” doesn’t work. In Latin, however, “Neptunus deus est” means the same thing as “Neptunus est deus” or any other combination for that matter! This will become easier to understand towards the end of the chapter.</p>
+        </section>
+
+        <section id="gender" aria-labelledby="gender-title">
+          <h2 id="gender-title">Gender</h2>
+          <div class="media-row">
+            <figure class="inline-image">
+              <img class="symbol-image" src="chapter-1-image-3.png" alt="Interlocking feminine, neuter, and masculine gender symbols">
+            </figure>
+            <div>
+              <p>Every noun in Latin has a gender. There are a total of 3 genders in Latin: masculine, feminine, and neuter. You might ask yourself, why does a noun have to have a gender?! There is really no good answer to this burning question. Some of this has bled over into our language. For instance, we usually refer to ships with the pronoun ‘she’. Sometimes there is a good reason for a noun to have the gender that it does. Deus (god) in Latin is masculine, while puella (girl) is feminine. There are however far more examples of nouns which have genders that we would not expect. Bellum (war) is neuter, while tempestas (storm) is feminine. Fortunately for us the declensions that I mentioned earlier will give us a handy guide. If you’d like a different explanation about Latin gender, you can check out this YouTube video <a href="https://youtu.be/kgNAANyE8rs">here</a>.</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="declension" aria-labelledby="declension-title">
+          <h2 id="declension-title">1st and 2nd Declension</h2>
+          <div class="media-row">
+            <div>
+              <p>So, before I dump a giant chart on you, I’ll need to explain a few things. The first is that there are a total of 5 heavily used cases in Latin, including the <strong>nominative</strong> case mentioned previously. In the chart below, you will notice that I am leaving spaces for these cases so that when they are revealed in a later chapter you will know the context of that new case. The second thing to mention is that, as I hinted earlier, we are learning the first two declensions, but the second declension has a brother….and it’s neuter. The 1st declension will hold all feminine nouns that we will learn (for now) and the 2nd declension will hold all the masculine and neuter nouns that we will learn (again...for now). In the boxes below you will see an ending. These little groups of letters show us how the ending of a noun will need to change in order to make it nominative singular or nominative plural. All nouns belong to a declension and whatever declension they belong to will never change.</p>
+            </div>
+            <figure class="inline-image">
+              <img class="columns-image" src="chapter-1-image-4.png" alt="Doric, Ionic, and Corinthian columns">
+            </figure>
+          </div>
+
+          <div class="table-wrap">
+            <table aria-label="First and second declension chart">
+              <thead>
+                <tr>
+                  <th scope="col"></th>
+                  <th scope="col">Feminine</th>
+                  <th scope="col">Masculine</th>
+                  <th scope="col">Neuter</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="subhead">
+                  <th scope="row">Singular</th>
+                  <td>1st Declension</td>
+                  <td>2nd Declension</td>
+                  <td>2nd Declension (n)</td>
+                </tr>
+                <tr>
+                  <th scope="row">Nominative</th>
+                  <td><span class="noun-ending">-a</span></td>
+                  <td><span class="noun-ending">-us/r</span></td>
+                  <td><span class="noun-ending">-um</span></td>
+                </tr>
+                <tr>
+                  <th scope="row">Genitive</th>
+                  <td class="empty" aria-label="blank"></td>
+                  <td class="empty" aria-label="blank"></td>
+                  <td class="empty" aria-label="blank"></td>
+                </tr>
+                <tr>
+                  <th scope="row">Dative</th>
+                  <td class="empty" aria-label="blank"></td>
+                  <td class="empty" aria-label="blank"></td>
+                  <td class="empty" aria-label="blank"></td>
+                </tr>
+                <tr>
+                  <th scope="row">Accusative</th>
+                  <td class="empty" aria-label="blank"></td>
+                  <td class="empty" aria-label="blank"></td>
+                  <td class="empty" aria-label="blank"></td>
+                </tr>
+                <tr>
+                  <th scope="row">Ablative</th>
+                  <td class="empty" aria-label="blank"></td>
+                  <td class="empty" aria-label="blank"></td>
+                  <td class="empty" aria-label="blank"></td>
+                </tr>
+                <tr class="subhead">
+                  <th scope="row">Plural</th>
+                  <td class="empty" aria-label="blank"></td>
+                  <td class="empty" aria-label="blank"></td>
+                  <td class="empty" aria-label="blank"></td>
+                </tr>
+                <tr>
+                  <th scope="row">Nominative</th>
+                  <td><span class="noun-ending">-ae</span></td>
+                  <td><span class="noun-ending">-i</span></td>
+                  <td><span class="noun-ending">-a</span></td>
+                </tr>
+                <tr>
+                  <th scope="row">Genitive</th>
+                  <td class="empty" aria-label="blank"></td>
+                  <td class="empty" aria-label="blank"></td>
+                  <td class="empty" aria-label="blank"></td>
+                </tr>
+                <tr>
+                  <th scope="row">Dative</th>
+                  <td class="empty" aria-label="blank"></td>
+                  <td class="empty" aria-label="blank"></td>
+                  <td class="empty" aria-label="blank"></td>
+                </tr>
+                <tr>
+                  <th scope="row">Accusative</th>
+                  <td class="empty" aria-label="blank"></td>
+                  <td class="empty" aria-label="blank"></td>
+                  <td class="empty" aria-label="blank"></td>
+                </tr>
+                <tr>
+                  <th scope="row">Ablative</th>
+                  <td class="empty" aria-label="blank"></td>
+                  <td class="empty" aria-label="blank"></td>
+                  <td class="empty" aria-label="blank"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="note"><strong>N.B.</strong> the 2nd declension nominative can end in a “us” or an “r”.</p>
+
+          <p>So, taking a look at this chart you can probably see that the word “bellum” from our Basic Sentences fits into the 2nd declension neuter column because it ends in “um”. If you follow that column downward you can see that if we want to make the word “bellum” plural we will need to change the ending to the plural form “bella”. If we wanted to change Basic Sentence 1.4 entirely plural if would look like this:</p>
+
+          <p class="grammar-line"><span class="nom">Bella</span> <span>sunt</span> <span class="nom">longa.</span></p>
+
+          <p>Notice that the verb has to change to plural (est---> sunt) and the predicate adjective/nominative has to change as well!</p>
+        </section>
+
+        <section id="vocabulary" class="vocab" aria-labelledby="vocabulary-title">
+          <h2 id="vocabulary-title">Vocabulary</h2>
+          <p><a href="https://quizlet.com/_2exocn">Flash Cards</a></p>
+
+          <div class="table-wrap">
+            <table aria-label="Chapter 1 vocabulary">
+              <thead>
+                <tr>
+                  <th scope="col">Word</th>
+                  <th scope="col">Definition</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>est/sunt</td><td>is/are</td></tr>
+                <tr><td>Animus, i m</td><td>mind</td></tr>
+                <tr><td>Deus, i m</td><td>god</td></tr>
+                <tr><td>Terra, ae f</td><td>land</td></tr>
+                <tr><td>Vita, ae f</td><td>life</td></tr>
+                <tr><td>Causa, ae f</td><td>reason/cause</td></tr>
+                <tr><td>Vir, i m</td><td>man</td></tr>
+                <tr><td>Bellum, i n</td><td>war</td></tr>
+                <tr><td>Caelum, i n</td><td>Sky/heaven</td></tr>
+                <tr><td>Puer, i m</td><td>boy</td></tr>
+                <tr><td>Populus, i m</td><td>people</td></tr>
+                <tr><td>Puella, ae f</td><td>girl</td></tr>
+                <tr><td>Fatum, i n</td><td>fate</td></tr>
+                <tr><td>Equus, i m</td><td>horse</td></tr>
+                <tr><td>Dominus, i m</td><td>master</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <p class="footer-note">Source: Google Drive document “Chapter 1”. Converted to a web-ready HTML chapter page.</p>
+      </main>
+    </div>
+  </div>
+  <script>
+    document.getElementById("exercisesLink").addEventListener("click", (event) => {
+      event.preventDefault();
+      const exercisesUrl = new URL("chapter-1-exercises.html", window.location.href).href;
+      const opened = window.open(exercisesUrl, "_blank", "noopener");
+      if (!opened) {
+        window.location.href = exercisesUrl;
+      }
+    });
+  </script>
+</body>
+</html>

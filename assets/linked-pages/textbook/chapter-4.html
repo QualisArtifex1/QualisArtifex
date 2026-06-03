@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chapter 4 | Latin Textbook</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #20201d;
+      --muted: #635f57;
+      --paper: #fffdf8;
+      --line: #ddd6c8;
+      --accent: #8f2f2f;
+      --accent-dark: #6f2222;
+      --gold: #bf8f35;
+      --sage: #566f60;
+      --blue: #295f86;
+      --pink: #b33b72;
+      --green: #2f7d52;
+      --soft-gold: #fbf4e5;
+      --shadow: 0 20px 50px rgba(55, 43, 28, 0.12);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(255, 253, 248, 0.92), rgba(255, 253, 248, 0.98)),
+        repeating-linear-gradient(90deg, rgba(191, 143, 53, 0.05) 0 1px, transparent 1px 34px);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 18px;
+      line-height: 1.65;
+    }
+    a { color: var(--blue); font-weight: 700; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; height: auto; }
+    .page { width: calc(100% - 32px); max-width: 1120px; margin: 0 auto; padding: 32px 0 64px; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(300px, 1.1fr);
+      gap: 28px;
+      align-items: stretch;
+      min-height: 430px;
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 28px;
+    }
+    .hero-copy { display: flex; flex-direction: column; justify-content: center; min-width: 0; padding: 28px 0; }
+    .kicker {
+      margin: 0 0 10px;
+      color: var(--accent-dark);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3 { font-family: "Trebuchet MS", Arial, sans-serif; line-height: 1.12; letter-spacing: 0; }
+    h1 { margin: 0; color: #181715; font-size: clamp(3rem, 10vw, 6.5rem); }
+    .subtitle { max-width: 650px; margin: 18px 0 0; color: var(--muted); font-size: 1.2rem; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 9px 15px;
+      background: var(--accent);
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .button.secondary { background: transparent; color: var(--accent-dark); }
+    .hero-image { min-width: 0; overflow: hidden; border-radius: 8px; background: #181715; }
+    .hero-image img { width: 100%; height: 100%; min-height: 430px; object-fit: cover; object-position: center; }
+    .layout { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 28px; align-items: start; }
+    .toc {
+      position: sticky;
+      top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .toc h2 { margin: 0 0 12px; font-size: 1rem; }
+    .toc ol { display: grid; gap: 8px; margin: 0; padding-left: 20px; color: var(--muted); }
+    .toc a { color: var(--ink); font-weight: 700; text-decoration: none; }
+    main { min-width: 0; }
+    section { padding: 34px 0; border-bottom: 1px solid var(--line); }
+    section:first-child { padding-top: 0; }
+    h2 { margin: 0 0 18px; color: var(--accent-dark); font-size: clamp(2rem, 6vw, 3.2rem); }
+    h3 { margin: 26px 0 10px; color: #312c25; font-size: 1.35rem; }
+    p { margin: 0 0 18px; }
+    .sentence-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; font-size: 1.1rem; }
+    .sentence-list li, .callout, .example {
+      border-left: 5px solid var(--gold);
+      background: #fff;
+      box-shadow: var(--shadow);
+      padding: 14px 16px;
+    }
+    .note { color: var(--muted); font-style: italic; }
+    .topic-grid, .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 18px 0 0;
+    }
+    .topic, .info-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.86);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .topic strong, .info-card strong { display: block; margin-bottom: 8px; color: var(--accent-dark); }
+    figure.content-image {
+      margin: 24px 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+    figure.content-image img { width: 100%; background: #f6f0e6; }
+    figcaption { padding: 10px 14px; color: var(--muted); font-family: Arial, Helvetica, sans-serif; font-size: 0.9rem; }
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      margin: 20px 0;
+    }
+    table { width: 100%; min-width: 660px; border-collapse: collapse; font-family: Arial, Helvetica, sans-serif; font-size: 0.98rem; line-height: 1.35; }
+    th, td { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 10px; text-align: left; vertical-align: middle; }
+    th:last-child, td:last-child { border-right: 0; }
+    tr:last-child td, tr:last-child th { border-bottom: 0; }
+    thead th { background: var(--accent-dark); color: #fff; font-weight: 800; }
+    tbody th { background: #faf6ed; font-weight: 800; }
+    .noun-ending { color: var(--accent); font-weight: 900; }
+    .gen-ending { color: var(--green); font-weight: 900; }
+    .acc-ending { color: var(--blue); font-weight: 900; }
+    .abl-ending { color: var(--pink); font-weight: 900; }
+    .latin { font-style: italic; font-weight: 800; }
+    .bracketed { color: var(--green); font-weight: 800; }
+    .vocab-table td:first-child { width: 58%; font-style: italic; font-weight: 800; }
+    .mini-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    @media (max-width: 880px) {
+      .hero, .layout, .mini-grid { grid-template-columns: 1fr; }
+      .toc { position: static; }
+      .hero-image img { min-height: 320px; }
+    }
+    @media (max-width: 640px) {
+      body { font-size: 16px; }
+      .page { width: calc(100% - 24px); padding-top: 20px; }
+      .topic-grid, .card-grid { grid-template-columns: 1fr; }
+      table { min-width: 620px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Latin Textbook</p>
+        <h1>Chapter 4</h1>
+        <p class="subtitle">The genitive case, 3rd and 4th conjugation verbs, causal clauses, and how Latin dictionary entries work.</p>
+        <div class="hero-actions">
+          <a class="button" href="https://docs.google.com/forms/d/e/1FAIpQLScVSdr1-pUMNy6Tcr1a0f9kPZ7jMoLd86paSFL9x-Y7zxQnFw/viewform?usp=sf_link">Module</a>
+          <a class="button secondary" href="#vocabulary">Vocabulary</a>
+          <a class="button secondary" id="exercisesLink" href="chapter-4-exercises.html" target="_blank" rel="noopener">Exercises</a>
+        </div>
+      </div>
+      <figure class="hero-image">
+        <img src="chapter-4-image-1.png" alt="A Gallic warrior at the time of Caesar">
+      </figure>
+    </header>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Chapter sections">
+        <h2>On This Page</h2>
+        <ol>
+          <li><a href="#basic-sentences">Basic Sentences</a></li>
+          <li><a href="#topics">Topics this Chapter</a></li>
+          <li><a href="#genitive">The Genitive Case</a></li>
+          <li><a href="#conjugations">Verb Conjugations 3 and 4</a></li>
+          <li><a href="#causal">Causal Clause</a></li>
+          <li><a href="#dictionary">The Latin Dictionary Entry</a></li>
+          <li><a href="#vocabulary">Vocabulary</a></li>
+        </ol>
+      </nav>
+
+      <main>
+        <section id="basic-sentences">
+          <h2>Basic Sentences</h2>
+          <ul class="sentence-list">
+            <li><span class="latin">4.1 Mercurius est nuntius deorum.</span></li>
+            <li><span class="latin">4.2 Necdum etiam causae irarum animo excidunt.</span> (slightly adapted from <span class="latin">Aeneid</span> 1.25)<br><span class="note">Explaining that after many years Juno is still upset with Aeneas and the Trojans.</span></li>
+            <li><span class="latin">4.3 Helvetii reliquos Gallos audaciā praecedunt, quod cotidianis proeliis cum Germanis contendunt.</span> (Slightly adapted from Caesar 1.1 DBG)<br><span class="note">Caesar is telling the reader why the Helvetians, a tribe from modern day Switzerland, is one of the fiercest of the Gallic Tribes.</span></li>
+          </ul>
+          <figure class="content-image">
+            <img src="chapter-4-image-1.png" alt="A Gallic warrior at the time of Caesar">
+            <figcaption>Image of a Gallic warrior at the time of Caesar.</figcaption>
+          </figure>
+        </section>
+
+        <section id="topics">
+          <h2>Topics this Chapter</h2>
+          <div class="topic-grid">
+            <div class="topic"><strong>1. The Genitive Case</strong></div>
+            <div class="topic"><strong>2. Verb Conjugations 3 and 4</strong></div>
+            <div class="topic"><strong>3. Causal Clause</strong></div>
+            <div class="topic"><strong>4. The Latin Dictionary Entry</strong></div>
+            <div class="topic"><strong>5. Vocabulary</strong></div>
+          </div>
+        </section>
+
+        <section id="genitive">
+          <h2>The Genitive Case</h2>
+          <p>The second to last main case is one of the most important partly because it is used frequently, but also because it is part of the dictionary entry of a noun that you have seen for 4 chapters now. In this chapter and in the future I will be denoting the genitive case in <strong class="gen-ending">green</strong>.</p>
+          <p>The genitive case is BEST handled when you see it by translating the noun with the word "of" before it. Just as the ablative case, there are many different versions of these genitives that some grammarians give special names to. Keep in mind that as you read these terms below, they are ALL still using the word "of" to express the genitive.</p>
+          <h3>Genitive types</h3>
+          <p><strong>1. Of Possession</strong> (the most common) In English this is sometimes expressed by adding an "'s" to a noun.</p>
+          <p>A good example of this is Basic Sentence 4.1.</p>
+          <p class="example"><span class="latin">Mercurius est nuntius deorum.</span><br>Mercury is the messenger of the gods.<br>Mercury is the gods' messenger.</p>
+          <p>The meaning is the same between the two interpretations. There is a video that might help elaborate a bit for you <a href="https://youtu.be/nJRk7DmpANM">here</a>.</p>
+          <p><strong>2. Objective</strong></p>
+          <p class="example"><span class="latin">Causa belli est ignota.</span><br>The cause of the war is unknown.</p>
+          <p>As you can see. This use still uses the word "of" but doesn't show possession.</p>
+          <p><strong>3. Partitive</strong></p>
+          <p class="example"><span class="latin">pars viae est recta.</span><br>part of the road is straight.</p>
+          <p>This example shows that if a genitive is showing that it is part of a larger whole then it is called a partitive genitive.</p>
+          <p>To sum up all this information it is best to go back to the basics. If you see a noun in the genitive, it is probably best to translate it using the word "of" before the noun and not worry so much at this point what kind of genitive it is. In fact, there are many more types that one day you may learn, but for now...KEEP IT SIMPLE.</p>
+          <p>To form the genitive case, refer to the familiar chart below:</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th></th><th>Feminine</th><th>Masculine</th><th>Neuter</th></tr>
+              </thead>
+              <tbody>
+                <tr><th colspan="4">Singular</th></tr>
+                <tr><th>Nominative</th><td><span class="noun-ending">-a</span></td><td><span class="noun-ending">-us/r</span></td><td><span class="noun-ending">-um</span></td></tr>
+                <tr><th>Genitive</th><td><span class="gen-ending">-ae</span></td><td><span class="gen-ending">-i</span></td><td><span class="gen-ending">-i</span></td></tr>
+                <tr><th>Dative</th><td></td><td></td><td></td></tr>
+                <tr><th>Accusative</th><td><span class="acc-ending">-am</span></td><td><span class="acc-ending">-um</span></td><td><span class="acc-ending">-um</span></td></tr>
+                <tr><th>Ablative</th><td><span class="abl-ending">-ā</span></td><td><span class="abl-ending">-o</span></td><td><span class="abl-ending">-o</span></td></tr>
+                <tr><th colspan="4">Plural</th></tr>
+                <tr><th>Nominative</th><td><span class="noun-ending">-ae</span></td><td><span class="noun-ending">-i</span></td><td><span class="noun-ending">-a</span></td></tr>
+                <tr><th>Genitive</th><td><span class="gen-ending">-arum</span></td><td><span class="gen-ending">-orum</span></td><td><span class="gen-ending">-orum</span></td></tr>
+                <tr><th>Dative</th><td></td><td></td><td></td></tr>
+                <tr><th>Accusative</th><td><span class="acc-ending">-as</span></td><td><span class="acc-ending">-os</span></td><td><span class="acc-ending">-a</span></td></tr>
+                <tr><th>Ablative</th><td><span class="abl-ending">-īs</span></td><td><span class="abl-ending">-īs</span></td><td><span class="abl-ending">-īs</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="conjugations">
+          <h2>Verb Conjugations 3 and 4</h2>
+          <p>In chapter 3, you learned that a verb can be categorized into one of 4 conjugations. You learned that 1st conjugation verbs have an "a" in the stem and 2nd conjugation verbs have an "e" in the stem. The 3rd conjugation does not have a vowel in the stem.</p>
+          <p>At first glance, the 2nd and 3rd conjugations can look quite similar because both have an "e" in some of their forms. The way to tell them apart is by looking at the first two principal parts.</p>
+          <p class="example"><span class="latin">Video, videre, vidi, visum</span> = 2nd conjugation because it has an "eo" in the first principal part.<br><span class="latin">Dico, dicere, dixi, dictum</span> = 3rd conjugation because it has an "ere" infinitive and just an "o" in the first principal part.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Dico, dicere, dixi, dictum</th><th>singular</th><th>plural</th></tr></thead>
+              <tbody>
+                <tr><th>1st person</th><td class="latin">dico</td><td class="latin">dicimus</td></tr>
+                <tr><th>2nd person</th><td class="latin">dicis</td><td class="latin">dicitis</td></tr>
+                <tr><th>3rd person</th><td class="latin">dicit</td><td class="latin">dicunt</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>There is no rhyme or reason to it, but for 3rd conjugation verbs, think: O, 4 i's, U.</p>
+          <p>4th conjugation verbs are more straightforward. They have an "i" in the stem and an infinitive ending in "ire".</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Venio, venire, veni, ventum</th><th>singular</th><th>plural</th></tr></thead>
+              <tbody>
+                <tr><th>1st person</th><td class="latin">venio</td><td class="latin">venimus</td></tr>
+                <tr><th>2nd person</th><td class="latin">venis</td><td class="latin">venitis</td></tr>
+                <tr><th>3rd person</th><td class="latin">venit</td><td class="latin">veniunt</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>The tricky form in 4th conjugation is the 3rd person plural, because it has a "u" after the "i": <span class="latin">veniunt</span>.</p>
+        </section>
+
+        <section id="causal">
+          <h2>Causal Clause</h2>
+          <p>A causal clause is a subordinate clause that gives the reason why something happens. In English, we often introduce this kind of clause with "because" or "since." Latin frequently uses <span class="latin">quod</span> for this same job.</p>
+          <p class="example"><span class="latin">Helvetii reliquos Gallos audaciā praecedunt, <span class="bracketed">[quod cotidianis proeliis cum Germanis contendunt.]</span></span><br>The Helvetians precede the rest of the Gauls in boldness, <span class="bracketed">[because they contend with the Germans in daily battles.]</span></p>
+          <p>The square brackets show the subordinate clause. It gives the cause or reason for the main statement.</p>
+        </section>
+
+        <section id="dictionary">
+          <h2>The Latin Dictionary Entry</h2>
+          <p>The way that a Latin word appears in the dictionary tells us a lot of information. We can use that information to determine what kind of word it is and how that word is going to behave in a sentence.</p>
+          <h3>Nouns</h3>
+          <p>When a noun is listed in the the dictionary you are given the following:</p>
+          <p class="example">NOMINATIVE, GENITIVE &nbsp; GENDER<br><span class="latin">Puella, puellae f</span></p>
+          <p>The gender abbreviation tells you whether the noun is masculine, feminine, or neuter. The genitive ending tells you which declension the noun belongs to and helps you find the stem of the noun.</p>
+          <h3>Verbs</h3>
+          <p>When a verb is listed in the dictionary you are usually given 4 principal parts. There is a video that explains these principal parts <a href="https://youtu.be/nBno-dmlw_8">here</a>.</p>
+          <p class="example">1st PERSON SINGULAR, INFINITIVE, 3rd PART, 4th PART<br><span class="latin">Amo, amare, amavi, amatum</span></p>
+          <p>The first principal part is the 1st person singular form. The second principal part is the infinitive. There is also a video on infinitives <a href="https://youtu.be/_XdvKNVlH9E">here</a>.</p>
+          <p class="example"><span class="latin">Amare</span> = to love<br><span class="latin">Dicere</span> = to speak<br><span class="latin">Habere</span> = to have</p>
+          <p>The infinitive is especially useful because it helps identify the conjugation of the verb. The last two principal parts will become more important later, but they are included now so that you can begin recognizing the full dictionary entry.</p>
+          <h3>All Other Words</h3>
+          <p>All other words, such as adverbs, conjunctions, and prepositions, are usually indeclinable. That means they do not change form the way nouns, adjectives, and verbs do.</p>
+        </section>
+
+        <section id="vocabulary">
+          <h2>Vocabulary</h2>
+          <p><a href="https://quizlet.com/_2expwh">Flash Cards</a></p>
+          <div class="table-wrap">
+            <table class="vocab-table">
+              <thead><tr><th>Word</th><th>Definition</th></tr></thead>
+              <tbody>
+                <tr><td>Nuntius, i m</td><td>messenger</td></tr>
+                <tr><td>etiam</td><td>even/also</td></tr>
+                <tr><td>Cado, cadere, cecidi, casum</td><td>To fall</td></tr>
+                <tr><td>quod</td><td>because</td></tr>
+                <tr><td>Proelium, proelii n</td><td>battle</td></tr>
+                <tr><td>Dico, dicere, dixi, dictum</td><td>To say/speak</td></tr>
+                <tr><td>Ago, agere, egi, actum</td><td>To do/drive/act</td></tr>
+                <tr><td>Peto, petere, petivi, petitum</td><td>To seek/ask</td></tr>
+                <tr><td>Vinco, vincere, vici, victum</td><td>To conquer</td></tr>
+                <tr><td>Venio, venire, veni, ventum</td><td>To arrive</td></tr>
+                <tr><td>Audio, audire, audivi, auditum</td><td>To hear</td></tr>
+                <tr><td>Scio, scire, scivi, scitum</td><td>To know</td></tr>
+                <tr><td>Periculum, i n</td><td>Danger</td></tr>
+                <tr><td>Ventus, i m</td><td>Wind</td></tr>
+                <tr><td>Cura, ae f</td><td>Care/concern</td></tr>
+                <tr><td>Unda, ae f</td><td>wave</td></tr>
+                <tr><td>Poena, ae f</td><td>punishment</td></tr>
+                <tr><td>Silva, ae f</td><td>forest/grove</td></tr>
+                <tr><td>Nec</td><td>And not</td></tr>
+                <tr><td>-que</td><td>and</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("exercisesLink").addEventListener("click", (event) => {
+      event.preventDefault();
+      const exercisesUrl = new URL("chapter-4-exercises.html", window.location.href).href;
+      const opened = window.open(exercisesUrl, "_blank", "noopener");
+      if (!opened) {
+        window.location.href = exercisesUrl;
+      }
+    });
+  </script>
+</body>
+</html>

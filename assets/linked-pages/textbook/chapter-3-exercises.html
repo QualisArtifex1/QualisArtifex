@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chapter 3 Exercises | Latin Textbook</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #20201d;
+      --muted: #635f57;
+      --paper: #fffdf8;
+      --line: #ddd6c8;
+      --accent: #8f2f2f;
+      --accent-dark: #6f2222;
+      --sage: #566f60;
+      --blue: #295f86;
+      --soft-gold: #fbf4e5;
+      --shadow: 0 18px 42px rgba(55, 43, 28, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(255, 253, 248, 0.95), rgba(255, 253, 248, 1)),
+        repeating-linear-gradient(90deg, rgba(191, 143, 53, 0.05) 0 1px, transparent 1px 34px);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 17px;
+      line-height: 1.55;
+    }
+    a { color: var(--blue); font-weight: 700; text-underline-offset: 0.18em; }
+    .page { width: calc(100% - 32px); max-width: 1120px; margin: 0 auto; padding: 30px 0 64px; }
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 20px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 24px;
+      margin-bottom: 28px;
+    }
+    .kicker {
+      margin: 0 0 8px;
+      color: var(--accent-dark);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3 { font-family: "Trebuchet MS", Arial, sans-serif; line-height: 1.12; letter-spacing: 0; }
+    h1 { margin: 0; font-size: clamp(2.4rem, 8vw, 5rem); }
+    .subtitle { max-width: 700px; margin: 14px 0 0; color: var(--muted); font-size: 1.08rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 9px 15px;
+      background: var(--accent);
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .button.secondary { background: transparent; color: var(--accent-dark); }
+    main { display: grid; gap: 26px; }
+    section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+    h2 { margin: 0 0 12px; color: var(--accent-dark); font-size: clamp(1.6rem, 5vw, 2.3rem); }
+    p { margin: 0 0 16px; }
+    .table-wrap { width: 100%; overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+    table { width: 100%; min-width: 720px; border-collapse: collapse; font-family: Arial, Helvetica, sans-serif; font-size: 0.98rem; line-height: 1.35; }
+    th, td { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 10px; text-align: left; vertical-align: middle; }
+    th:last-child, td:last-child { border-right: 0; }
+    tr:last-child td, tr:last-child th { border-bottom: 0; }
+    thead th { background: var(--accent-dark); color: #fff; font-weight: 800; }
+    tbody th { background: #faf6ed; font-weight: 800; }
+    .example-row td, .example-row th { background: var(--soft-gold); font-style: italic; }
+    .word-cell { width: 28%; font-style: italic; font-weight: 800; }
+    input[type="text"], textarea {
+      width: 100%;
+      border: 1px solid #cfc6b6;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      padding: 8px 10px;
+    }
+    input[type="text"] { min-height: 38px; }
+    textarea { min-height: 88px; resize: vertical; }
+    .check-cell { width: 16%; text-align: center; }
+    input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--accent); }
+    .note {
+      margin: 16px 0 0;
+      border-left: 5px solid var(--sage);
+      padding: 12px 14px;
+      background: #f5f8f6;
+      color: #37463d;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+    }
+    .print-only { display: none; }
+    @media (max-width: 760px) {
+      header { grid-template-columns: 1fr; }
+      .actions { justify-content: flex-start; }
+      .page { width: calc(100% - 24px); }
+    }
+    @media print {
+      body { background: #fff; font-size: 11pt; }
+      .page { width: 100%; max-width: none; padding: 0; }
+      header, section { box-shadow: none; }
+      .actions, .note { display: none; }
+      .print-only { display: block; }
+      input[type="text"], textarea { border: 0; border-bottom: 1px solid #777; border-radius: 0; padding: 2px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <p class="kicker">Latin Textbook</p>
+        <h1>Chapter 3 Exercises</h1>
+        <p class="subtitle">Fill in your answers below. Your work is saved in this browser, and the Export Answers as PDF button will open your print dialog.</p>
+        <p class="print-only">Name: ________________________________ Date: ____________________</p>
+      </div>
+      <div class="actions">
+        <a class="button secondary" href="chapter-3.html">Back to Chapter</a>
+        <button class="button" type="button" id="printButton">Export Answers as PDF</button>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <h2>3.1</h2>
+        <p>For each of the following verbs identify the conjugation. Some verbs are not vocabulary words.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Verb</th><th class="check-cell">1st Conjugation</th><th class="check-cell">2nd Conjugation</th></tr></thead>
+            <tbody>
+              <tr class="example-row"><th>Ex: amamus</th><td class="check-cell">X</td><td></td></tr>
+              <tr><th>habeo</th><td class="check-cell"><input type="checkbox" name="habeo-1st"></td><td class="check-cell"><input type="checkbox" name="habeo-2nd"></td></tr>
+              <tr><th>parant</th><td class="check-cell"><input type="checkbox" name="parant-1st"></td><td class="check-cell"><input type="checkbox" name="parant-2nd"></td></tr>
+              <tr><th>spectant</th><td class="check-cell"><input type="checkbox" name="spectant-1st"></td><td class="check-cell"><input type="checkbox" name="spectant-2nd"></td></tr>
+              <tr><th>Neco</th><td class="check-cell"><input type="checkbox" name="neco-1st"></td><td class="check-cell"><input type="checkbox" name="neco-2nd"></td></tr>
+              <tr><th>manent</th><td class="check-cell"><input type="checkbox" name="manent-1st"></td><td class="check-cell"><input type="checkbox" name="manent-2nd"></td></tr>
+              <tr><th>Datis</th><td class="check-cell"><input type="checkbox" name="datis-1st"></td><td class="check-cell"><input type="checkbox" name="datis-2nd"></td></tr>
+              <tr><th>secant</th><td class="check-cell"><input type="checkbox" name="secant-1st"></td><td class="check-cell"><input type="checkbox" name="secant-2nd"></td></tr>
+              <tr><th>Simulas</th><td class="check-cell"><input type="checkbox" name="simulas-1st"></td><td class="check-cell"><input type="checkbox" name="simulas-2nd"></td></tr>
+              <tr><th>timent</th><td class="check-cell"><input type="checkbox" name="timent-1st"></td><td class="check-cell"><input type="checkbox" name="timent-2nd"></td></tr>
+              <tr><th>Ambulamus</th><td class="check-cell"><input type="checkbox" name="ambulamus-1st"></td><td class="check-cell"><input type="checkbox" name="ambulamus-2nd"></td></tr>
+              <tr><th>putas</th><td class="check-cell"><input type="checkbox" name="putas-1st"></td><td class="check-cell"><input type="checkbox" name="putas-2nd"></td></tr>
+              <tr><th>aedificat</th><td class="check-cell"><input type="checkbox" name="aedificat-1st"></td><td class="check-cell"><input type="checkbox" name="aedificat-2nd"></td></tr>
+              <tr><th>Iaceo</th><td class="check-cell"><input type="checkbox" name="iaceo-1st"></td><td class="check-cell"><input type="checkbox" name="iaceo-2nd"></td></tr>
+              <tr><th>volant</th><td class="check-cell"><input type="checkbox" name="volant-1st"></td><td class="check-cell"><input type="checkbox" name="volant-2nd"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>3.2</h2>
+        <p>For the chart below, give the ablative singular and the ablative plural for each noun.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Noun</th><th>Ablative Singular</th><th>Ablative Plural</th></tr></thead>
+            <tbody>
+              <tr class="example-row"><th>Ex: animus</th><td>animo</td><td>animis</td></tr>
+              <tr><th class="word-cell">terra</th><td><input type="text" name="terra-singular"></td><td><input type="text" name="terra-plural"></td></tr>
+              <tr><th class="word-cell">fatum</th><td><input type="text" name="fatum-singular"></td><td><input type="text" name="fatum-plural"></td></tr>
+              <tr><th class="word-cell">puer</th><td><input type="text" name="puer-singular"></td><td><input type="text" name="puer-plural"></td></tr>
+              <tr><th class="word-cell">verbum</th><td><input type="text" name="verbum-singular"></td><td><input type="text" name="verbum-plural"></td></tr>
+              <tr><th class="word-cell">oculus</th><td><input type="text" name="oculus-singular"></td><td><input type="text" name="oculus-plural"></td></tr>
+              <tr><th class="word-cell">ager</th><td><input type="text" name="ager-singular"></td><td><input type="text" name="ager-plural"></td></tr>
+              <tr><th class="word-cell">ira</th><td><input type="text" name="ira-singular"></td><td><input type="text" name="ira-plural"></td></tr>
+              <tr><th class="word-cell">umerus</th><td><input type="text" name="umerus-singular"></td><td><input type="text" name="umerus-plural"></td></tr>
+              <tr><th class="word-cell">aqua</th><td><input type="text" name="aqua-singular"></td><td><input type="text" name="aqua-plural"></td></tr>
+              <tr><th class="word-cell">regnum</th><td><input type="text" name="regnum-singular"></td><td><input type="text" name="regnum-plural"></td></tr>
+              <tr><th class="word-cell">telum</th><td><input type="text" name="telum-singular"></td><td><input type="text" name="telum-plural"></td></tr>
+              <tr><th class="word-cell">servus</th><td><input type="text" name="servus-singular"></td><td><input type="text" name="servus-plural"></td></tr>
+              <tr><th class="word-cell">nodus</th><td><input type="text" name="nodus-singular"></td><td><input type="text" name="nodus-plural"></td></tr>
+              <tr><th class="word-cell">vir</th><td><input type="text" name="vir-singular"></td><td><input type="text" name="vir-plural"></td></tr>
+              <tr><th class="word-cell">nauta</th><td><input type="text" name="nauta-singular"></td><td><input type="text" name="nauta-plural"></td></tr>
+              <tr><th class="word-cell">campus</th><td><input type="text" name="campus-singular"></td><td><input type="text" name="campus-plural"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>3.3</h2>
+        <p>For each English phrase write out a corresponding prepositional phrase in Latin. Please include a preposition in all instances.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>English Phrase</th><th>Latin</th></tr></thead>
+            <tbody>
+              <tr class="example-row"><th>Ex: in the road</th><td>In via</td></tr>
+              <tr><th>With friends (amicus)</th><td><input type="text" name="with-friends"></td></tr>
+              <tr><th>Through the kingdom</th><td><input type="text" name="through-kingdom"></td></tr>
+              <tr><th>Down from the shoulders</th><td><input type="text" name="down-shoulders"></td></tr>
+              <tr><th>With a spear</th><td><input type="text" name="with-spear"></td></tr>
+              <tr><th>To the kingdom</th><td><input type="text" name="to-kingdom"></td></tr>
+              <tr><th>By the girls</th><td><input type="text" name="by-girls"></td></tr>
+              <tr><th>Out of the water</th><td><input type="text" name="out-water"></td></tr>
+              <tr><th>Into the water</th><td><input type="text" name="into-water"></td></tr>
+              <tr><th>From the servant</th><td><input type="text" name="from-servant"></td></tr>
+              <tr><th>To the road</th><td><input type="text" name="to-road"></td></tr>
+              <tr><th>With a knot</th><td><input type="text" name="with-knot"></td></tr>
+              <tr><th>In anger</th><td><input type="text" name="in-anger"></td></tr>
+              <tr><th>With the servants</th><td><input type="text" name="with-servants"></td></tr>
+              <tr><th>With a man</th><td><input type="text" name="with-man"></td></tr>
+              <tr><th>Through the land</th><td><input type="text" name="through-land"></td></tr>
+              <tr><th>Into the school (ludus)</th><td><input type="text" name="into-school"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>3.4</h2>
+        <p>puella, ae f... amicus, i m... templum, i n</p>
+        <p>Given the ablative form, supply the nominative and genitive case. Some words are NOT vocabulary words.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Ablative Noun</th><th>Nominative</th><th>Genitive</th></tr></thead>
+            <tbody>
+              <tr><th class="word-cell">telis</th><td><input type="text" name="telis-nominative"></td><td><input type="text" name="telis-genitive"></td></tr>
+              <tr><th class="word-cell">puellā</th><td><input type="text" name="puella-nominative"></td><td><input type="text" name="puella-genitive"></td></tr>
+              <tr><th class="word-cell">terris</th><td><input type="text" name="terris-nominative"></td><td><input type="text" name="terris-genitive"></td></tr>
+              <tr><th class="word-cell">puero</th><td><input type="text" name="puero-nominative"></td><td><input type="text" name="puero-genitive"></td></tr>
+              <tr><th class="word-cell">servo</th><td><input type="text" name="servo-nominative"></td><td><input type="text" name="servo-genitive"></td></tr>
+              <tr><th class="word-cell">regnis</th><td><input type="text" name="regnis-nominative"></td><td><input type="text" name="regnis-genitive"></td></tr>
+              <tr><th class="word-cell">graphicā</th><td><input type="text" name="graphica-nominative"></td><td><input type="text" name="graphica-genitive"></td></tr>
+              <tr><th class="word-cell">villā</th><td><input type="text" name="villa-nominative"></td><td><input type="text" name="villa-genitive"></td></tr>
+              <tr><th class="word-cell">auro</th><td><input type="text" name="auro-nominative"></td><td><input type="text" name="auro-genitive"></td></tr>
+              <tr><th class="word-cell">caelis</th><td><input type="text" name="caelis-nominative"></td><td><input type="text" name="caelis-genitive"></td></tr>
+              <tr><th class="word-cell">animo</th><td><input type="text" name="animo-nominative"></td><td><input type="text" name="animo-genitive"></td></tr>
+              <tr><th class="word-cell">gladio</th><td><input type="text" name="gladio-nominative"></td><td><input type="text" name="gladio-genitive"></td></tr>
+              <tr><th class="word-cell">deā</th><td><input type="text" name="dea-nominative"></td><td><input type="text" name="dea-genitive"></td></tr>
+              <tr><th class="word-cell">tabulā</th><td><input type="text" name="tabula-nominative"></td><td><input type="text" name="tabula-genitive"></td></tr>
+              <tr><th class="word-cell">iris</th><td><input type="text" name="iris-nominative"></td><td><input type="text" name="iris-genitive"></td></tr>
+              <tr><th class="word-cell">poetā</th><td><input type="text" name="poeta-nominative"></td><td><input type="text" name="poeta-genitive"></td></tr>
+              <tr><th class="word-cell">campo</th><td><input type="text" name="campo-nominative"></td><td><input type="text" name="campo-genitive"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <p class="note">Answers are stored only in this browser on this computer. Use Export Answers as PDF when you are ready to save or print your work.</p>
+  </div>
+
+  <script>
+    const storageKey = "chapter-3-exercises-answers";
+    const fields = Array.from(document.querySelectorAll("input, textarea"));
+
+    function loadAnswers() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
+        fields.forEach((field) => {
+          if (!field.name || !(field.name in saved)) return;
+          if (field.type === "checkbox") {
+            field.checked = Boolean(saved[field.name]);
+          } else {
+            field.value = saved[field.name];
+          }
+        });
+      } catch (error) {
+        localStorage.removeItem(storageKey);
+      }
+    }
+
+    function saveAnswers() {
+      const data = {};
+      fields.forEach((field) => {
+        if (!field.name) return;
+        data[field.name] = field.type === "checkbox" ? field.checked : field.value;
+      });
+      localStorage.setItem(storageKey, JSON.stringify(data));
+    }
+
+    fields.forEach((field) => {
+      field.addEventListener("input", saveAnswers);
+      field.addEventListener("change", saveAnswers);
+    });
+
+    document.getElementById("printButton").addEventListener("click", () => {
+      saveAnswers();
+      window.print();
+    });
+
+    loadAnswers();
+  </script>
+</body>
+</html>

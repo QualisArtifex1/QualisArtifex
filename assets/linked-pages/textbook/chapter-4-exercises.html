@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chapter 4 Exercises | Latin Textbook</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #20201d;
+      --muted: #635f57;
+      --paper: #fffdf8;
+      --line: #ddd6c8;
+      --accent: #8f2f2f;
+      --accent-dark: #6f2222;
+      --sage: #566f60;
+      --blue: #295f86;
+      --soft-gold: #fbf4e5;
+      --shadow: 0 18px 42px rgba(55, 43, 28, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(255, 253, 248, 0.95), rgba(255, 253, 248, 1)),
+        repeating-linear-gradient(90deg, rgba(191, 143, 53, 0.05) 0 1px, transparent 1px 34px);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 17px;
+      line-height: 1.55;
+    }
+    a { color: var(--blue); font-weight: 700; text-underline-offset: 0.18em; }
+    .page { width: calc(100% - 32px); max-width: 1120px; margin: 0 auto; padding: 30px 0 64px; }
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 20px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 24px;
+      margin-bottom: 28px;
+    }
+    .kicker {
+      margin: 0 0 8px;
+      color: var(--accent-dark);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    h1, h2 { font-family: "Trebuchet MS", Arial, sans-serif; line-height: 1.12; letter-spacing: 0; }
+    h1 { margin: 0; font-size: clamp(2.4rem, 8vw, 5rem); }
+    .subtitle { max-width: 700px; margin: 14px 0 0; color: var(--muted); font-size: 1.08rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 9px 15px;
+      background: var(--accent);
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .button.secondary { background: transparent; color: var(--accent-dark); }
+    main { display: grid; gap: 26px; }
+    section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+    h2 { margin: 0 0 12px; color: var(--accent-dark); font-size: clamp(1.6rem, 5vw, 2.3rem); }
+    p { margin: 0 0 16px; }
+    .table-wrap { width: 100%; overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+    table { width: 100%; min-width: 720px; border-collapse: collapse; font-family: Arial, Helvetica, sans-serif; font-size: 0.98rem; line-height: 1.35; }
+    th, td { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 10px; text-align: left; vertical-align: middle; }
+    th:last-child, td:last-child { border-right: 0; }
+    tr:last-child td, tr:last-child th { border-bottom: 0; }
+    thead th { background: var(--accent-dark); color: #fff; font-weight: 800; }
+    tbody th { background: #faf6ed; font-weight: 800; }
+    .example-row td, .example-row th { background: var(--soft-gold); font-style: italic; }
+    .word-cell { width: 26%; font-style: italic; font-weight: 800; }
+    input[type="text"], textarea {
+      width: 100%;
+      border: 1px solid #cfc6b6;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      padding: 8px 10px;
+    }
+    input[type="text"] { min-height: 38px; }
+    textarea { min-height: 88px; resize: vertical; }
+    .check-cell { width: 13%; text-align: center; }
+    input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--accent); }
+    .note {
+      margin: 16px 0 0;
+      border-left: 5px solid var(--sage);
+      padding: 12px 14px;
+      background: #f5f8f6;
+      color: #37463d;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+    }
+    .export-status {
+      width: 100%;
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.92rem;
+    }
+    .export-status:empty { display: none; }
+    .print-only { display: none; }
+    @media (max-width: 760px) {
+      header { grid-template-columns: 1fr; }
+      .actions { justify-content: flex-start; }
+      .page { width: calc(100% - 24px); }
+    }
+    @media print {
+      body { background: #fff; font-size: 11pt; }
+      .page { width: 100%; max-width: none; padding: 0; }
+      header, section { box-shadow: none; }
+      .actions, .note { display: none; }
+      .print-only { display: block; }
+      input[type="text"], textarea { border: 0; border-bottom: 1px solid #777; border-radius: 0; padding: 2px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <p class="kicker">Latin Textbook</p>
+        <h1>Chapter 4 Exercises</h1>
+        <p class="subtitle">Fill in your answers below. Your work is saved in this browser, and the Export Answers as PDF button will open your print dialog.</p>
+        <p class="print-only">Name: ________________________________ Date: ____________________</p>
+      </div>
+      <div class="actions">
+        <a class="button secondary" href="chapter-4.html">Back to Chapter</a>
+        <button class="button" type="button" id="printButton">Export Answers as PDF</button>
+        <p class="export-status" id="exportStatus" role="status" aria-live="polite"></p>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <h2>4.1</h2>
+        <p>Identify the conjugation of each verb.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Verb</th><th class="check-cell">1st</th><th class="check-cell">2nd</th><th class="check-cell">3rd</th><th class="check-cell">4th</th></tr></thead>
+            <tbody>
+              <tr class="example-row"><th>Ex: Amo, amare, amavi, amatum</th><td class="check-cell">X</td><td></td><td></td><td></td></tr>
+              <tr><th>Habeo, habere, habui, habitum</th><td class="check-cell"><input type="checkbox" name="habeo-1"></td><td class="check-cell"><input type="checkbox" name="habeo-2"></td><td class="check-cell"><input type="checkbox" name="habeo-3"></td><td class="check-cell"><input type="checkbox" name="habeo-4"></td></tr>
+              <tr><th>Mitto, mittere, misi, missum</th><td class="check-cell"><input type="checkbox" name="mitto-1"></td><td class="check-cell"><input type="checkbox" name="mitto-2"></td><td class="check-cell"><input type="checkbox" name="mitto-3"></td><td class="check-cell"><input type="checkbox" name="mitto-4"></td></tr>
+              <tr><th>Peto, petere, petivi, petitum</th><td class="check-cell"><input type="checkbox" name="peto-1"></td><td class="check-cell"><input type="checkbox" name="peto-2"></td><td class="check-cell"><input type="checkbox" name="peto-3"></td><td class="check-cell"><input type="checkbox" name="peto-4"></td></tr>
+              <tr><th>Vinco, vincere, vici, victum</th><td class="check-cell"><input type="checkbox" name="vinco-1"></td><td class="check-cell"><input type="checkbox" name="vinco-2"></td><td class="check-cell"><input type="checkbox" name="vinco-3"></td><td class="check-cell"><input type="checkbox" name="vinco-4"></td></tr>
+              <tr><th>Video, videre, visi, visum</th><td class="check-cell"><input type="checkbox" name="video-1"></td><td class="check-cell"><input type="checkbox" name="video-2"></td><td class="check-cell"><input type="checkbox" name="video-3"></td><td class="check-cell"><input type="checkbox" name="video-4"></td></tr>
+              <tr><th>Maneo, manere, mansi, mansum</th><td class="check-cell"><input type="checkbox" name="maneo-1"></td><td class="check-cell"><input type="checkbox" name="maneo-2"></td><td class="check-cell"><input type="checkbox" name="maneo-3"></td><td class="check-cell"><input type="checkbox" name="maneo-4"></td></tr>
+              <tr><th>Ambulo, ambulare, ambulavi, ambulatum</th><td class="check-cell"><input type="checkbox" name="ambulo-1"></td><td class="check-cell"><input type="checkbox" name="ambulo-2"></td><td class="check-cell"><input type="checkbox" name="ambulo-3"></td><td class="check-cell"><input type="checkbox" name="ambulo-4"></td></tr>
+              <tr><th>Scio, scire, scivi, scitum</th><td class="check-cell"><input type="checkbox" name="scio-1"></td><td class="check-cell"><input type="checkbox" name="scio-2"></td><td class="check-cell"><input type="checkbox" name="scio-3"></td><td class="check-cell"><input type="checkbox" name="scio-4"></td></tr>
+              <tr><th>Bibo, bibere, bibi, bibitum</th><td class="check-cell"><input type="checkbox" name="bibo-1"></td><td class="check-cell"><input type="checkbox" name="bibo-2"></td><td class="check-cell"><input type="checkbox" name="bibo-3"></td><td class="check-cell"><input type="checkbox" name="bibo-4"></td></tr>
+              <tr><th>Ardeo, ardere, arsi, arsum</th><td class="check-cell"><input type="checkbox" name="ardeo-1"></td><td class="check-cell"><input type="checkbox" name="ardeo-2"></td><td class="check-cell"><input type="checkbox" name="ardeo-3"></td><td class="check-cell"><input type="checkbox" name="ardeo-4"></td></tr>
+              <tr><th>Simulo, simulare, simulavi, simulatum</th><td class="check-cell"><input type="checkbox" name="simulo-1"></td><td class="check-cell"><input type="checkbox" name="simulo-2"></td><td class="check-cell"><input type="checkbox" name="simulo-3"></td><td class="check-cell"><input type="checkbox" name="simulo-4"></td></tr>
+              <tr><th>Dico, dicere, dixi, dictum</th><td class="check-cell"><input type="checkbox" name="dico-1"></td><td class="check-cell"><input type="checkbox" name="dico-2"></td><td class="check-cell"><input type="checkbox" name="dico-3"></td><td class="check-cell"><input type="checkbox" name="dico-4"></td></tr>
+              <tr><th>Puto, putare, Putavi, putatum</th><td class="check-cell"><input type="checkbox" name="puto-1"></td><td class="check-cell"><input type="checkbox" name="puto-2"></td><td class="check-cell"><input type="checkbox" name="puto-3"></td><td class="check-cell"><input type="checkbox" name="puto-4"></td></tr>
+              <tr><th>Credo, credere, credidi, creditum</th><td class="check-cell"><input type="checkbox" name="credo-1"></td><td class="check-cell"><input type="checkbox" name="credo-2"></td><td class="check-cell"><input type="checkbox" name="credo-3"></td><td class="check-cell"><input type="checkbox" name="credo-4"></td></tr>
+              <tr><th>Loco, locare, locavi, locatum</th><td class="check-cell"><input type="checkbox" name="loco-1"></td><td class="check-cell"><input type="checkbox" name="loco-2"></td><td class="check-cell"><input type="checkbox" name="loco-3"></td><td class="check-cell"><input type="checkbox" name="loco-4"></td></tr>
+              <tr><th>Mugito, mugitare, mugitavi, mugitatum</th><td class="check-cell"><input type="checkbox" name="mugito-1"></td><td class="check-cell"><input type="checkbox" name="mugito-2"></td><td class="check-cell"><input type="checkbox" name="mugito-3"></td><td class="check-cell"><input type="checkbox" name="mugito-4"></td></tr>
+              <tr><th>Invenio, invenire, inveni, inventum</th><td class="check-cell"><input type="checkbox" name="invenio-1"></td><td class="check-cell"><input type="checkbox" name="invenio-2"></td><td class="check-cell"><input type="checkbox" name="invenio-3"></td><td class="check-cell"><input type="checkbox" name="invenio-4"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>4.2</h2>
+        <p>Give the genitive singular and genitive plural of each noun.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Nominative</th><th>Genitive Singular</th><th>Genitive Plural</th></tr></thead>
+            <tbody>
+              <tr class="example-row"><th>Ex: puella</th><td>puellae</td><td>puellarum</td></tr>
+              <tr><th class="word-cell">cura</th><td><input type="text" name="cura-genitive-singular"></td><td><input type="text" name="cura-genitive-plural"></td></tr>
+              <tr><th class="word-cell">poena</th><td><input type="text" name="poena-genitive-singular"></td><td><input type="text" name="poena-genitive-plural"></td></tr>
+              <tr><th class="word-cell">silva</th><td><input type="text" name="silva-genitive-singular"></td><td><input type="text" name="silva-genitive-plural"></td></tr>
+              <tr><th class="word-cell">puer</th><td><input type="text" name="puer-genitive-singular"></td><td><input type="text" name="puer-genitive-plural"></td></tr>
+              <tr><th class="word-cell">caelum</th><td><input type="text" name="caelum-genitive-singular"></td><td><input type="text" name="caelum-genitive-plural"></td></tr>
+              <tr><th class="word-cell">periculum</th><td><input type="text" name="periculum-genitive-singular"></td><td><input type="text" name="periculum-genitive-plural"></td></tr>
+              <tr><th class="word-cell">ventus</th><td><input type="text" name="ventus-genitive-singular"></td><td><input type="text" name="ventus-genitive-plural"></td></tr>
+              <tr><th class="word-cell">nuntius</th><td><input type="text" name="nuntius-genitive-singular"></td><td><input type="text" name="nuntius-genitive-plural"></td></tr>
+              <tr><th class="word-cell">equus</th><td><input type="text" name="equus-genitive-singular"></td><td><input type="text" name="equus-genitive-plural"></td></tr>
+              <tr><th class="word-cell">villa</th><td><input type="text" name="villa-genitive-singular"></td><td><input type="text" name="villa-genitive-plural"></td></tr>
+              <tr><th class="word-cell">deus</th><td><input type="text" name="deus-genitive-singular"></td><td><input type="text" name="deus-genitive-plural"></td></tr>
+              <tr><th class="word-cell">amicus</th><td><input type="text" name="amicus-genitive-singular"></td><td><input type="text" name="amicus-genitive-plural"></td></tr>
+              <tr><th class="word-cell">regnum</th><td><input type="text" name="regnum-genitive-singular"></td><td><input type="text" name="regnum-genitive-plural"></td></tr>
+              <tr><th class="word-cell">templum</th><td><input type="text" name="templum-genitive-singular"></td><td><input type="text" name="templum-genitive-plural"></td></tr>
+              <tr><th class="word-cell">campus</th><td><input type="text" name="campus-genitive-singular"></td><td><input type="text" name="campus-genitive-plural"></td></tr>
+              <tr><th class="word-cell">telum</th><td><input type="text" name="telum-genitive-singular"></td><td><input type="text" name="telum-genitive-plural"></td></tr>
+              <tr><th class="word-cell">ludus</th><td><input type="text" name="ludus-genitive-singular"></td><td><input type="text" name="ludus-genitive-plural"></td></tr>
+              <tr><th class="word-cell">via</th><td><input type="text" name="via-genitive-singular"></td><td><input type="text" name="via-genitive-plural"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>4.3</h2>
+        <p>Fill in the blanks of each row. Next translate the first two boxes of each verb.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>1st Principal Part</th><th>2nd Principal Part</th><th>3rd Principal Part</th><th>4th Principal Part</th><th>Translate 1st</th><th>Translate 2nd</th></tr></thead>
+            <tbody>
+              <tr class="example-row"><td>amo</td><td>AMARE</td><td>amavi</td><td>AMATUM</td><td>I love</td><td>To love</td></tr>
+              <tr><td><input type="text" name="habeo-principal-1"></td><td><input type="text" name="habeo-principal-2"></td><td>habui</td><td>habitum</td><td><input type="text" name="habeo-translate-1"></td><td><input type="text" name="habeo-translate-2"></td></tr>
+              <tr><td><input type="text" name="do-principal-1"></td><td>dare</td><td><input type="text" name="do-principal-3"></td><td>datum</td><td><input type="text" name="do-translate-1"></td><td><input type="text" name="do-translate-2"></td></tr>
+              <tr><td>ago</td><td><input type="text" name="ago-principal-2"></td><td><input type="text" name="ago-principal-3"></td><td>actum</td><td><input type="text" name="ago-translate-1"></td><td><input type="text" name="ago-translate-2"></td></tr>
+              <tr><td>dico</td><td><input type="text" name="dico-principal-2"></td><td>dixi</td><td><input type="text" name="dico-principal-4"></td><td><input type="text" name="dico-translate-1"></td><td><input type="text" name="dico-translate-2"></td></tr>
+              <tr><td>audio</td><td><input type="text" name="audio-principal-2"></td><td>audivi</td><td><input type="text" name="audio-principal-4"></td><td><input type="text" name="audio-translate-1"></td><td><input type="text" name="audio-translate-2"></td></tr>
+              <tr><td>sum</td><td><input type="text" name="sum-principal-2"></td><td>fui</td><td>futurum</td><td><input type="text" name="sum-translate-1"></td><td><input type="text" name="sum-translate-2"></td></tr>
+              <tr><td><input type="text" name="video-principal-1"></td><td>videre</td><td>vidi</td><td><input type="text" name="video-principal-4"></td><td><input type="text" name="video-translate-1"></td><td><input type="text" name="video-translate-2"></td></tr>
+              <tr><td><input type="text" name="maneo-principal-1"></td><td>manere</td><td><input type="text" name="maneo-principal-3"></td><td>mansum</td><td><input type="text" name="maneo-translate-1"></td><td><input type="text" name="maneo-translate-2"></td></tr>
+              <tr><td>vinco</td><td>vincere</td><td><input type="text" name="vinco-principal-3"></td><td><input type="text" name="vinco-principal-4"></td><td><input type="text" name="vinco-translate-1"></td><td><input type="text" name="vinco-translate-2"></td></tr>
+              <tr><td><input type="text" name="specto-principal-1"></td><td><input type="text" name="specto-principal-2"></td><td>spectavi</td><td>spectatum</td><td><input type="text" name="specto-translate-1"></td><td><input type="text" name="specto-translate-2"></td></tr>
+              <tr><td>paro</td><td><input type="text" name="paro-principal-2"></td><td>paravi</td><td>paratum</td><td><input type="text" name="paro-translate-1"></td><td><input type="text" name="paro-translate-2"></td></tr>
+              <tr><td><input type="text" name="voco-principal-1"></td><td>vocare</td><td><input type="text" name="voco-principal-3"></td><td>vocatum</td><td><input type="text" name="voco-translate-1"></td><td><input type="text" name="voco-translate-2"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <p class="note">Answers are stored only in this browser on this computer. Use Export Answers as PDF when you are ready to save or print your work.</p>
+  </div>
+
+  <script>
+    const storageKey = "chapter-4-exercises-answers";
+    const fields = Array.from(document.querySelectorAll("input, textarea"));
+
+    function loadAnswers() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
+        fields.forEach((field) => {
+          if (!field.name || !(field.name in saved)) return;
+          if (field.type === "checkbox") {
+            field.checked = Boolean(saved[field.name]);
+          } else {
+            field.value = saved[field.name];
+          }
+        });
+      } catch (error) {
+        localStorage.removeItem(storageKey);
+      }
+    }
+
+    function saveAnswers() {
+      const data = {};
+      fields.forEach((field) => {
+        if (!field.name) return;
+        data[field.name] = field.type === "checkbox" ? field.checked : field.value;
+      });
+      localStorage.setItem(storageKey, JSON.stringify(data));
+    }
+
+    fields.forEach((field) => {
+      field.addEventListener("input", saveAnswers);
+      field.addEventListener("change", saveAnswers);
+    });
+
+    const printButton = document.getElementById("printButton");
+    const exportStatus = document.getElementById("exportStatus");
+    let printStarted = false;
+
+    window.addEventListener("beforeprint", () => {
+      printStarted = true;
+      exportStatus.textContent = "Print dialog opened. Choose Save as PDF as the destination.";
+    });
+
+    window.addEventListener("afterprint", () => {
+      exportStatus.textContent = "Done. Your answers are still saved in this browser.";
+    });
+
+    printButton.addEventListener("click", () => {
+      saveAnswers();
+      printStarted = false;
+      exportStatus.textContent = "Opening the print dialog...";
+      window.focus();
+      setTimeout(() => {
+        window.print();
+        setTimeout(() => {
+          if (!printStarted) {
+            exportStatus.textContent = "If no print dialog opened, use Command+P or your browser's Print command, then choose Save as PDF.";
+          }
+        }, 800);
+      }, 50);
+    });
+
+    loadAnswers();
+  </script>
+</body>
+</html>

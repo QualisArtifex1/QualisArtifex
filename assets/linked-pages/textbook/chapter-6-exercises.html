@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chapter 6 Exercises | Latin Textbook</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #20201d;
+      --muted: #635f57;
+      --paper: #fffdf8;
+      --line: #ddd6c8;
+      --accent: #8f2f2f;
+      --accent-dark: #6f2222;
+      --sage: #566f60;
+      --blue: #295f86;
+      --soft-gold: #fbf4e5;
+      --shadow: 0 18px 42px rgba(55, 43, 28, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(255, 253, 248, 0.95), rgba(255, 253, 248, 1)),
+        repeating-linear-gradient(90deg, rgba(191, 143, 53, 0.05) 0 1px, transparent 1px 34px);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 17px;
+      line-height: 1.55;
+    }
+    a { color: var(--blue); font-weight: 700; text-underline-offset: 0.18em; }
+    .page { width: calc(100% - 32px); max-width: 1120px; margin: 0 auto; padding: 30px 0 64px; }
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 20px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 24px;
+      margin-bottom: 28px;
+    }
+    .kicker {
+      margin: 0 0 8px;
+      color: var(--accent-dark);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    h1, h2 { font-family: "Trebuchet MS", Arial, sans-serif; line-height: 1.12; letter-spacing: 0; }
+    h1 { margin: 0; font-size: clamp(2.4rem, 8vw, 5rem); }
+    .subtitle { max-width: 700px; margin: 14px 0 0; color: var(--muted); font-size: 1.08rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 9px 15px;
+      background: var(--accent);
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .button.secondary { background: transparent; color: var(--accent-dark); }
+    main { display: grid; gap: 26px; }
+    section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+    h2 { margin: 0 0 12px; color: var(--accent-dark); font-size: clamp(1.6rem, 5vw, 2.3rem); }
+    p { margin: 0 0 16px; }
+    .table-wrap { width: 100%; overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+    table { width: 100%; min-width: 720px; border-collapse: collapse; font-family: Arial, Helvetica, sans-serif; font-size: 0.98rem; line-height: 1.35; }
+    th, td { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 10px; text-align: left; vertical-align: middle; }
+    th:last-child, td:last-child { border-right: 0; }
+    tr:last-child td, tr:last-child th { border-bottom: 0; }
+    thead th { background: var(--accent-dark); color: #fff; font-weight: 800; }
+    tbody th { background: #faf6ed; font-weight: 800; }
+    .green-head th { background: #00ff00; color: #000; }
+    .soft-green-head th { background: #d9ead3; color: #000; }
+    .example-row td, .example-row th { background: var(--soft-gold); font-style: italic; }
+    .word-cell { width: 26%; font-style: italic; font-weight: 800; }
+    input[type="text"], textarea {
+      width: 100%;
+      border: 1px solid #cfc6b6;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      padding: 8px 10px;
+    }
+    input[type="text"] { min-height: 38px; }
+    textarea { min-height: 96px; resize: vertical; }
+    .note {
+      margin: 16px 0 0;
+      border-left: 5px solid var(--sage);
+      padding: 12px 14px;
+      background: #f5f8f6;
+      color: #37463d;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+    }
+    .export-status {
+      width: 100%;
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.92rem;
+    }
+    .export-status:empty { display: none; }
+    .print-only { display: none; }
+    @media (max-width: 760px) {
+      header { grid-template-columns: 1fr; }
+      .actions { justify-content: flex-start; }
+      .page { width: calc(100% - 24px); }
+    }
+    @media print {
+      body { background: #fff; font-size: 11pt; }
+      .page { width: 100%; max-width: none; padding: 0; }
+      header, section { box-shadow: none; }
+      .actions, .note { display: none; }
+      .print-only { display: block; }
+      input[type="text"], textarea { border: 0; border-bottom: 1px solid #777; border-radius: 0; padding: 2px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <p class="kicker">Latin Textbook</p>
+        <h1>Chapter 6 Exercises</h1>
+        <p class="subtitle">Fill in your answers below. Your work is saved in this browser, and the Export Answers as PDF button will open your print dialog.</p>
+        <p class="print-only">Name: ________________________________ Date: ____________________</p>
+      </div>
+      <div class="actions">
+        <a class="button secondary" href="chapter-6.html">Back to Chapter</a>
+        <button class="button" type="button" id="printButton">Export Answers as PDF</button>
+        <p class="export-status" id="exportStatus" role="status" aria-live="polite"></p>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <h2>6.1</h2>
+        <p>Identify each of the following 3rd declension nouns by case, number, and gender. If more than one possibility exists, give all possibilities. Then, choose the form of <em>malus, a, um</em> and <em>omnis, omne</em> that matches the given noun. Again, give all possibilities.</p>
+        <div class="table-wrap">
+          <table>
+            <thead class="green-head"><tr><th>Noun</th><th>Case/Number/Gender</th><th>Malus, a, um and Omnis, Omne</th></tr></thead>
+            <tbody>
+              <tr class="example-row"><th class="word-cell">parte</th><td>Ex. abl/sing/fem</td><td>Ex. mala omne</td></tr>
+              <tr><th class="word-cell">hostes</th><td><input type="text" name="hostes-cng"></td><td><input type="text" name="hostes-adjectives"></td></tr>
+              <tr><th class="word-cell">temporibus</th><td><input type="text" name="temporibus-cng"></td><td><input type="text" name="temporibus-adjectives"></td></tr>
+              <tr><th class="word-cell">urbi</th><td><input type="text" name="urbi-cng"></td><td><input type="text" name="urbi-adjectives"></td></tr>
+              <tr><th class="word-cell">partium</th><td><input type="text" name="partium-cng"></td><td><input type="text" name="partium-adjectives"></td></tr>
+              <tr><th class="word-cell">hostis</th><td><input type="text" name="hostis-cng"></td><td><input type="text" name="hostis-adjectives"></td></tr>
+              <tr><th class="word-cell">rex</th><td><input type="text" name="rex-cng"></td><td><input type="text" name="rex-adjectives"></td></tr>
+              <tr><th class="word-cell">puellis</th><td><input type="text" name="puellis-cng"></td><td><input type="text" name="puellis-adjectives"></td></tr>
+              <tr><th class="word-cell">amicorum</th><td><input type="text" name="amicorum-cng"></td><td><input type="text" name="amicorum-adjectives"></td></tr>
+              <tr><th class="word-cell">corpus</th><td><input type="text" name="corpus-cng"></td><td><input type="text" name="corpus-adjectives"></td></tr>
+              <tr><th class="word-cell">patris</th><td><input type="text" name="patris-cng"></td><td><input type="text" name="patris-adjectives"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>6.2</h2>
+        <p>Translate each of the following noun adjective pairs into the Latin case indicated. You may need to consult a dictionary or previous chapters' vocabulary.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Pair</th><th>Translation</th></tr></thead>
+            <tbody>
+              <tr class="example-row"><th>Sad king (nominative plural)</th><td>Ex: tristes reges</td></tr>
+              <tr><th>Brave enemy (ablative plural)<br><em>Fortis, forte hostis, hostis m</em></th><td><input type="text" name="brave-enemy"></td></tr>
+              <tr><th>Heavy body (genitive plural)<br><em>Gravis, grave corpus, corporis n</em></th><td><input type="text" name="heavy-body"></td></tr>
+              <tr><th>Small turtle (accusative singular)<br><em>Parvus, a, um testudo, testudinis f</em></th><td><input type="text" name="small-turtle"></td></tr>
+              <tr><th>Happy mother (dative singular)<br><em>Laetus, a, um mater, matris f</em></th><td><input type="text" name="happy-mother"></td></tr>
+              <tr><th>Every leader (nominative singular)<br><em>Omnis, omne dux, ducis m</em></th><td><input type="text" name="every-leader"></td></tr>
+              <tr><th>Heavenly kingdom (accusative plural)<br><em>Cealestis, caeleste regnum, regni n</em></th><td><input type="text" name="heavenly-kingdom"></td></tr>
+              <tr><th>Huge ocean (ablative singular)<br><em>Ingens, ingentis aequor, aequoris n</em></th><td><input type="text" name="huge-ocean"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>6.3</h2>
+        <p>In each of the following sentences identify the PAP, give its case/number/gender, and then say which noun it modifies.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Sentence</th><th>PAP</th><th>Case/Number/Gender</th><th>Noun Head</th></tr></thead>
+            <tbody>
+              <tr class="example-row"><th>Consul exercitum timens discedere conatur.</th><td>Ex: Timens</td><td>nom/sing/x</td><td>consul</td></tr>
+              <tr><th>Dimisit illos viros in agris dormientes.</th><td><input type="text" name="dimisit-pap"></td><td><input type="text" name="dimisit-cng"></td><td><input type="text" name="dimisit-head"></td></tr>
+              <tr><th>Puer epistulam legens domi manserat.</th><td><input type="text" name="puer-pap"></td><td><input type="text" name="puer-cng"></td><td><input type="text" name="puer-head"></td></tr>
+              <tr><th>Duce milites vocante, hostes fugiunt.</th><td><input type="text" name="duce-pap"></td><td><input type="text" name="duce-cng"></td><td><input type="text" name="duce-head"></td></tr>
+              <tr><th>Feminae pro templo stanti donum magnum do.</th><td><input type="text" name="feminae-pap"></td><td><input type="text" name="feminae-cng"></td><td><input type="text" name="feminae-head"></td></tr>
+              <tr><th>Nautae navigare parantes cibum acceperunt.</th><td><input type="text" name="nautae-pap"></td><td><input type="text" name="nautae-cng"></td><td><input type="text" name="nautae-head"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>6.4</h2>
+        <p>Give the Roman numeral for each of the following dates.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Year</th><th>Roman Numeral</th></tr></thead>
+            <tbody>
+              <tr><th>1997</th><td><input type="text" name="year-1997"></td></tr>
+              <tr><th>2004</th><td><input type="text" name="year-2004"></td></tr>
+              <tr><th>1492</th><td><input type="text" name="year-1492"></td></tr>
+              <tr><th>1776</th><td><input type="text" name="year-1776"></td></tr>
+              <tr><th>509</th><td><input type="text" name="year-509"></td></tr>
+              <tr><th>1099</th><td><input type="text" name="year-1099"></td></tr>
+              <tr><th>1945</th><td><input type="text" name="year-1945"></td></tr>
+              <tr><th>756</th><td><input type="text" name="year-756"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>6.5</h2>
+        <p>Translate each English question into Latin.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>English</th><th>Latin</th></tr></thead>
+            <tbody>
+              <tr><th>Is the boy sad?</th><td><input type="text" name="question-boy-sad"></td></tr>
+              <tr><th>Do you see the enemies?</th><td><input type="text" name="question-see-enemies"></td></tr>
+              <tr><th>The gods are heavenly, right?</th><td><input type="text" name="question-gods-heavenly"></td></tr>
+              <tr><th>The city isn't huge, is it?</th><td><input type="text" name="question-city-huge"></td></tr>
+              <tr><th>I am not carrying the water, am I?</th><td><input type="text" name="question-carrying-water"></td></tr>
+              <tr><th>Are the enemies carrying swords?</th><td><input type="text" name="question-enemies-swords"></td></tr>
+              <tr><th>Does the boy see the girls carrying water?</th><td><input type="text" name="question-boy-girls-water"></td></tr>
+              <tr><th>The kings give food to the people walking on the road.</th><td><input type="text" name="question-kings-food-people"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>6.6</h2>
+        <p>Give the English date for each given Roman date.</p>
+        <div class="table-wrap">
+          <table>
+            <thead class="soft-green-head"><tr><th>Roman Date</th><th>English Date</th></tr></thead>
+            <tbody>
+              <tr><th>A.d. IV Id. Apr.</th><td><input type="text" name="date-apr"></td></tr>
+              <tr><th>A.d. III Non. Oct.</th><td><input type="text" name="date-oct"></td></tr>
+              <tr><th>A.d. VIII Kal. Sep.</th><td><input type="text" name="date-sep"></td></tr>
+              <tr><th>A.d. VI Id. Dec.</th><td><input type="text" name="date-dec"></td></tr>
+              <tr><th>A.d. V Kal. Jan.</th><td><input type="text" name="date-jan"></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">Answers are saved locally in this browser. The PDF export uses your browser's print dialog so students can choose Save as PDF.</p>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      var storageKey = "latin-chapter-6-exercises";
+      var fields = Array.prototype.slice.call(document.querySelectorAll("input, textarea"));
+      var status = document.getElementById("exportStatus");
+      var saved = {};
+
+      try {
+        saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
+      } catch (error) {
+        saved = {};
+      }
+
+      fields.forEach(function (field) {
+        if (Object.prototype.hasOwnProperty.call(saved, field.name)) {
+          field.value = saved[field.name];
+        }
+        field.addEventListener("input", saveAnswers);
+      });
+
+      function saveAnswers() {
+        var answers = {};
+        fields.forEach(function (field) {
+          answers[field.name] = field.value;
+        });
+        localStorage.setItem(storageKey, JSON.stringify(answers));
+      }
+
+      document.getElementById("printButton").addEventListener("click", function () {
+        var printStarted = false;
+        saveAnswers();
+        status.textContent = "Opening print dialog. Choose Save as PDF to export your answers.";
+
+        var markStarted = function () {
+          printStarted = true;
+          window.removeEventListener("beforeprint", markStarted);
+        };
+
+        window.addEventListener("beforeprint", markStarted);
+        window.print();
+
+        window.setTimeout(function () {
+          if (!printStarted) {
+            status.textContent = "If no print dialog opened, use Command+P or your browser's Print command, then choose Save as PDF.";
+          }
+        }, 800);
+      });
+    }());
+  </script>
+</body>
+</html>

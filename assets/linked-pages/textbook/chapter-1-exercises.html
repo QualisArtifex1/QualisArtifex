@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chapter 1 Exercises | Latin Textbook</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #20201d;
+      --muted: #635f57;
+      --paper: #fffdf8;
+      --panel: #ffffff;
+      --line: #ddd6c8;
+      --accent: #8f2f2f;
+      --accent-dark: #6f2222;
+      --sage: #566f60;
+      --blue: #295f86;
+      --soft-gold: #fbf4e5;
+      --shadow: 0 18px 42px rgba(55, 43, 28, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(255, 253, 248, 0.95), rgba(255, 253, 248, 1)),
+        repeating-linear-gradient(90deg, rgba(191, 143, 53, 0.05) 0 1px, transparent 1px 34px);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 17px;
+      line-height: 1.55;
+    }
+
+    a {
+      color: var(--blue);
+      font-weight: 700;
+      text-underline-offset: 0.18em;
+    }
+
+    .page {
+      width: calc(100% - 32px);
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 30px 0 64px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 20px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 24px;
+      margin-bottom: 28px;
+    }
+
+    .kicker {
+      margin: 0 0 8px;
+      color: var(--accent-dark);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2 {
+      font-family: "Trebuchet MS", Arial, sans-serif;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.4rem, 8vw, 5rem);
+    }
+
+    .subtitle {
+      max-width: 700px;
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 9px 15px;
+      background: var(--accent);
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .button.secondary {
+      background: transparent;
+      color: var(--accent-dark);
+    }
+
+    main {
+      display: grid;
+      gap: 26px;
+    }
+
+    section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      color: var(--accent-dark);
+      font-size: clamp(1.6rem, 5vw, 2.3rem);
+    }
+
+    p {
+      margin: 0 0 16px;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      min-width: 720px;
+      border-collapse: collapse;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.98rem;
+      line-height: 1.35;
+    }
+
+    th,
+    td {
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 10px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th:last-child,
+    td:last-child {
+      border-right: 0;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    thead th {
+      background: var(--accent-dark);
+      color: #fff;
+      font-weight: 800;
+    }
+
+    tbody th {
+      background: #faf6ed;
+      font-weight: 800;
+    }
+
+    .example-row td,
+    .example-row th {
+      background: var(--soft-gold);
+      font-style: italic;
+    }
+
+    .word-cell {
+      width: 22%;
+      font-style: italic;
+      font-weight: 800;
+    }
+
+    .answer-cell {
+      width: 32%;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      border: 1px solid #cfc6b6;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      padding: 8px 10px;
+    }
+
+    input[type="text"] {
+      min-height: 38px;
+    }
+
+    textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    .check-cell {
+      width: 10%;
+      text-align: center;
+    }
+
+    input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      accent-color: var(--accent);
+    }
+
+    .writing-table td {
+      width: 50%;
+    }
+
+    .note {
+      margin: 16px 0 0;
+      border-left: 5px solid var(--sage);
+      padding: 12px 14px;
+      background: #f5f8f6;
+      color: #37463d;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+    }
+
+    .print-only {
+      display: none;
+    }
+
+    @media (max-width: 760px) {
+      header {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        justify-content: flex-start;
+      }
+
+      section {
+        padding: 16px;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        font-size: 11pt;
+      }
+
+      .page {
+        width: 100%;
+        max-width: none;
+        padding: 0;
+      }
+
+      header,
+      section {
+        box-shadow: none;
+      }
+
+      header {
+        display: block;
+        margin-bottom: 14pt;
+        padding-bottom: 10pt;
+      }
+
+      .actions,
+      .note {
+        display: none;
+      }
+
+      section {
+        break-inside: avoid;
+        border: 1px solid #bbb;
+        margin-bottom: 12pt;
+        padding: 12pt;
+      }
+
+      h1 {
+        font-size: 26pt;
+      }
+
+      h2 {
+        font-size: 17pt;
+      }
+
+      table {
+        min-width: 0;
+        font-size: 9.5pt;
+      }
+
+      th,
+      td {
+        padding: 6pt;
+      }
+
+      input[type="text"],
+      textarea {
+        border: 0;
+        border-bottom: 1px solid #444;
+        border-radius: 0;
+        padding: 0 0 2pt;
+      }
+
+      input[type="checkbox"] {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      .print-only {
+        display: inline;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <p class="kicker">Latin Textbook</p>
+        <h1>Chapter 1 Exercises</h1>
+        <p class="subtitle">Type directly into the answer boxes. When you are done, use Export Answers as PDF and choose Save as PDF in the print dialog.</p>
+      </div>
+      <div class="actions">
+        <a class="button secondary" href="chapter-1.html">Back to Chapter</a>
+        <button class="button" type="button" id="printAnswers">Export Answers as PDF</button>
+      </div>
+    </header>
+
+    <main>
+      <section aria-labelledby="exercise-1-1">
+        <h2 id="exercise-1-1">1.1</h2>
+        <p>Change each noun from singular to plural or plural to singular. If a word is not a vocabulary word, look it up here if you need to: <a href="http://archives.nd.edu/words.html">Dictionary</a>. Check the box to indicate the noun’s declension.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Noun</th>
+                <th scope="col">Changed Form</th>
+                <th scope="col">1st</th>
+                <th scope="col">2nd</th>
+                <th scope="col">2nd N</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="example-row">
+                <th scope="row">Ex: animus</th>
+                <td>animi</td>
+                <td></td>
+                <td class="check-cell">x</td>
+                <td></td>
+              </tr>
+              <tr><th class="word-cell" scope="row">dei</th><td class="answer-cell"><input type="text" aria-label="Changed form for dei"></td><td class="check-cell"><input type="checkbox" aria-label="dei 1st declension"></td><td class="check-cell"><input type="checkbox" aria-label="dei 2nd declension"></td><td class="check-cell"><input type="checkbox" aria-label="dei 2nd neuter declension"></td></tr>
+              <tr><th class="word-cell" scope="row">vir</th><td class="answer-cell"><input type="text" aria-label="Changed form for vir"></td><td class="check-cell"><input type="checkbox" aria-label="vir 1st declension"></td><td class="check-cell"><input type="checkbox" aria-label="vir 2nd declension"></td><td class="check-cell"><input type="checkbox" aria-label="vir 2nd neuter declension"></td></tr>
+              <tr><th class="word-cell" scope="row">populus</th><td class="answer-cell"><input type="text" aria-label="Changed form for populus"></td><td class="check-cell"><input type="checkbox" aria-label="populus 1st declension"></td><td class="check-cell"><input type="checkbox" aria-label="populus 2nd declension"></td><td class="check-cell"><input type="checkbox" aria-label="populus 2nd neuter declension"></td></tr>
+              <tr><th class="word-cell" scope="row">equus</th><td class="answer-cell"><input type="text" aria-label="Changed form for equus"></td><td class="check-cell"><input type="checkbox" aria-label="equus 1st declension"></td><td class="check-cell"><input type="checkbox" aria-label="equus 2nd declension"></td><td class="check-cell"><input type="checkbox" aria-label="equus 2nd neuter declension"></td></tr>
+              <tr><th class="word-cell" scope="row">caela</th><td class="answer-cell"><input type="text" aria-label="Changed form for caela"></td><td class="check-cell"><input type="checkbox" aria-label="caela 1st declension"></td><td class="check-cell"><input type="checkbox" aria-label="caela 2nd declension"></td><td class="check-cell"><input type="checkbox" aria-label="caela 2nd neuter declension"></td></tr>
+              <tr><th class="word-cell" scope="row">causa</th><td class="answer-cell"><input type="text" aria-label="Changed form for causa"></td><td class="check-cell"><input type="checkbox" aria-label="causa 1st declension"></td><td class="check-cell"><input type="checkbox" aria-label="causa 2nd declension"></td><td class="check-cell"><input type="checkbox" aria-label="causa 2nd neuter declension"></td></tr>
+              <tr><th class="word-cell" scope="row">terrae</th><td class="answer-cell"><input type="text" aria-label="Changed form for terrae"></td><td class="check-cell"><input type="checkbox" aria-label="terrae 1st declension"></td><td class="check-cell"><input type="checkbox" aria-label="terrae 2nd declension"></td><td class="check-cell"><input type="checkbox" aria-label="terrae 2nd neuter declension"></td></tr>
+              <tr><th class="word-cell" scope="row">bellum</th><td class="answer-cell"><input type="text" aria-label="Changed form for bellum"></td><td class="check-cell"><input type="checkbox" aria-label="bellum 1st declension"></td><td class="check-cell"><input type="checkbox" aria-label="bellum 2nd declension"></td><td class="check-cell"><input type="checkbox" aria-label="bellum 2nd neuter declension"></td></tr>
+              <tr><th class="word-cell" scope="row">monstrum</th><td class="answer-cell"><input type="text" aria-label="Changed form for monstrum"></td><td class="check-cell"><input type="checkbox" aria-label="monstrum 1st declension"></td><td class="check-cell"><input type="checkbox" aria-label="monstrum 2nd declension"></td><td class="check-cell"><input type="checkbox" aria-label="monstrum 2nd neuter declension"></td></tr>
+              <tr><th class="word-cell" scope="row">gladius</th><td class="answer-cell"><input type="text" aria-label="Changed form for gladius"></td><td class="check-cell"><input type="checkbox" aria-label="gladius 1st declension"></td><td class="check-cell"><input type="checkbox" aria-label="gladius 2nd declension"></td><td class="check-cell"><input type="checkbox" aria-label="gladius 2nd neuter declension"></td></tr>
+              <tr><th class="word-cell" scope="row">telae</th><td class="answer-cell"><input type="text" aria-label="Changed form for telae"></td><td class="check-cell"><input type="checkbox" aria-label="telae 1st declension"></td><td class="check-cell"><input type="checkbox" aria-label="telae 2nd declension"></td><td class="check-cell"><input type="checkbox" aria-label="telae 2nd neuter declension"></td></tr>
+              <tr><th class="word-cell" scope="row">tumulus</th><td class="answer-cell"><input type="text" aria-label="Changed form for tumulus"></td><td class="check-cell"><input type="checkbox" aria-label="tumulus 1st declension"></td><td class="check-cell"><input type="checkbox" aria-label="tumulus 2nd declension"></td><td class="check-cell"><input type="checkbox" aria-label="tumulus 2nd neuter declension"></td></tr>
+              <tr><th class="word-cell" scope="row">regia</th><td class="answer-cell"><input type="text" aria-label="Changed form for regia"></td><td class="check-cell"><input type="checkbox" aria-label="regia 1st declension"></td><td class="check-cell"><input type="checkbox" aria-label="regia 2nd declension"></td><td class="check-cell"><input type="checkbox" aria-label="regia 2nd neuter declension"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section aria-labelledby="exercise-1-2">
+        <h2 id="exercise-1-2">1.2</h2>
+        <p>For each sentence change the entire sentence including the verb from singular to plural or plural to singular as needed.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Sentence</th>
+                <th scope="col">Changed Sentence</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="example-row"><th scope="row">Ex: Animus est magnus</th><td>Animi sunt magni</td></tr>
+              <tr><th scope="row">Terrae sunt optimae</th><td><input type="text" aria-label="Changed sentence for Terrae sunt optimae"></td></tr>
+              <tr><th scope="row">Monstrum est malum</th><td><input type="text" aria-label="Changed sentence for Monstrum est malum"></td></tr>
+              <tr><th scope="row">Equi sunt parvi</th><td><input type="text" aria-label="Changed sentence for Equi sunt parvi"></td></tr>
+              <tr><th scope="row">Puellae sunt pulchrae</th><td><input type="text" aria-label="Changed sentence for Puellae sunt pulchrae"></td></tr>
+              <tr><th scope="row">Vir est crassus</th><td><input type="text" aria-label="Changed sentence for Vir est crassus"></td></tr>
+              <tr><th scope="row">Hasta est longa</th><td><input type="text" aria-label="Changed sentence for Hasta est longa"></td></tr>
+              <tr><th scope="row">Discipulus est fessus</th><td><input type="text" aria-label="Changed sentence for Discipulus est fessus"></td></tr>
+              <tr><th scope="row">Via est recta</th><td><input type="text" aria-label="Changed sentence for Via est recta"></td></tr>
+              <tr><th scope="row">Murus est altus</th><td><input type="text" aria-label="Changed sentence for Murus est altus"></td></tr>
+              <tr><th scope="row">Gladii sunt sanguinei</th><td><input type="text" aria-label="Changed sentence for Gladii sunt sanguinei"></td></tr>
+              <tr><th scope="row">Dei sunt stulti</th><td><input type="text" aria-label="Changed sentence for Dei sunt stulti"></td></tr>
+              <tr><th scope="row">Aqua est placida</th><td><input type="text" aria-label="Changed sentence for Aqua est placida"></td></tr>
+              <tr><th scope="row">Oculus est caecus</th><td><input type="text" aria-label="Changed sentence for Oculus est caecus"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section aria-labelledby="exercise-1-3">
+        <h2 id="exercise-1-3">1.3</h2>
+        <p>For each noun indicate the gender by checking off the box. Some of these words are NOT vocabulary words. Use this <a href="http://archives.nd.edu/words.html">link</a> to help or use any Latin dictionary.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Noun</th>
+                <th scope="col">Masculine</th>
+                <th scope="col">Feminine</th>
+                <th scope="col">Neuter</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="example-row"><th scope="row">Ex: dea</th><td></td><td class="check-cell">x</td><td></td></tr>
+              <tr><th class="word-cell" scope="row">deus</th><td class="check-cell"><input type="checkbox" aria-label="deus masculine"></td><td class="check-cell"><input type="checkbox" aria-label="deus feminine"></td><td class="check-cell"><input type="checkbox" aria-label="deus neuter"></td></tr>
+              <tr><th class="word-cell" scope="row">animus</th><td class="check-cell"><input type="checkbox" aria-label="animus masculine"></td><td class="check-cell"><input type="checkbox" aria-label="animus feminine"></td><td class="check-cell"><input type="checkbox" aria-label="animus neuter"></td></tr>
+              <tr><th class="word-cell" scope="row">terra</th><td class="check-cell"><input type="checkbox" aria-label="terra masculine"></td><td class="check-cell"><input type="checkbox" aria-label="terra feminine"></td><td class="check-cell"><input type="checkbox" aria-label="terra neuter"></td></tr>
+              <tr><th class="word-cell" scope="row">bellum</th><td class="check-cell"><input type="checkbox" aria-label="bellum masculine"></td><td class="check-cell"><input type="checkbox" aria-label="bellum feminine"></td><td class="check-cell"><input type="checkbox" aria-label="bellum neuter"></td></tr>
+              <tr><th class="word-cell" scope="row">vir</th><td class="check-cell"><input type="checkbox" aria-label="vir masculine"></td><td class="check-cell"><input type="checkbox" aria-label="vir feminine"></td><td class="check-cell"><input type="checkbox" aria-label="vir neuter"></td></tr>
+              <tr><th class="word-cell" scope="row">puella</th><td class="check-cell"><input type="checkbox" aria-label="puella masculine"></td><td class="check-cell"><input type="checkbox" aria-label="puella feminine"></td><td class="check-cell"><input type="checkbox" aria-label="puella neuter"></td></tr>
+              <tr><th class="word-cell" scope="row">aqua</th><td class="check-cell"><input type="checkbox" aria-label="aqua masculine"></td><td class="check-cell"><input type="checkbox" aria-label="aqua feminine"></td><td class="check-cell"><input type="checkbox" aria-label="aqua neuter"></td></tr>
+              <tr><th class="word-cell" scope="row">templum</th><td class="check-cell"><input type="checkbox" aria-label="templum masculine"></td><td class="check-cell"><input type="checkbox" aria-label="templum feminine"></td><td class="check-cell"><input type="checkbox" aria-label="templum neuter"></td></tr>
+              <tr><th class="word-cell" scope="row">gladius</th><td class="check-cell"><input type="checkbox" aria-label="gladius masculine"></td><td class="check-cell"><input type="checkbox" aria-label="gladius feminine"></td><td class="check-cell"><input type="checkbox" aria-label="gladius neuter"></td></tr>
+              <tr><th class="word-cell" scope="row">oculus</th><td class="check-cell"><input type="checkbox" aria-label="oculus masculine"></td><td class="check-cell"><input type="checkbox" aria-label="oculus feminine"></td><td class="check-cell"><input type="checkbox" aria-label="oculus neuter"></td></tr>
+              <tr><th class="word-cell" scope="row">mensa</th><td class="check-cell"><input type="checkbox" aria-label="mensa masculine"></td><td class="check-cell"><input type="checkbox" aria-label="mensa feminine"></td><td class="check-cell"><input type="checkbox" aria-label="mensa neuter"></td></tr>
+              <tr><th class="word-cell" scope="row">tabula</th><td class="check-cell"><input type="checkbox" aria-label="tabula masculine"></td><td class="check-cell"><input type="checkbox" aria-label="tabula feminine"></td><td class="check-cell"><input type="checkbox" aria-label="tabula neuter"></td></tr>
+              <tr><th class="word-cell" scope="row">bracchium</th><td class="check-cell"><input type="checkbox" aria-label="bracchium masculine"></td><td class="check-cell"><input type="checkbox" aria-label="bracchium feminine"></td><td class="check-cell"><input type="checkbox" aria-label="bracchium neuter"></td></tr>
+              <tr><th class="word-cell" scope="row">nauta (look it up)</th><td class="check-cell"><input type="checkbox" aria-label="nauta masculine"></td><td class="check-cell"><input type="checkbox" aria-label="nauta feminine"></td><td class="check-cell"><input type="checkbox" aria-label="nauta neuter"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section aria-labelledby="exercise-1-4">
+        <h2 id="exercise-1-4">1.4</h2>
+        <p>Create your own linking sentences in Latin and translate them. You could also create the sentences and swap with a partner to translate each others. Try to create two sentences using singular nouns and two sentences using plurals.</p>
+
+        <div class="table-wrap">
+          <table class="writing-table">
+            <thead>
+              <tr>
+                <th scope="col">Latin</th>
+                <th scope="col">English</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><textarea aria-label="Latin sentence 1"></textarea></td><td><textarea aria-label="English translation 1"></textarea></td></tr>
+              <tr><td><textarea aria-label="Latin sentence 2"></textarea></td><td><textarea aria-label="English translation 2"></textarea></td></tr>
+              <tr><td><textarea aria-label="Latin sentence 3"></textarea></td><td><textarea aria-label="English translation 3"></textarea></td></tr>
+              <tr><td><textarea aria-label="Latin sentence 4"></textarea></td><td><textarea aria-label="English translation 4"></textarea></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const storageKey = "chapter-1-exercises-answers";
+    const fields = () => Array.from(document.querySelectorAll("input, textarea"));
+
+    function saveAnswers() {
+      const answers = fields().map((field) => {
+        if (field.type === "checkbox") {
+          return { type: field.type, checked: field.checked };
+        }
+        return { type: field.type, value: field.value };
+      });
+      localStorage.setItem(storageKey, JSON.stringify(answers));
+    }
+
+    function restoreAnswers() {
+      const saved = localStorage.getItem(storageKey);
+      if (!saved) return;
+      try {
+        JSON.parse(saved).forEach((answer, index) => {
+          const field = fields()[index];
+          if (!field) return;
+          if (field.type === "checkbox") {
+            field.checked = Boolean(answer.checked);
+          } else {
+            field.value = answer.value || "";
+          }
+        });
+      } catch {
+        localStorage.removeItem(storageKey);
+      }
+    }
+
+    restoreAnswers();
+    fields().forEach((field) => field.addEventListener("input", saveAnswers));
+    fields().forEach((field) => field.addEventListener("change", saveAnswers));
+
+    document.getElementById("printAnswers").addEventListener("click", () => {
+      saveAnswers();
+      window.print();
+    });
+  </script>
+</body>
+</html>

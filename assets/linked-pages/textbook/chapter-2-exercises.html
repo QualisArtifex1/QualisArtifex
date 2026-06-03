@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chapter 2 Exercises | Latin Textbook</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #20201d;
+      --muted: #635f57;
+      --paper: #fffdf8;
+      --panel: #ffffff;
+      --line: #ddd6c8;
+      --accent: #8f2f2f;
+      --accent-dark: #6f2222;
+      --sage: #566f60;
+      --blue: #295f86;
+      --soft-gold: #fbf4e5;
+      --shadow: 0 18px 42px rgba(55, 43, 28, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(255, 253, 248, 0.95), rgba(255, 253, 248, 1)),
+        repeating-linear-gradient(90deg, rgba(191, 143, 53, 0.05) 0 1px, transparent 1px 34px);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 17px;
+      line-height: 1.55;
+    }
+
+    a {
+      color: var(--blue);
+      font-weight: 700;
+      text-underline-offset: 0.18em;
+    }
+
+    .page {
+      width: calc(100% - 32px);
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 30px 0 64px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 20px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 24px;
+      margin-bottom: 28px;
+    }
+
+    .kicker {
+      margin: 0 0 8px;
+      color: var(--accent-dark);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: "Trebuchet MS", Arial, sans-serif;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.4rem, 8vw, 5rem);
+    }
+
+    .subtitle {
+      max-width: 700px;
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 9px 15px;
+      background: var(--accent);
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .button.secondary {
+      background: transparent;
+      color: var(--accent-dark);
+    }
+
+    main {
+      display: grid;
+      gap: 26px;
+    }
+
+    section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      color: var(--accent-dark);
+      font-size: clamp(1.6rem, 5vw, 2.3rem);
+    }
+
+    h3 {
+      margin: 18px 0 10px;
+      color: #312c25;
+      font-size: 1.18rem;
+    }
+
+    p {
+      margin: 0 0 16px;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      min-width: 720px;
+      border-collapse: collapse;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.98rem;
+      line-height: 1.35;
+    }
+
+    th,
+    td {
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 10px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th:last-child,
+    td:last-child {
+      border-right: 0;
+    }
+
+    tr:last-child td,
+    tr:last-child th {
+      border-bottom: 0;
+    }
+
+    thead th {
+      background: var(--accent-dark);
+      color: #fff;
+      font-weight: 800;
+    }
+
+    tbody th {
+      background: #faf6ed;
+      font-weight: 800;
+    }
+
+    .example-row td,
+    .example-row th {
+      background: var(--soft-gold);
+      font-style: italic;
+    }
+
+    .word-cell {
+      width: 22%;
+      font-style: italic;
+      font-weight: 800;
+    }
+
+    .verb-title {
+      margin-top: 22px;
+      border-left: 5px solid var(--sage);
+      background: #f5f8f6;
+      padding: 10px 12px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: 800;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      border: 1px solid #cfc6b6;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      padding: 8px 10px;
+    }
+
+    input[type="text"] {
+      min-height: 38px;
+    }
+
+    textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    .check-cell {
+      width: 10%;
+      text-align: center;
+    }
+
+    input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      accent-color: var(--accent);
+    }
+
+    .shade {
+      background: #efefef;
+    }
+
+    .dark-shade {
+      background: #d9d9d9;
+    }
+
+    .note {
+      margin: 16px 0 0;
+      border-left: 5px solid var(--sage);
+      padding: 12px 14px;
+      background: #f5f8f6;
+      color: #37463d;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+    }
+
+    .print-only {
+      display: none;
+    }
+
+    @media (max-width: 760px) {
+      header {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        justify-content: flex-start;
+      }
+
+      .page {
+        width: calc(100% - 24px);
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        font-size: 11pt;
+      }
+
+      .page {
+        width: 100%;
+        max-width: none;
+        padding: 0;
+      }
+
+      header,
+      section {
+        box-shadow: none;
+      }
+
+      .actions,
+      .note {
+        display: none;
+      }
+
+      .print-only {
+        display: block;
+      }
+
+      input[type="text"],
+      textarea {
+        border: 0;
+        border-bottom: 1px solid #777;
+        border-radius: 0;
+        padding: 2px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <p class="kicker">Latin Textbook</p>
+        <h1>Chapter 2 Exercises</h1>
+        <p class="subtitle">Fill in your answers below. Your work is saved in this browser, and the Export Answers as PDF button will open your print dialog.</p>
+        <p class="print-only">Name: ________________________________ Date: ____________________</p>
+      </div>
+      <div class="actions">
+        <a class="button secondary" href="chapter-2.html">Back to Chapter</a>
+        <button class="button" type="button" id="printButton">Export Answers as PDF</button>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <h2>2.1</h2>
+        <p>For each nominative noun, change it into the accusative case and write down the singular and plural forms. Some words are not vocabulary words.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nominative</th>
+                <th>Accusative Singular</th>
+                <th>Accusative Plural</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="example-row"><th>Ex: oculus</th><td>oculum</td><td>oculos</td></tr>
+              <tr><th class="word-cell">annus</th><td><input type="text" name="annus-singular"></td><td><input type="text" name="annus-plural"></td></tr>
+              <tr><th class="word-cell">exercitum</th><td><input type="text" name="exercitum-singular"></td><td><input type="text" name="exercitum-plural"></td></tr>
+              <tr><th class="word-cell">imperium</th><td><input type="text" name="imperium-singular"></td><td><input type="text" name="imperium-plural"></td></tr>
+              <tr><th class="word-cell">via</th><td><input type="text" name="via-singular"></td><td><input type="text" name="via-plural"></td></tr>
+              <tr><th class="word-cell">ager</th><td><input type="text" name="ager-singular"></td><td><input type="text" name="ager-plural"></td></tr>
+              <tr><th class="word-cell">gladius</th><td><input type="text" name="gladius-singular"></td><td><input type="text" name="gladius-plural"></td></tr>
+              <tr><th class="word-cell">aqua</th><td><input type="text" name="aqua-singular"></td><td><input type="text" name="aqua-plural"></td></tr>
+              <tr><th class="word-cell">amicus</th><td><input type="text" name="amicus-singular"></td><td><input type="text" name="amicus-plural"></td></tr>
+              <tr><th class="word-cell">charta</th><td><input type="text" name="charta-singular"></td><td><input type="text" name="charta-plural"></td></tr>
+              <tr><th class="word-cell">regnum</th><td><input type="text" name="regnum-singular"></td><td><input type="text" name="regnum-plural"></td></tr>
+              <tr><th class="word-cell">campus</th><td><input type="text" name="campus-singular"></td><td><input type="text" name="campus-plural"></td></tr>
+              <tr><th class="word-cell">cuniculus</th><td><input type="text" name="cuniculus-singular"></td><td><input type="text" name="cuniculus-plural"></td></tr>
+              <tr><th class="word-cell">villa</th><td><input type="text" name="villa-singular"></td><td><input type="text" name="villa-plural"></td></tr>
+              <tr><th class="word-cell">regia</th><td><input type="text" name="regia-singular"></td><td><input type="text" name="regia-plural"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>2.2</h2>
+        <p>See if you can fill in the chart for the given verbs</p>
+
+        <h3 class="verb-title">Paro, parare, paravi, paratum</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th></th><th>singular</th><th>plural</th></tr></thead>
+            <tbody>
+              <tr><th>1st person</th><td><input type="text" name="paro-1s"></td><td><input type="text" name="paro-1p"></td></tr>
+              <tr><th>2nd person</th><td><input type="text" name="paro-2s"></td><td><input type="text" name="paro-2p"></td></tr>
+              <tr><th>3rd person</th><td><input type="text" name="paro-3s"></td><td><input type="text" name="paro-3p"></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="verb-title">Habeo, habere, habui, habitum</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th></th><th>singular</th><th>plural</th></tr></thead>
+            <tbody>
+              <tr><th>1st person</th><td><input type="text" name="habeo-1s"></td><td><input type="text" name="habeo-1p"></td></tr>
+              <tr><th>2nd person</th><td><input type="text" name="habeo-2s"></td><td><input type="text" name="habeo-2p"></td></tr>
+              <tr><th>3rd person</th><td><input type="text" name="habeo-3s"></td><td><input type="text" name="habeo-3p"></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="verb-title">Sum, esse, fui</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th></th><th>singular</th><th>plural</th></tr></thead>
+            <tbody>
+              <tr><th>1st person</th><td><input type="text" name="sum-1s"></td><td><input type="text" name="sum-1p"></td></tr>
+              <tr><th>2nd person</th><td><input type="text" name="sum-2s"></td><td><input type="text" name="sum-2p"></td></tr>
+              <tr><th>3rd person</th><td><input type="text" name="sum-3s"></td><td><input type="text" name="sum-3p"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>2.3</h2>
+        <p>For each sentence make a check mark in the appropriate column to indicate whether it is linking, transitive, or intransitive. You do NOT need to know what these sentences are saying in order to complete this exercise.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Latin Sentence</th>
+                <th class="check-cell">Linking</th>
+                <th class="check-cell">Transitive</th>
+                <th class="check-cell">Intransitive</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="example-row"><th>Ex: magister est clarus</th><td class="check-cell">X</td><td></td><td></td></tr>
+              <tr><th>Video virum.</th><td class="check-cell"><input type="checkbox" name="video-virum-linking"></td><td class="check-cell"><input type="checkbox" name="video-virum-transitive"></td><td class="check-cell"><input type="checkbox" name="video-virum-intransitive"></td></tr>
+              <tr><th>Dei sunt irati.</th><td class="check-cell"><input type="checkbox" name="dei-sunt-linking"></td><td class="check-cell"><input type="checkbox" name="dei-sunt-transitive"></td><td class="check-cell"><input type="checkbox" name="dei-sunt-intransitive"></td></tr>
+              <tr><th>Puella ambulat.</th><td class="check-cell"><input type="checkbox" name="puella-ambulat-linking"></td><td class="check-cell"><input type="checkbox" name="puella-ambulat-transitive"></td><td class="check-cell"><input type="checkbox" name="puella-ambulat-intransitive"></td></tr>
+              <tr><th>Amamus mala.</th><td class="check-cell"><input type="checkbox" name="amamus-mala-linking"></td><td class="check-cell"><input type="checkbox" name="amamus-mala-transitive"></td><td class="check-cell"><input type="checkbox" name="amamus-mala-intransitive"></td></tr>
+              <tr><th>Puer est fessus.</th><td class="check-cell"><input type="checkbox" name="puer-est-linking"></td><td class="check-cell"><input type="checkbox" name="puer-est-transitive"></td><td class="check-cell"><input type="checkbox" name="puer-est-intransitive"></td></tr>
+              <tr><th>Marcus gladium habet.</th><td class="check-cell"><input type="checkbox" name="marcus-gladium-linking"></td><td class="check-cell"><input type="checkbox" name="marcus-gladium-transitive"></td><td class="check-cell"><input type="checkbox" name="marcus-gladium-intransitive"></td></tr>
+              <tr><th>Dominus dormit.</th><td class="check-cell"><input type="checkbox" name="dominus-dormit-linking"></td><td class="check-cell"><input type="checkbox" name="dominus-dormit-transitive"></td><td class="check-cell"><input type="checkbox" name="dominus-dormit-intransitive"></td></tr>
+              <tr><th>Vivunt multos annos.</th><td class="check-cell"><input type="checkbox" name="vivunt-annos-linking"></td><td class="check-cell"><input type="checkbox" name="vivunt-annos-transitive"></td><td class="check-cell"><input type="checkbox" name="vivunt-annos-intransitive"></td></tr>
+              <tr><th>Aqua est callida.</th><td class="check-cell"><input type="checkbox" name="aqua-est-linking"></td><td class="check-cell"><input type="checkbox" name="aqua-est-transitive"></td><td class="check-cell"><input type="checkbox" name="aqua-est-intransitive"></td></tr>
+              <tr><th>Ludus multos discipulos habet.</th><td class="check-cell"><input type="checkbox" name="ludus-discipulos-linking"></td><td class="check-cell"><input type="checkbox" name="ludus-discipulos-transitive"></td><td class="check-cell"><input type="checkbox" name="ludus-discipulos-intransitive"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>2.4</h2>
+        <p>For each verb check of the person and number and translate.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th rowspan="2">Verb</th>
+                <th colspan="3">Person</th>
+                <th colspan="2">Number</th>
+                <th rowspan="2">Translation</th>
+              </tr>
+              <tr>
+                <th class="check-cell">1st</th>
+                <th class="check-cell">2nd</th>
+                <th class="check-cell">3rd</th>
+                <th class="check-cell">Singular</th>
+                <th class="check-cell">Plural</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="example-row"><th>Ex: amat</th><td></td><td></td><td class="check-cell">X</td><td class="check-cell">X</td><td></td><td>He loves</td></tr>
+              <tr><th>damus</th><td class="check-cell"><input type="checkbox" name="damus-1st"></td><td class="check-cell"><input type="checkbox" name="damus-2nd"></td><td class="check-cell"><input type="checkbox" name="damus-3rd"></td><td class="check-cell shade"><input type="checkbox" name="damus-singular"></td><td class="check-cell shade"><input type="checkbox" name="damus-plural"></td><td><input type="text" name="damus-translation"></td></tr>
+              <tr><th>spectas</th><td class="check-cell"><input type="checkbox" name="spectas-1st"></td><td class="check-cell"><input type="checkbox" name="spectas-2nd"></td><td class="check-cell"><input type="checkbox" name="spectas-3rd"></td><td class="check-cell shade"><input type="checkbox" name="spectas-singular"></td><td class="check-cell shade"><input type="checkbox" name="spectas-plural"></td><td><input type="text" name="spectas-translation"></td></tr>
+              <tr><th>manent</th><td class="check-cell"><input type="checkbox" name="manent-1st"></td><td class="check-cell"><input type="checkbox" name="manent-2nd"></td><td class="check-cell"><input type="checkbox" name="manent-3rd"></td><td class="check-cell shade"><input type="checkbox" name="manent-singular"></td><td class="check-cell shade"><input type="checkbox" name="manent-plural"></td><td><input type="text" name="manent-translation"></td></tr>
+              <tr><th>parat</th><td class="check-cell"><input type="checkbox" name="parat-1st"></td><td class="check-cell"><input type="checkbox" name="parat-2nd"></td><td class="check-cell"><input type="checkbox" name="parat-3rd"></td><td class="check-cell shade"><input type="checkbox" name="parat-singular"></td><td class="check-cell shade"><input type="checkbox" name="parat-plural"></td><td><input type="text" name="parat-translation"></td></tr>
+              <tr><th>ambulo</th><td class="check-cell"><input type="checkbox" name="ambulo-1st"></td><td class="check-cell"><input type="checkbox" name="ambulo-2nd"></td><td class="check-cell"><input type="checkbox" name="ambulo-3rd"></td><td class="check-cell shade"><input type="checkbox" name="ambulo-singular"></td><td class="check-cell shade"><input type="checkbox" name="ambulo-plural"></td><td><input type="text" name="ambulo-translation"></td></tr>
+              <tr><th>habetis</th><td class="check-cell"><input type="checkbox" name="habetis-1st"></td><td class="check-cell"><input type="checkbox" name="habetis-2nd"></td><td class="check-cell"><input type="checkbox" name="habetis-3rd"></td><td class="check-cell shade"><input type="checkbox" name="habetis-singular"></td><td class="check-cell shade"><input type="checkbox" name="habetis-plural"></td><td><input type="text" name="habetis-translation"></td></tr>
+              <tr><th>habent</th><td class="check-cell"><input type="checkbox" name="habent-1st"></td><td class="check-cell"><input type="checkbox" name="habent-2nd"></td><td class="check-cell"><input type="checkbox" name="habent-3rd"></td><td class="check-cell shade"><input type="checkbox" name="habent-singular"></td><td class="check-cell shade"><input type="checkbox" name="habent-plural"></td><td><input type="text" name="habent-translation"></td></tr>
+              <tr><th>das</th><td class="check-cell"><input type="checkbox" name="das-1st"></td><td class="check-cell"><input type="checkbox" name="das-2nd"></td><td class="check-cell"><input type="checkbox" name="das-3rd"></td><td class="check-cell shade"><input type="checkbox" name="das-singular"></td><td class="check-cell shade"><input type="checkbox" name="das-plural"></td><td><input type="text" name="das-translation"></td></tr>
+              <tr><th>spectamus</th><td class="check-cell"><input type="checkbox" name="spectamus-1st"></td><td class="check-cell"><input type="checkbox" name="spectamus-2nd"></td><td class="check-cell"><input type="checkbox" name="spectamus-3rd"></td><td class="check-cell shade"><input type="checkbox" name="spectamus-singular"></td><td class="check-cell shade"><input type="checkbox" name="spectamus-plural"></td><td><input type="text" name="spectamus-translation"></td></tr>
+              <tr><th>paro</th><td class="check-cell"><input type="checkbox" name="paro-1st"></td><td class="check-cell"><input type="checkbox" name="paro-2nd"></td><td class="check-cell"><input type="checkbox" name="paro-3rd"></td><td class="check-cell shade"><input type="checkbox" name="paro-singular"></td><td class="check-cell shade"><input type="checkbox" name="paro-plural"></td><td><input type="text" name="paro-translation"></td></tr>
+              <tr><th>habeo</th><td class="check-cell"><input type="checkbox" name="habeo-1st"></td><td class="check-cell"><input type="checkbox" name="habeo-2nd"></td><td class="check-cell"><input type="checkbox" name="habeo-3rd"></td><td class="check-cell shade"><input type="checkbox" name="habeo-singular"></td><td class="check-cell shade"><input type="checkbox" name="habeo-plural"></td><td><input type="text" name="habeo-translation"></td></tr>
+              <tr><th>amant</th><td class="check-cell"><input type="checkbox" name="amant-1st"></td><td class="check-cell"><input type="checkbox" name="amant-2nd"></td><td class="check-cell"><input type="checkbox" name="amant-3rd"></td><td class="check-cell shade"><input type="checkbox" name="amant-singular"></td><td class="check-cell shade"><input type="checkbox" name="amant-plural"></td><td><input type="text" name="amant-translation"></td></tr>
+              <tr><th>est</th><td class="check-cell dark-shade"><input type="checkbox" name="est-1st"></td><td class="check-cell dark-shade"><input type="checkbox" name="est-2nd"></td><td class="check-cell dark-shade"><input type="checkbox" name="est-3rd"></td><td class="check-cell shade"><input type="checkbox" name="est-singular"></td><td class="check-cell shade"><input type="checkbox" name="est-plural"></td><td><input type="text" name="est-translation"></td></tr>
+              <tr><th>sum</th><td class="check-cell dark-shade"><input type="checkbox" name="sum-1st"></td><td class="check-cell dark-shade"><input type="checkbox" name="sum-2nd"></td><td class="check-cell dark-shade"><input type="checkbox" name="sum-3rd"></td><td class="check-cell shade"><input type="checkbox" name="sum-singular"></td><td class="check-cell shade"><input type="checkbox" name="sum-plural"></td><td><input type="text" name="sum-translation"></td></tr>
+              <tr><th>vident</th><td class="check-cell dark-shade"><input type="checkbox" name="vident-1st"></td><td class="check-cell dark-shade"><input type="checkbox" name="vident-2nd"></td><td class="check-cell dark-shade"><input type="checkbox" name="vident-3rd"></td><td class="check-cell shade"><input type="checkbox" name="vident-singular"></td><td class="check-cell shade"><input type="checkbox" name="vident-plural"></td><td><input type="text" name="vident-translation"></td></tr>
+              <tr><th>manes</th><td class="check-cell dark-shade"><input type="checkbox" name="manes-1st"></td><td class="check-cell dark-shade"><input type="checkbox" name="manes-2nd"></td><td class="check-cell dark-shade"><input type="checkbox" name="manes-3rd"></td><td class="check-cell shade"><input type="checkbox" name="manes-singular"></td><td class="check-cell shade"><input type="checkbox" name="manes-plural"></td><td><input type="text" name="manes-translation"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <p class="note">Answers are stored only in this browser on this computer. Use Export Answers as PDF when you are ready to save or print your work.</p>
+  </div>
+
+  <script>
+    const storageKey = "chapter-2-exercises-answers";
+    const fields = Array.from(document.querySelectorAll("input, textarea"));
+
+    function loadAnswers() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
+        fields.forEach((field) => {
+          if (!field.name || !(field.name in saved)) return;
+          if (field.type === "checkbox") {
+            field.checked = Boolean(saved[field.name]);
+          } else {
+            field.value = saved[field.name];
+          }
+        });
+      } catch (error) {
+        localStorage.removeItem(storageKey);
+      }
+    }
+
+    function saveAnswers() {
+      const data = {};
+      fields.forEach((field) => {
+        if (!field.name) return;
+        data[field.name] = field.type === "checkbox" ? field.checked : field.value;
+      });
+      localStorage.setItem(storageKey, JSON.stringify(data));
+    }
+
+    fields.forEach((field) => {
+      field.addEventListener("input", saveAnswers);
+      field.addEventListener("change", saveAnswers);
+    });
+
+    document.getElementById("printButton").addEventListener("click", () => {
+      saveAnswers();
+      window.print();
+    });
+
+    loadAnswers();
+  </script>
+</body>
+</html>

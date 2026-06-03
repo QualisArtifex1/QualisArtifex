@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chapter 5 | Latin Textbook</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #20201d;
+      --muted: #635f57;
+      --paper: #fffdf8;
+      --line: #ddd6c8;
+      --accent: #8f2f2f;
+      --accent-dark: #6f2222;
+      --gold: #bf8f35;
+      --sage: #566f60;
+      --blue: #295f86;
+      --pink: #b33b72;
+      --green: #2f7d52;
+      --orange: #ff9900;
+      --soft-gold: #fbf4e5;
+      --shadow: 0 20px 50px rgba(55, 43, 28, 0.12);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(255, 253, 248, 0.92), rgba(255, 253, 248, 0.98)),
+        repeating-linear-gradient(90deg, rgba(191, 143, 53, 0.05) 0 1px, transparent 1px 34px);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 18px;
+      line-height: 1.65;
+    }
+    a { color: var(--blue); font-weight: 700; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; height: auto; }
+    .page { width: calc(100% - 32px); max-width: 1120px; margin: 0 auto; padding: 32px 0 64px; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(300px, 1.1fr);
+      gap: 28px;
+      align-items: stretch;
+      min-height: 430px;
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 28px;
+    }
+    .hero-copy { display: flex; flex-direction: column; justify-content: center; min-width: 0; padding: 28px 0; }
+    .kicker {
+      margin: 0 0 10px;
+      color: var(--accent-dark);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3 { font-family: "Trebuchet MS", Arial, sans-serif; line-height: 1.12; letter-spacing: 0; }
+    h1 { margin: 0; color: #181715; font-size: clamp(3rem, 10vw, 6.5rem); }
+    .subtitle { max-width: 650px; margin: 18px 0 0; color: var(--muted); font-size: 1.2rem; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 9px 15px;
+      background: var(--accent);
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .button.secondary { background: transparent; color: var(--accent-dark); }
+    .hero-image { min-width: 0; overflow: hidden; border-radius: 8px; background: #181715; }
+    .hero-image img { width: 100%; height: 100%; min-height: 430px; object-fit: cover; object-position: center; }
+    .layout { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 28px; align-items: start; }
+    .toc {
+      position: sticky;
+      top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .toc h2 { margin: 0 0 12px; font-size: 1rem; }
+    .toc ol { display: grid; gap: 8px; margin: 0; padding-left: 20px; color: var(--muted); }
+    .toc a { color: var(--ink); font-weight: 700; text-decoration: none; }
+    main { min-width: 0; }
+    section { padding: 34px 0; border-bottom: 1px solid var(--line); }
+    section:first-child { padding-top: 0; }
+    h2 { margin: 0 0 18px; color: var(--accent-dark); font-size: clamp(2rem, 6vw, 3.2rem); }
+    h3 { margin: 26px 0 10px; color: #312c25; font-size: 1.35rem; }
+    p { margin: 0 0 18px; }
+    ul { margin-top: 0; }
+    .sentence-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; font-size: 1.1rem; }
+    .sentence-list li, .callout, .example {
+      border-left: 5px solid var(--gold);
+      background: #fff;
+      box-shadow: var(--shadow);
+      padding: 14px 16px;
+    }
+    .note { color: var(--muted); font-style: italic; }
+    .topic-grid, .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 18px 0 0;
+    }
+    .topic, .info-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.86);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .topic strong, .info-card strong { display: block; margin-bottom: 8px; color: var(--accent-dark); }
+    figure.content-image {
+      margin: 24px 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+    figure.content-image img { width: 100%; background: #f6f0e6; }
+    figcaption { padding: 10px 14px; color: var(--muted); font-family: Arial, Helvetica, sans-serif; font-size: 0.9rem; }
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      margin: 20px 0;
+    }
+    table { width: 100%; min-width: 660px; border-collapse: collapse; font-family: Arial, Helvetica, sans-serif; font-size: 0.98rem; line-height: 1.35; }
+    th, td { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 10px; text-align: left; vertical-align: middle; }
+    th:last-child, td:last-child { border-right: 0; }
+    tr:last-child td, tr:last-child th { border-bottom: 0; }
+    thead th { background: var(--accent-dark); color: #fff; font-weight: 800; }
+    tbody th { background: #faf6ed; font-weight: 800; }
+    .noun-ending { color: var(--accent); font-weight: 900; }
+    .gen-ending { color: var(--green); font-weight: 900; }
+    .dat-ending { color: var(--orange); font-weight: 900; }
+    .acc-ending { color: var(--blue); font-weight: 900; }
+    .abl-ending { color: var(--pink); font-weight: 900; }
+    .doc-red { color: #ff0000; }
+    .doc-green { color: #38761d; }
+    .doc-bright-green { color: #00ff00; }
+    .doc-orange { color: #ff9900; }
+    .doc-blue { color: #0000ff; }
+    .doc-pink { color: #ff00ff; }
+    .u { text-decoration: underline; text-decoration-skip-ink: none; }
+    .latin { font-style: italic; font-weight: 800; }
+    .bracketed { color: var(--green); font-weight: 800; }
+    .vocab-table td:first-child { width: 58%; font-style: italic; font-weight: 800; }
+    .mini-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    @media (max-width: 880px) {
+      .hero, .layout, .mini-grid { grid-template-columns: 1fr; }
+      .toc { position: static; }
+      .hero-image img { min-height: 320px; }
+    }
+    @media (max-width: 640px) {
+      body { font-size: 16px; }
+      .page { width: calc(100% - 24px); padding-top: 20px; }
+      .topic-grid, .card-grid { grid-template-columns: 1fr; }
+      table { min-width: 620px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Latin Textbook</p>
+        <h1>Chapter 5</h1>
+        <p class="subtitle">The dative case, 1st and 2nd declension adjectives, temporal clauses, and new vocabulary from Vergil and Caesar.</p>
+        <div class="hero-actions">
+          <a class="button" href="https://docs.google.com/forms/d/e/1FAIpQLSd58hDClSHpjs5uQnzjt83MIGvsaASahGpCfa7e-FlJMBdorw/viewform?usp=sf_link">Module</a>
+          <a class="button secondary" href="#vocabulary">Vocabulary</a>
+          <a class="button secondary" id="exercisesLink" href="chapter-5-exercises.html" target="_blank" rel="noopener">Exercises</a>
+        </div>
+      </div>
+      <figure class="hero-image">
+        <img src="chapter-5-image-1.png" alt="Juno asks Aeolus to help sink Aeneas' ships">
+      </figure>
+    </header>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Chapter sections">
+        <h2>On This Page</h2>
+        <ol>
+          <li><a href="#basic-sentences">Basic Sentences</a></li>
+          <li><a href="#topics">Topics this Chapter</a></li>
+          <li><a href="#dative">The Dative Case</a></li>
+          <li><a href="#adjectives">Adjectives 1st and 2nd Declension</a></li>
+          <li><a href="#temporal">Temporal Clause</a></li>
+          <li><a href="#vocabulary">Vocabulary</a></li>
+        </ol>
+      </nav>
+
+      <main>
+        <section id="basic-sentences">
+          <h2>Basic Sentences</h2>
+          <ul class="sentence-list">
+            <li><span class="latin">5.1 "Romanis imperium sine termino do."</span> (Slightly adapted <span class="latin">Aeneid</span> 1.278)<br><span class="note">Jupiter speaking to Venus in the Aeneid and assuring her that the Romans have a bright future.</span></li>
+            <li><span class="latin">5.2 Ubi de Caesaris adventu Helvetii discunt, legatos mittunt.</span> (Slightly adapted from Caesar DBG 1.7)<br><span class="note">Notes: adventu is ablative; Caesaris is genitive. Explaining what the Helvetians (modern day Swiss) do when Caesar marches into their territory.</span></li>
+            <li><span class="latin">5.3 Hic vasto rex Aeolus antro sedet.</span> (Slightly adapted from <span class="latin">Aeneid</span> 1.53)<br><span class="note">Notes: rex is nominative. Vergil explains where Aeolus, king of the winds, resides.</span></li>
+          </ul>
+          <figure class="content-image">
+            <img src="chapter-5-image-1.png" alt="Juno asks Aeolus to help sink Aeneas' ships">
+            <figcaption>Juno asks Aeolus to help sink Aeneas' ships.</figcaption>
+          </figure>
+        </section>
+
+        <section id="topics">
+          <h2>Topics this Chapter</h2>
+          <div class="topic-grid">
+            <div class="topic"><strong>1. The Dative Case</strong></div>
+            <div class="topic"><strong>2. Adjectives 1st and 2nd Declension</strong></div>
+            <div class="topic"><strong>3. Temporal Clause</strong></div>
+            <div class="topic"><strong>4. Vocabulary</strong></div>
+          </div>
+        </section>
+
+        <section id="dative">
+          <h2>The Dative Case</h2>
+          <p>The last major case that you will learn is called the dative case. The dative case is probably the case that gives most students fits and for good reason. On the surface it seems quite easy. Any time you see a dative noun you should start by translating it with the words "to or for". This will usually give you a good answer. However, there are many uses of the dative, most of which we will not be discussing in this chapter that might give you fits. There are three main uses that will be introduced below, but just understand that this list is NOT exhaustive.</p>
+          <p>Let's start first with how to form the dative case. Consult the familiar chart below. Note that the dative will be given in <strong class="doc-orange">ORANGE</strong>.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th></th><th>Feminine</th><th>Masculine</th><th>Neuter</th></tr></thead>
+              <tbody>
+                <tr><th><span class="u">Singular</span></th><td>1st Declension</td><td>2nd Declension</td><td>2nd Declension (n)</td></tr>
+                <tr><th><span class="doc-red">Nominative</span></th><td><span class="doc-red">-a</span></td><td><span class="doc-red">-us/r</span></td><td><span class="doc-red">-um</span></td></tr>
+                <tr><th><span class="doc-green">Genitive</span></th><td><span class="doc-green">-ae</span></td><td><span class="doc-green">-i</span></td><td><span class="doc-green">-i</span></td></tr>
+                <tr><th><span class="doc-orange">Dative</span></th><td><span class="doc-orange">-ae</span></td><td><span class="doc-orange">-o</span></td><td><span class="doc-orange">-o</span></td></tr>
+                <tr><th><span class="doc-blue">Accusative</span></th><td><span class="doc-blue">-am</span></td><td><span class="doc-blue">-um</span></td><td><span class="doc-blue">-um</span></td></tr>
+                <tr><th><span class="doc-pink">Ablative</span></th><td><span class="doc-pink">-ā</span></td><td><span class="doc-pink">-o</span></td><td><span class="doc-pink">-o</span></td></tr>
+                <tr><th><span class="u">Plural</span></th><td></td><td></td><td></td></tr>
+                <tr><th><span class="doc-red">Nominative</span></th><td><span class="doc-red">-ae</span></td><td><span class="doc-red">-i</span></td><td><span class="doc-red">-a</span></td></tr>
+                <tr><th><span class="doc-green">Genitive</span></th><td><span class="doc-green">-arum</span></td><td><span class="doc-green">-orum</span></td><td><span class="doc-green">-orum</span></td></tr>
+                <tr><th><span class="doc-orange">Dative</span></th><td><span class="doc-orange">-is</span></td><td><span class="doc-orange">-is</span></td><td><span class="doc-orange">-is</span></td></tr>
+                <tr><th><span class="doc-blue">Accusative</span></th><td><span class="doc-blue">-as</span></td><td><span class="doc-blue">-os</span></td><td><span class="doc-blue">-a</span></td></tr>
+                <tr><th><span class="doc-pink">Ablative</span></th><td><span class="doc-pink">-īs</span></td><td><span class="doc-pink">-īs</span></td><td><span class="doc-pink">-īs</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Dative types</h3>
+          <p><strong class="u">1. Dative of Indirect Object</strong></p>
+          <p>The most common type of dative. It is used to show an indirect object with verbs of giving, showing, etc. In fact the word "dative" comes from the Latin word "do" which means "to give". An indirect object is a noun phrase referring to someone or something that is affected by the action of a transitive verb (typically as a recipient), but is not the primary object (e.g., him in give him the book/give the book to him). Basic Sentence 5.1 has a great example of this use.</p>
+          <p class="example"><span class="latin">5.1 "<span class="doc-orange">Romanis</span> <span class="doc-blue">imperium</span> sine <span class="doc-pink">termino</span> <span class="u">do</span>."</span><br><span class="u">I give</span> <span class="doc-blue">rule</span> without <span class="doc-pink">end</span> <span class="doc-orange">to the Romans</span>.</p>
+          <p>Notice how the word "Romanis" is dative and in the translation it is translated with the word "to" in front of it.</p>
+
+          <p><strong class="u">2. Dative of Possession</strong></p>
+          <p>This is one of those instances where the dative is NOT going to sound like a "typical dative". The dative can be used to show possession in a similar fashion to the genitive case. Consider the following sentence:</p>
+          <p class="example"><span class="u">Mary has a little lamb.</span></p>
+          <p>Seems simple enough in English, but the Romans would probably not have written it the way we say it in English. Most likely this sentence would have been written like this:</p>
+          <p class="example"><span class="latin"><span class="doc-red">Agnus parvus</span> <span class="doc-orange">Mariae</span> <span class="u">est</span>.</span><br><span class="doc-red">A small lamb</span> <span class="u">is</span> <span class="doc-orange">to Mary</span>.</p>
+          <p>I know that to a native English speaker this may seem a bit odd. However, when you see a dative noun accompanied by a form of the verb "to be", you are most likely looking at a dative of possession and your translation may not use the traditional "to/for" method.</p>
+
+          <p><strong class="u">3. Dative with Special Verbs</strong></p>
+          <p>This use is very common in Caesar and is relatively simple to learn. Some verbs in Latin take a dative noun as a direct object instead of the usual accusative. Most of the time you can tell from the dictionary entry of the word which might be listed like this: <span class="latin">Persuadeo, persuadere, persuasi, persuasum + dat</span></p>
+          <p>If you have one of these special verbs it is a good idea to memorize the fact that it will use a dative for a direct object but a lot of times it is easy to pick out a verb like this even if you have forgotten because there will be no accusative in the sentence!</p>
+          <p>Again, the dative has several other uses, like the dative of reference and the dreaded dative of purpose! Check out this link <a href="http://www.thelatinlibrary.com/101/CaseUse.pdf">here</a> if you are feeling adventurous.</p>
+          <p>Now would also be an excellent time to watch this video <a href="https://youtu.be/2fhP_fk2wNQ">here</a>, which reviews all the cases.</p>
+        </section>
+
+        <section id="adjectives">
+          <h2>Adjectives 1st and 2nd Declension</h2>
+          <p>Now that adjectives are being introduced your world is going to get a lot more interesting. For now, adjectives should be quite easy to pick up because you already know all of their forms if you know your noun forms. It might seem overwhelming at first to be told that many adjectives have 30 forms! The reason why this is so is because all adjectives in Latin MUST MATCH THE NOUN THEY ARE DESCRIBING IN CASE, NUMBER, AND GENDER!! Note this does NOT include declension! Many times a noun and its adjective will match in declension but this is just coincidence. Consider Basic Sentence 5.3:</p>
+          <p class="example"><span class="latin">5.3 Hic <span class="doc-pink">vasto</span> <span class="doc-red">rex Aeolus</span> <span class="doc-pink">antro</span> <span class="u">sedet</span>.</span><br>Here <span class="doc-red">King Aeolus</span> <span class="u">sits</span> <span class="doc-pink">in a vast cave</span>.</p>
+          <p>The word "antro" (cave) is a NIAWOP. Here we are supplying the preposition "in" because NIAWOPS need prepositions to be supplied. The word "vasto" is also in the ablative case, but it is an adjective. It is going to describe a noun that is the same case, number, and gender. You might notice that the ending on the word "vasto" has several possibilities but there is only one noun in this sentence that it can match. So, even though "vasto" is not next to "antro" it is still describing it and will be translated next to it in the English! Sometimes it helps to draw an arrow from the adjective to the noun to remind yourself that they go together.</p>
+          <p>The forms of the adjectives are going to use the 1st declension endings for all feminine forms, the second declension for all masculine forms, and the second declension neuter for all neuter forms. I think a chart will help illustrate this. You might notice that it is basically the same as the chart you saw earlier but with the order changed.</p>
+          <figure class="content-image">
+            <img src="chapter-5-image-2.png" alt="A chameleon">
+            <figcaption>Adjectives are chameleons: they change form to match the nouns they describe.</figcaption>
+          </figure>
+          <h3>1st and 2nd Declension Adjective Forms</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th></th><th>Masculine</th><th>Feminine</th><th>Neuter</th></tr></thead>
+              <tbody>
+                <tr><th><span class="u">Singular</span></th><td></td><td></td><td></td></tr>
+                <tr><th><span class="doc-red">Nominative</span></th><td><span class="doc-red">-us</span></td><td><span class="doc-red">-a</span></td><td><span class="doc-red">-um</span></td></tr>
+                <tr><th><span class="doc-bright-green">Genitive</span></th><td><span class="doc-bright-green">-i</span></td><td><span class="doc-bright-green">-ae</span></td><td><span class="doc-bright-green">-i</span></td></tr>
+                <tr><th><span class="doc-orange">Dative</span></th><td><span class="doc-orange">-o</span></td><td><span class="doc-orange">-ae</span></td><td><span class="doc-orange">-o</span></td></tr>
+                <tr><th><span class="doc-blue">Accusative</span></th><td><span class="doc-blue">-um</span></td><td><span class="doc-blue">-am</span></td><td><span class="doc-blue">-um</span></td></tr>
+                <tr><th><span class="doc-pink">Ablative</span></th><td><span class="doc-pink">-o</span></td><td><span class="doc-pink">-ā</span></td><td><span class="doc-pink">-o</span></td></tr>
+                <tr><th><span class="u">Plural</span></th><td></td><td></td><td></td></tr>
+                <tr><th><span class="doc-red">Nominative</span></th><td><span class="doc-red">-i</span></td><td><span class="doc-red">-ae</span></td><td><span class="doc-red">-a</span></td></tr>
+                <tr><th><span class="doc-bright-green">Genitive</span></th><td><span class="doc-bright-green">-orum</span></td><td><span class="doc-bright-green">-arum</span></td><td><span class="doc-bright-green">-orum</span></td></tr>
+                <tr><th><span class="doc-orange">Dative</span></th><td><span class="doc-orange">-is</span></td><td><span class="doc-orange">-is</span></td><td><span class="doc-orange">-is</span></td></tr>
+                <tr><th><span class="doc-blue">Accusative</span></th><td><span class="doc-blue">-os</span></td><td><span class="doc-blue">-as</span></td><td><span class="doc-blue">-a</span></td></tr>
+                <tr><th><span class="doc-pink">Ablative</span></th><td><span class="doc-pink">-īs</span></td><td><span class="doc-pink">-īs</span></td><td><span class="doc-pink">-īs</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>If you take a look at the top row of this chart I have increased the font and bolded the nominative for a reason. The nominative of the three genders going left to right is how an adjective that lives in the 1st declension will show up in the dictionary. For instance:</p>
+          <p class="example"><span class="latin">Bonus, a, um</span> = good</p>
+          <ul>
+            <li>Bonus is the nominative masculine form,</li>
+            <li>Bona is the nominative feminine form,</li>
+            <li>And Bonum is the nominative neuter form.</li>
+          </ul>
+          <p>What this dictionary entry is saying is that the word "bonus, a, um" can take all 30 forms of the chart above because it MUST be able to adapt and match any noun that it describes and nouns can be all three genders, plural and singular, and in any of the 5 cases. Adjectives are chameleons. They will blend into their surroundings. A lot of the time the endings will actually look alike which will make things easier (<span class="latin">vasto antro</span>). Sometimes though they will not look alike. Consider the noun "nauta, ae m". This word means sailor and is MASCULINE even though it lives in the 1st declension. So, what form of the word "bonus, a, um" would you use to match the form "nauta"?</p>
+          <p class="example">Good sailor<br><span class="latin">Nauta ?</span></p>
+          <p>Let's identify the noun first. If you consult your noun declension chart you'll see that it is nominative, singular, and masculine. Now compare that to the adjective chart just above and you'll see that the match is "bonus".</p>
+          <p class="example">Good sailor = <span class="latin">nauta bonus!</span></p>
+          <p>These two words don't look alike but they do in fact match! This is more of an exception to the rule, but this fact, that not all adjectives LOOK like they match their nouns will come in handy next chapter.</p>
+          <p>Here is a video that can give you an alternative description. <a href="https://youtu.be/TBA46LamsWY">Here</a></p>
+        </section>
+
+        <section id="temporal">
+          <h2>Temporal Clause</h2>
+          <p>You were introduced to causal clauses in a previous chapter. Temporal clauses are not much different. The only difference is that instead of the clause beginning with the word "because", a temporal clause will usually start with the word "when". The most common Latin word for this is "ubi". Let's take a look at Basic Sentence 5.2.</p>
+          <p class="example"><span class="latin">[Ubi &lt;de <span class="doc-green">Caesaris</span> <span class="doc-pink">adventu</span>&gt; <span class="doc-red">Helvetii</span> <span class="u">discunt</span>], <span class="doc-blue">legatos</span> <span class="u">mittunt</span>.</span><br>[When <span class="doc-red">the Helvetians</span> <span class="u">learn</span> about <span class="doc-pink">the arrival</span> <span class="doc-green">of Caesar</span>], <span class="u">they send</span> <span class="doc-blue">ambassadors</span>.</p>
+          <p>You can see that the clause in both English and Latin have been bracketed off. This is good practice because as you start to read more and more difficult sentences it will be crucial that you know where clauses begin and end.</p>
+        </section>
+
+        <section id="vocabulary">
+          <h2>Vocabulary</h2>
+          <p><a href="https://quizlet.com/_2exr5k">Flash Cards</a></p>
+          <div class="table-wrap">
+            <table class="vocab-table">
+              <thead><tr><th>Word</th><th>Definition</th></tr></thead>
+              <tbody>
+                <tr><td>Hic</td><td>here</td></tr>
+                <tr><td>Ubi</td><td>when/where</td></tr>
+                <tr><td>Legatus, i m</td><td>ambassador/lieutenant</td></tr>
+                <tr><td>Disco, discere, didici, discitum</td><td>To learn</td></tr>
+                <tr><td>Mitto, mittere, misi, missum</td><td>To send</td></tr>
+                <tr><td>Sine + abl</td><td>without</td></tr>
+                <tr><td>Ante + acc</td><td>before</td></tr>
+                <tr><td>Sub + abl</td><td>under</td></tr>
+                <tr><td>Pro + abl</td><td>In front of/before/on behalf of</td></tr>
+                <tr><td>Romanus, a, um</td><td>Roman</td></tr>
+                <tr><td>Vastus, a, um</td><td>vast</td></tr>
+                <tr><td>Antrum, i n</td><td>cave</td></tr>
+                <tr><td>Magnus, a, um</td><td>great/large</td></tr>
+                <tr><td>Multus, a, um</td><td>many/much</td></tr>
+                <tr><td>Bonus, a, um</td><td>good</td></tr>
+                <tr><td>Novus, a, um</td><td>new</td></tr>
+                <tr><td>Tantus, a, um</td><td>Such a/so great</td></tr>
+                <tr><td>Longus, a, um</td><td>long</td></tr>
+                <tr><td>Parvus, a, um</td><td>small</td></tr>
+                <tr><td>Altus, a, um</td><td>high/deep</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("exercisesLink").addEventListener("click", (event) => {
+      event.preventDefault();
+      const exercisesUrl = new URL("chapter-5-exercises.html", window.location.href).href;
+      const opened = window.open(exercisesUrl, "_blank", "noopener");
+      if (!opened) {
+        window.location.href = exercisesUrl;
+      }
+    });
+  </script>
+</body>
+</html>

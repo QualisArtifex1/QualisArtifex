@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chapter 12 | Latin Textbook</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #20201d;
+      --muted: #635f57;
+      --paper: #fffdf8;
+      --line: #ddd6c8;
+      --accent: #8f2f2f;
+      --accent-dark: #6f2222;
+      --gold: #bf8f35;
+      --sage: #566f60;
+      --blue: #295f86;
+      --soft-gold: #fbf4e5;
+      --shadow: 0 20px 50px rgba(55, 43, 28, 0.12);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(255, 253, 248, 0.93), rgba(255, 253, 248, 0.99)),
+        repeating-linear-gradient(90deg, rgba(191, 143, 53, 0.05) 0 1px, transparent 1px 34px);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 18px;
+      line-height: 1.65;
+    }
+    a { color: var(--blue); font-weight: 700; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; height: auto; }
+    .page { width: calc(100% - 32px); max-width: 1180px; margin: 0 auto; padding: 32px 0 64px; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(300px, 1.05fr);
+      gap: 28px;
+      align-items: stretch;
+      min-height: 420px;
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 28px;
+    }
+    .hero-copy { display: flex; flex-direction: column; justify-content: center; min-width: 0; padding: 28px 0; }
+    .kicker {
+      margin: 0 0 10px;
+      color: var(--accent-dark);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3 { font-family: "Trebuchet MS", Arial, sans-serif; line-height: 1.12; letter-spacing: 0; }
+    .hero h1 { margin: 0; color: #181715; font-size: clamp(3rem, 10vw, 6.5rem); }
+    .subtitle { max-width: 660px; margin: 18px 0 0; color: var(--muted); font-size: 1.2rem; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 9px 15px;
+      background: var(--accent);
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .button.secondary { background: transparent; color: var(--accent-dark); }
+    .hero-image { min-width: 0; overflow: hidden; border-radius: 8px; background: #181715; }
+    .hero-image img { width: 100%; height: 100%; min-height: 420px; object-fit: cover; object-position: center; }
+    .layout { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 28px; align-items: start; }
+    .toc {
+      position: sticky;
+      top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.84);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .toc h2 { margin: 0 0 12px; font-size: 1rem; color: var(--accent-dark); }
+    .toc ol { display: grid; gap: 8px; margin: 0; padding-left: 20px; color: var(--muted); }
+    .toc a { color: var(--ink); font-weight: 700; text-decoration: none; }
+    main { min-width: 0; }
+    .doc-content {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow);
+      padding: 28px;
+      overflow: hidden;
+    }
+    .doc-content, .doc-content p, .doc-content li { font-family: Georgia, "Times New Roman", serif; }
+    .doc-content p { margin-top: 0; margin-bottom: 15px; }
+    .doc-content h1, .doc-content h2, .doc-content h3 { font-family: "Trebuchet MS", Arial, sans-serif; line-height: 1.15; letter-spacing: 0; }
+    .doc-content h1 { margin: 32px 0 16px; color: var(--accent-dark); font-size: clamp(2rem, 6vw, 3.2rem); }
+    .doc-content h2 { margin: 26px 0 12px; color: #312c25; font-size: 1.45rem; }
+    .doc-content table { width: 100%; border-collapse: collapse; margin: 18px 0; font-family: Arial, Helvetica, sans-serif; font-size: 0.97rem; line-height: 1.35; }
+    .doc-content table[style] { margin-left: 0 !important; }
+    .doc-content th, .doc-content td { border: 1px solid var(--line); padding: 9px !important; vertical-align: top; }
+    .doc-content img { max-width: 100%; height: auto !important; margin: 18px auto; border-radius: 6px; }
+    .doc-content ul, .doc-content ol { padding-left: 28px; }
+    @media (max-width: 900px) { .hero, .layout { grid-template-columns: 1fr; } .toc { position: static; } .hero-image img { min-height: 310px; } }
+    @media (max-width: 640px) { body { font-size: 16px; } .page { width: calc(100% - 24px); padding-top: 20px; } .doc-content { padding: 18px; } }
+</style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Latin Textbook</p>
+        <h1>Chapter 12</h1>
+        <p class="subtitle">Pluperfect tense, ablative absolute, and vocabulary.</p>
+        <div class="hero-actions">
+          <a class="button secondary" href="#vocabulary">Vocabulary</a>
+          <a class="button secondary" id="exercisesLink" href="chapter-12-exercises.html" target="_blank" rel="noopener">Exercises</a>
+        </div>
+      </div>
+      <figure class="hero-image" aria-label="Chapter 12 illustration">
+        <img src="chapter-12-image-1.png" alt="Illustration used in Chapter 12">
+      </figure>
+    </header>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Chapter sections">
+        <h2>Chapter Sections</h2>
+        <ol>
+          <li><a href="#pluperfect-tense">Pluperfect Tense</a></li>
+          <li><a href="#ablative-absolute">Ablative Absolute</a></li>
+          <li><a href="#vocabulary">Vocabulary</a></li>
+        </ol>
+      </nav>
+      <main>
+        <article class="doc-content">
+<p></p>
+<h1><span style="text-decoration:underline">Basic Sentences</span></h1>
+<p><span style="font-size:16pt">12.1 </span><span style="color:#333333;font-size:16pt"> Atque nostris militibus cunctantibus, maxime propter altitudinem maris, (miles) X legionis aquilam in hostes gerebat.</span></p>
+<p><span style="font-style:italic;color:#333333;font-size:16pt">(Caesar DBG 4.26. The Roman soldiers are in a tough spot.  Slightly edited)</span></p>
+<p></p>
+<p><span style="color:#333333;font-size:16pt">12.2 Erat ob has causas summa difficultas, quod naves propter magnitudinem nisi in alto constitui non poterant, militibus autem, ignotis locis, impeditis manibus, magno et gravi onere armorum oppressis…</span></p>
+<p><span style="font-style:italic;color:#333333;font-size:16pt">(Caesar DBG 4.25. More rough times for the Romans)</span></p>
+<p><span style="font-style:italic;color:#333333;font-size:16pt">q</span></p>
+<p><span style="color:#333333;font-size:16pt">12.3 </span><span style="color:#333333;font-size:16pt">Is</span><span style="color:#333333;font-size:16pt"> M. Messala et M. Pisone consulibus regni cupiditate inductus coniurationem nobilitatis fecit</span></p>
+<p><span style="font-style:italic;color:#333333;font-size:16pt">(Caesar DBG 1.2. Orgetorix has a plan)</span></p>
+<p><span style="font-style:italic;color:#333333;font-size:16pt"> </span></p>
+<p><span style="color:#333333;font-size:16pt">12.4 Omnibus rebus ad profectionem comparatis diem </span><span style="text-decoration:underline;color:#333333;font-size:16pt">dicunt</span><span style="color:#333333;font-size:16pt">, </span></p>
+<p><span style="font-style:italic;color:#333333;font-size:16pt">(Caesar DBG 1.6. Helvetians set a date)</span></p>
+<p></p>
+<p><span style="color:#333333;font-size:16pt">12.5 Vina, quae deinde cadis oneraverat bonus Acestes               </span><span style="color:#333333;font-size:13pt">195</span></p>
+<p><span style="color:#333333;font-size:16pt">litore Trinacrio dederatque abeuntibus heros,</span></p>
+<p><span style="color:#333333;font-size:16pt">Dividit, </span><span style="font-style:italic;color:#333333;font-size:16pt">(Aeneas is the subject)</span></p>
+<p><span style="font-style:italic;color:#333333;font-size:16pt">(Aeneid 1.195-197. Aeneas feeds his weary companions)</span></p>
+<p></p>
+<p></p>
+<p></p>
+<p><img src="chapter-12-image-1.png" alt="Chapter 12 image"></p>
+<p><span style="color:#333333;font-size:16pt">(</span><span style="font-style:italic;color:#333333;font-size:16pt">The eagle bearer leads by example)</span></p>
+<p></p>
+<p><img src="chapter-12-image-2.png" alt="Chapter 12 image"></p>
+<p><span style="font-style:italic;color:#333333;font-size:16pt">(Aeneas hands out food and wine to his companions)</span></p>
+<p></p>
+<h1><span style="text-decoration:underline">Topics this Chapter</span></h1>
+<h1><span>1. </span><a href="#" target="_blank" rel="noopener"><span style="text-decoration:underline;color:#1155cc">Pluperfect Tense</span></a></h1>
+<h1><span>2. </span><a href="#" target="_blank" rel="noopener"><span style="text-decoration:underline;color:#1155cc">Ablative Absolute</span></a></h1>
+<h1><span>3. </span><a href="#" target="_blank" rel="noopener"><span style="text-decoration:underline;color:#1155cc">Vocabulary</span></a></h1>
+<p></p>
+<p></p>
+<p><img src="chapter-12-image-3.png" alt="Chapter 12 image"></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<a id="pluperfect-tense"></a><h1 style="text-align:center;"><span style="font-weight:700;text-decoration:underline">Pluperfect Tense</span></h1>
+<p></p>
+<p><span>The pluperfect is formed in English with the auxiliary verb “HAD”, followed by the past participle of the main verb:</span></p>
+<p></p>
+<p></p>
+<table><tr><td><p><span>He had always wanted to travel in Africa. </span></p><p></p><p><span>She had already left when Philippe arrived. </span></p><p></p><p><span>I bought the book that Corinne had recommended to me. </span></p></td></tr></table>
+<p></p>
+<p><span>The pluperfect shows that the action has been done before another action (in the past). Adverbs such as &quot;already&quot; reinforce this impression.</span></p>
+<p></p>
+<table><tr><td><p><span>She learned to love the dog that had bitten her the week before.</span><span> </span></p><p></p><p><span>When I got home, I had already heard the bad news. </span></p><p></p><p><span>The children ate all the cookies that their father had bought.</span><span> </span></p></td></tr></table>
+<p></p>
+<p><span> The most important thing when translating the pluperfect tense in English is to use the word “HAD”.  It is the farthest back in time that can be described using the Latin language.</span></p>
+<p style="text-align:center;"><span style="font-size:50pt">HAD! HAD! HAD!</span></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<h1><span style="text-decoration:underline">Latin Forms: </span><span> </span></h1>
+<p></p>
+<p><span>Now that we also know the passive voice </span><span>from the last</span><span> chapter, we will have to tackle this in two waves just like the forms were introduced in Chapter 11.</span></p>
+<p></p>
+<p><span>First the </span><span style="text-decoration:underline">pluperfect active:</span></p>
+<p></p>
+<p></p>
+<table><tr><td><p style="text-align:center;"><span>3rd principal part (minus “i”) + pluperfect endings</span></p></td></tr></table>
+<p></p>
+<p style="text-align:center;"><span>Amo, amare, </span><span style="font-weight:700;font-size:18pt">amavi</span><span>, amatus</span></p>
+<p><span>                                                               +</span></p>
+<table><tr><td><p style="text-align:center;"><span style="font-weight:700;text-decoration:underline;font-size:18pt">Pluperfect Active Verb Endings</span></p></td><td><p><span>singular</span></p></td><td><p><span>plural</span></p></td></tr><tr><td><p><span>1st person</span></p></td><td><p><span>-eram </span></p></td><td><p><span>-eramus</span></p></td></tr><tr><td><p><span>2nd person</span></p></td><td><p><span>-eras</span></p></td><td><p><span>-eratis</span></p></td></tr><tr><td><p><span>3rd person</span></p></td><td><p><span>-erat</span></p></td><td><p><span>-erant</span></p></td></tr></table>
+<p></p>
+<p></p>
+<p></p>
+<table><tr><td><p style="text-align:center;"><span style="font-weight:700;text-decoration:underline;font-size:18pt">Pluperfect Active Verb Endings</span></p><p style="text-align:center;"><span style="font-weight:700;text-decoration:underline;font-size:18pt">Example</span></p></td><td><p><span>singular</span></p></td><td><p><span>plural</span></p></td></tr><tr><td><p><span>1st person</span></p></td><td><p><span>Amav+eram = amaveram</span></p></td><td><p><span>Amav+eramus = amaveramus</span></p></td></tr><tr><td><p><span>2nd person</span></p></td><td><p><span>Amav+eras = amaveras</span></p></td><td><p><span>Amav+eratis = amaveratis</span></p></td></tr><tr><td><p><span>3rd person</span></p></td><td><p><span>Amav+erat = amaverat </span></p></td><td><p><span>Amav+erant = amaverant</span></p></td></tr></table>
+<p></p>
+<p></p>
+<p><span style="text-decoration:underline">Plup</span><span style="text-decoration:underline">erfect Passive: </span></p>
+<p></p>
+<p><span>The </span><span>p</span><span>luperfect passive is even easier!  All you do is the following:</span></p>
+<p></p>
+<p></p>
+<table><tr><td><p style="text-align:center;"><span>4th principal part + imperfect form of “sum”</span></p><p style="text-align:center;"></p><p style="text-align:center;"><span>It will be a two word verb!</span></p></td></tr></table>
+<p></p>
+<p><span>N.B.  All perfect and passive verbs will be two words!!</span></p>
+<p></p>
+<p style="text-align:center;"><span>Amo, amare, amavi,</span><span style="font-weight:700;font-size:18pt"> amatus </span></p>
+<p><span>                                                               +</span></p>
+<p></p>
+<table><tr><td><p style="text-align:center;"><span style="font-weight:700;text-decoration:underline;font-size:18pt">Pluerfect Passive Verb Endings</span></p></td><td><p><span>singular</span></p></td><td><p><span>plural</span></p></td></tr><tr><td><p><span>1st person</span></p></td><td><p><span>eram</span></p></td><td><p><span>eramus</span></p></td></tr><tr><td><p><span>2nd person</span></p></td><td><p><span>eras</span></p></td><td><p><span>eratis</span></p></td></tr><tr><td><p><span>3rd person</span></p></td><td><p><span>erat</span></p></td><td><p><span>erant</span></p></td></tr></table>
+<p></p>
+<table><tr><td><p style="text-align:center;"><span style="font-weight:700;text-decoration:underline;font-size:18pt">Pluperfect Passive Verb Endings</span></p><p style="text-align:center;"><span style="font-weight:700;text-decoration:underline;font-size:18pt">Example</span></p></td><td><p><span>singular</span></p></td><td><p><span>plural</span></p></td></tr><tr><td><p><span>1st person</span></p></td><td><p><span>Amat</span><span>us</span><span> eram</span></p></td><td><p><span>Amati eramus</span></p></td></tr><tr><td><p><span>2nd person</span></p></td><td><p><span>Amatus eras</span></p></td><td><p><span>Amati eratis</span></p></td></tr><tr><td><p><span>3rd person</span></p></td><td><p><span>Amatus </span><span>erat</span></p></td><td><p><span>Amati erant</span></p></td></tr></table>
+<p></p>
+<p><span>You might even notice that it almost looks like the passive forms are an active form torn apart.</span></p>
+<p><span>N.B.  The first word of this verb will change endings to match the subject.  You’ll notice “amati” and “amatus” in the singular.  This could be different as well.  If the subject were a woman, then it would be “amata” instead. This is the same for all Latin verbs that are two words.</span></p>
+<p></p>
+<p><span>To translate these forms we will keep the HAD helping verb that was used in the active voice but to make it passive the word “been” needs to be added.</span></p>
+<p></p>
+<p><span style="font-weight:700">Example:</span></p>
+<p></p>
+<p><span style="font-weight:700">Amatus erat = he had been loved.  </span></p>
+<p></p>
+<p><span>The “HAD” indicates a pluperfect tense verb and the “BEEN” indicates that it’s passive.</span></p>
+<p></p>
+<p><span>Let’s take a look at Basic Sentence 12.5</span></p>
+<p></p>
+<p></p>
+<p><span style="color:#0000ff">Vina</span><span> [</span><span style="color:#ff0000">bonus</span><span> </span><span style="color:#0000ff">quae</span><span> deinde </span><span style="color:#ff00ff">cadis</span><span> </span><span style="text-decoration:underline">onerarat</span><span> </span><span style="color:#ff0000">Acestes</span><span>               195</span></p>
+<p><span style="color:#0000ff">litore Trinacrio</span><span> </span><span style="text-decoration:underline">dederat</span><span>que </span><span style="color:#ff9900">abeuntibus</span><span> </span><span style="color:#ff0000">heros</span><span>],</span></p>
+<p><span style="text-decoration:underline">Dividit</span></p>
+<p></p>
+<p><span>First notice that the relative clause is describing “vina” and the “quae” is delayed because poetry has that flexibility and that the verb deinde probably should be read with “dividit”.  Can you notice the pluperfect verbs?  Notice also that the PAP “abeuntibus” is describing a noun that is not written out so one must be provided.</span></p>
+<p></p>
+<p><span>He then </span><span style="text-decoration:underline">divided</span><span> </span><span style="color:#0000ff">the wine(s)</span><span>, </span><span style="color:#0000ff">which</span><span> </span><span style="color:#ff0000">the good hero Acestes</span><span> </span><span style="text-decoration:underline">had carried</span><span> </span><span style="color:#ff00ff">in jars</span><span> </span><span style="color:#ff00ff">from the Sicilian shore</span><span> and </span><span style="text-decoration:underline">had given</span><span> (it) </span><span style="color:#ff9900">to the departing (people)</span><span>.</span></p>
+<h1><span>Here are some helpful videos:  </span></h1>
+<h1><a href="https://youtu.be/b3JtdIh94v8" target="_blank" rel="noopener"><span style="text-decoration:underline;color:#1155cc">Pluperfect Active</span></a></h1>
+<h1><a href="https://youtu.be/5wb7R-LJCF4" target="_blank" rel="noopener"><span style="text-decoration:underline;color:#1155cc">Pluperfect Passive</span></a></h1>
+<p></p>
+<a id="ablative-absolute"></a><h1 style="text-align:center;"><span style="text-decoration:underline">Ablative Absolute</span></h1>
+<p></p>
+<p><span>You might have noticed that the amount of Basic Sentence used to show off an Ablative Absolute was high.  This is because the Ablative Absolute is one one of the most common grammatical constructions in Latin and it can be read in a lot of ways.  Caesar uses this construction a great deal too.</span></p>
+<p></p>
+<p><span>English does not have an Ablative Absolute so it is sometimes difficult to draw an analogue.  English does have a Nominative Absolute which Latin does not have.  So, the best thing to start with is perhaps to describe what is meant by “Absolute”.</span></p>
+<p></p>
+<p><span>If a phrase is </span><span style="text-decoration:underline">absolute</span><span> it means this:</span></p>
+<p></p>
+<p></p>
+<table><tr><td><p><span>The phrase has </span><span style="font-weight:700">no grammatical connection</span><span> to the rest of the sentence.  The phrase can be removed in its entirety and will not affect the rest of the sentence.</span></p></td></tr></table>
+<p></p>
+<p><span>Now, this does not mean that the phrase does not add meaning, just that grammatically the sentence will still survive without it.</span></p>
+<p></p>
+<table><tr><td><p style="text-align:center;"><span style="text-decoration:underline">ABLATIVE ABSOLUTE</span></p><p style="text-align:center;"></p><p style="text-align:center;"><span style="text-decoration:underline">Noun(Pronoun) + Participle </span></p><p style="text-align:center;"><span style="text-decoration:underline">ALL IN THE ABLATIVE CASE</span></p></td></tr></table>
+<p><span>The rule above does NOT mean that there cannot be more words in the Ablative Absolute, just that those are the things that are needed AT LEAST.  Often times the noun and participle are the first and last word in the phrase forming a kind of bracket for the phrase since Latin didn’t use commas.  This often irritates new students because this noun-participle pair can be separated by a great distance, but you’ll soon see that this is serving as punctuation.  There is one exception to the rule that we’ll pick up at the end.</span></p>
+<p></p>
+<p><span>The ablatives of a participle and a noun (or pronoun) are used to form a substitute for a subordinate clause defining the circumstances or situation in which the action of the main verb occurs. An Ablative Absolute with a perfect passive participle is widely used in classical Latin to express the cause or time of an action: </span></p>
+<p></p>
+<p></p>
+<table><tr><td><p style="text-align:center;"><span style="text-decoration:underline;font-size:18pt">EXAMPLES WITH A PPP</span></p><p></p><p><span style="font-style:italic">Hīs verbīs dictīs, Caesar discēdit.</span><span> With these words having been said, Caesar departs. </span></p><p></p><p><span style="font-style:italic">Acceptīs litterīs, Caesar discēdit.</span><span> With the letter having been received, Caesar departs.</span></p><p><span> </span></p><p><span style="font-style:italic">Leōne vīsō, fēminae discessērunt.</span><span> With the lion having been seen, the women departed. </span></p><p style="text-align:left;"></p></td></tr></table>
+<p></p>
+<p style="text-align:center;"><img src="chapter-12-image-4.png" alt="Chapter 12 image"></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p><span>Equally common is an Ablative Absolute with a present active participle: </span></p>
+<p></p>
+<table><tr><td><p style="text-align:center;"><span style="text-decoration:underline;font-size:18pt">EXAMPLES WITH A PAP</span></p><p style="text-align:center;"></p><p><span style="font-style:italic">Leōne </span><span style="font-style:italic">adveniente</span><span style="font-style:italic">, fēmina discēssit.</span><span> With the lion approaching, the woman left.</span></p></td></tr></table>
+<p></p>
+<p><span> On occasion, another noun may take the place of the participle in the Ablative Absolute construction.  This is the exception that was referenced earlier.  You’ll see this is Basic Sentence 12.3: </span></p>
+<p></p>
+<p></p>
+<table><tr><td><p style="text-align:center;"><span style="text-decoration:underline;font-size:18pt">EXCEPTION</span></p><p style="text-align:center;"></p><p><span style="font-style:italic">Caesare duce vincēmus</span><span>. With Caesar as leader, we shall conquer.</span></p></td></tr></table>
+<p></p>
+<p></p>
+<p><span> </span><span style="font-weight:700">Note: The noun (or pronoun) expressed in the Ablative Absolute is never the subject of the sentence.</span><span> If we wish to say “When she was departing, the woman saw the lion,” we cannot use the Ablative Absolute, because the subject of each clause (“she” and “woman”) is the same. Instead, a simple participle is used: Fēmina discēdēns leōnem vīdit. </span></p>
+<p></p>
+<p><span>See if you can find and bracket all of the Ablative Absolute in the Basic Sentences.</span></p>
+<p></p>
+<p><span>Check out the video below for a good explanation of all of these possibilities.</span></p>
+<p></p>
+<p><a href="https://youtu.be/1_BUn1zH7IM" target="_blank" rel="noopener"><span style="text-decoration:underline;color:#1155cc;font-size:24pt">ABLATIVE ABSOLUTES</span></a></p>
+<p></p>
+<h1></h1>
+<p></p>
+<a id="vocabulary"></a><h1><span>Vocabulary &nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp; </span><a href="https://quizlet.com/_2y6013" target="_blank" rel="noopener"><span style="text-decoration:underline;color:#1155cc">Flash Cards</span></a></h1>
+<p></p>
+<table><tr><td><p><span style="font-style:italic">Word</span></p></td><td><p><span style="font-style:italic">Definition</span></p></td></tr><tr><td><p><span>Deinde/dein      </span></p></td><td><p><span>Then/next</span></p></td></tr><tr><td><p><span>Volo, velle, volui      </span></p></td><td><p><span>To want/wish        </span></p></td></tr><tr><td><p><span>Totus, a, um</span></p></td><td><p><span>Whole/entire</span></p></td></tr><tr><td><p><span>Arma, armorum n</span></p></td><td><p><span>Weapons/arms</span></p></td></tr><tr><td><p><span>Legio, legionis f</span></p></td><td><p><span>legion</span></p></td></tr><tr><td><p><span>Propter + acc      </span></p></td><td><p><span>Because of</span></p></td></tr><tr><td><p><span>Gero, gerere, gessi, gestum    </span></p></td><td><p><span>Bear/Manage/Wage (war)</span></p></td></tr><tr><td><p><span>Navis, navis f</span></p></td><td><p><span>Ship</span></p></td></tr><tr><td><p><span>Onus, oneris n</span></p></td><td><p><span>Burden</span></p></td></tr><tr><td><p><span>Litus, litoris n           </span></p></td><td><p><span>Shore</span></p></td></tr><tr><td><p><span>Abeo, abire, abivi, abitum    </span></p></td><td><p><span>To go away</span></p></td></tr><tr><td><p><span>Vultus, us m</span></p></td><td><p><span>Look/Expression/Face</span></p></td></tr><tr><td><p><span>Autem</span></p></td><td><p><span>however</span></p></td></tr><tr><td><p><span>Quia</span></p></td><td><p><span>Because</span></p></td></tr><tr><td><p><span>Ergo             </span></p></td><td><p><span>Therefore</span></p></td></tr><tr><td><p><span>Miser, misera, miserum</span></p></td><td><p><span>Miserable/wretched</span></p></td></tr><tr><td><p><span>Saepe</span></p></td><td><p><span>Often</span></p></td></tr><tr><td><p><span>Os, oris n  </span></p></td><td><p><span>Mouth/face</span></p></td></tr><tr><td><p><span>Ignis, ignis m</span></p></td><td><p><span>Fire</span></p></td></tr><tr><td><p><span>Vivo, vivere, vixi, victum</span></p></td><td><p><span>To live</span></p></td></tr></table>
+<p></p>
+<p></p>
+<table><tr><td><p><span style="text-decoration:underline;color:#333333;font-size:16pt">Present</span></p></td><td><p><span style="text-decoration:underline;color:#333333;font-size:16pt">Imperfect</span></p></td><td><p><span style="text-decoration:underline;color:#333333;font-size:16pt">Future</span></p></td><td><p><span style="text-decoration:underline;color:#333333;font-size:16pt">Perfect</span></p></td><td><p><span style="text-decoration:underline;color:#333333;font-size:16pt">Pluperfect</span></p></td></tr><tr><td><p><span style="text-decoration:underline;color:#333333;font-size:16pt">amat</span></p></td><td><p></p></td><td><p></p></td><td><p></p></td><td><p></p></td></tr><tr><td><p><span style="text-decoration:underline;color:#333333;font-size:16pt">dat</span></p></td><td><p></p></td><td><p></p></td><td><p></p></td><td><p></p></td></tr><tr><td><p><span style="text-decoration:underline;color:#333333;font-size:16pt">necatur</span></p></td><td><p></p></td><td><p></p></td><td><p></p></td><td><p></p></td></tr><tr><td><p><span style="text-decoration:underline;color:#333333;font-size:16pt">habemus</span></p></td><td><p></p></td><td><p></p></td><td><p></p></td><td><p></p></td></tr><tr><td><p><span style="text-decoration:underline;color:#333333;font-size:16pt">videntur</span></p></td><td><p></p></td><td><p></p></td><td><p></p></td><td><p></p></td></tr><tr><td><p><span style="text-decoration:underline;color:#333333;font-size:16pt">regis</span></p></td><td><p></p></td><td><p></p></td><td><p></p></td><td><p></p></td></tr><tr><td><p><span style="text-decoration:underline;color:#333333;font-size:16pt">potest</span></p></td><td><p></p></td><td><p></p></td><td><p></p></td><td><p></p></td></tr></table>
+<p></p>
+<p></p>
+<p></p>
+        </article>
+      </main>
+    </div>
+  </div>
+  <script>
+    document.getElementById("exercisesLink").addEventListener("click", (event) => {
+      event.preventDefault();
+      const exercisesUrl = new URL("chapter-12-exercises.html", window.location.href).href;
+      const opened = window.open(exercisesUrl, "_blank", "noopener");
+      if (!opened) {
+        window.location.href = exercisesUrl;
+      }
+    });
+  </script>
+</body>
+</html>

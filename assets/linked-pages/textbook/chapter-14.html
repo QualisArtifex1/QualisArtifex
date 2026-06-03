@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chapter 14 | Latin Textbook</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #20201d;
+      --muted: #635f57;
+      --paper: #fffdf8;
+      --line: #ddd6c8;
+      --accent: #8f2f2f;
+      --accent-dark: #6f2222;
+      --gold: #bf8f35;
+      --sage: #566f60;
+      --blue: #295f86;
+      --soft-gold: #fbf4e5;
+      --shadow: 0 20px 50px rgba(55, 43, 28, 0.12);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(255, 253, 248, 0.93), rgba(255, 253, 248, 0.99)),
+        repeating-linear-gradient(90deg, rgba(191, 143, 53, 0.05) 0 1px, transparent 1px 34px);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 18px;
+      line-height: 1.65;
+    }
+    a { color: var(--blue); font-weight: 700; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; height: auto; }
+    .page { width: calc(100% - 32px); max-width: 1180px; margin: 0 auto; padding: 32px 0 64px; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(300px, 1.05fr);
+      gap: 28px;
+      align-items: stretch;
+      min-height: 420px;
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 28px;
+    }
+    .hero-copy { display: flex; flex-direction: column; justify-content: center; min-width: 0; padding: 28px 0; }
+    .kicker { margin: 0 0 10px; color: var(--accent-dark); font-family: Arial, Helvetica, sans-serif; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
+    h1, h2, h3 { font-family: "Trebuchet MS", Arial, sans-serif; line-height: 1.12; letter-spacing: 0; }
+    .hero h1 { margin: 0; color: #181715; font-size: clamp(3rem, 10vw, 6.5rem); }
+    .subtitle { max-width: 660px; margin: 18px 0 0; color: var(--muted); font-size: 1.2rem; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+    .button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; border: 1px solid var(--accent); border-radius: 6px; padding: 9px 15px; background: var(--accent); color: #fff; font-family: Arial, Helvetica, sans-serif; font-size: 0.95rem; font-weight: 800; text-decoration: none; cursor: pointer; }
+    .button.secondary { background: transparent; color: var(--accent-dark); }
+    .hero-image { min-width: 0; overflow: hidden; border-radius: 8px; background: #181715; }
+    .hero-image img { width: 100%; height: 100%; min-height: 420px; object-fit: cover; object-position: center; }
+    .layout { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 28px; align-items: start; }
+    .toc { position: sticky; top: 18px; border: 1px solid var(--line); border-radius: 8px; background: rgba(255, 255, 255, 0.84); box-shadow: var(--shadow); padding: 18px; font-family: Arial, Helvetica, sans-serif; }
+    .toc h2 { margin: 0 0 12px; font-size: 1rem; color: var(--accent-dark); }
+    .toc ol { display: grid; gap: 8px; margin: 0; padding-left: 20px; color: var(--muted); }
+    .toc a { color: var(--ink); font-weight: 700; text-decoration: none; }
+    main { min-width: 0; }
+    .doc-content { min-width: 0; border: 1px solid var(--line); border-radius: 8px; background: rgba(255, 255, 255, 0.9); box-shadow: var(--shadow); padding: 28px; overflow: hidden; }
+    .doc-content, .doc-content p, .doc-content li { font-family: Georgia, "Times New Roman", serif; }
+    .doc-content p { margin-top: 0; margin-bottom: 15px; }
+    .doc-content h1, .doc-content h2, .doc-content h3 { font-family: "Trebuchet MS", Arial, sans-serif; line-height: 1.15; letter-spacing: 0; }
+    .doc-content h1 { margin: 32px 0 16px; color: var(--accent-dark); font-size: clamp(2rem, 6vw, 3.2rem); }
+    .doc-content h2 { margin: 26px 0 12px; color: #312c25; font-size: 1.45rem; }
+    .doc-content table { width: 100%; border-collapse: collapse; margin: 18px 0; font-family: Arial, Helvetica, sans-serif; font-size: 0.97rem; line-height: 1.35; }
+    .doc-content th, .doc-content td { border: 1px solid var(--line); padding: 9px !important; vertical-align: top; }
+    .doc-content img { max-width: 100%; height: auto !important; margin: 18px auto; border-radius: 6px; }
+    .doc-content ul, .doc-content ol { padding-left: 28px; }
+    @media (max-width: 900px) { .hero, .layout { grid-template-columns: 1fr; } .toc { position: static; } .hero-image img { min-height: 310px; } }
+    @media (max-width: 640px) { body { font-size: 16px; } .page { width: calc(100% - 24px); padding-top: 20px; } .doc-content { padding: 18px; } }
+</style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Latin Textbook</p>
+        <h1>Chapter 14</h1>
+        <p class="subtitle">Infinitive forms, indirect statement, relative time, and vocabulary.</p>
+        <div class="hero-actions">
+          <a class="button secondary" href="#vocabulary">Vocabulary</a>
+          <a class="button secondary" id="exercisesLink" href="chapter-14-exercises.html" target="_blank" rel="noopener">Exercises</a>
+        </div>
+      </div>
+      <figure class="hero-image" aria-label="Chapter 14 illustration">
+        <img src="chapter-14-image-1.png" alt="Illustration used in Chapter 14">
+      </figure>
+    </header>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Chapter sections">
+        <h2>Chapter Sections</h2>
+        <ol>
+          <li><a href="#infinitive-forms">Infinitive Forms</a></li>
+          <li><a href="#indirect-statement">Indirect Statement</a></li>
+          <li><a href="#vocabulary">Vocabulary</a></li>
+        </ol>
+      </nav>
+      <main>
+        <article class="doc-content">
+
+<h1><span style="text-decoration:underline">Basic Sentences</span></h1>
+<p></p>
+<p><span style="color:#333333;font-size:16pt">14.1 qui sunt adfecti gravioribus morbis quique in proeliis periculisque versantur, aut (Galli) pro victimis homines immolant aut se immolaturos vovent.</span></p>
+<p><span style="font-style:italic;color:#333333;font-size:16pt">(Caesar DBG 6.16 slightly adapted.  Caesar discusses the Gallic custom of human sacrifice.)</span></p>
+<p></p>
+<p><span style="color:#333333;font-size:16pt">14.2 obsides sese daturos quaeque imperasset facturos polliciti sunt. </span></p>
+<p><span style="font-style:italic;color:#333333;font-size:16pt">(Caesar DBG 4.27. Caesar makes arrangements for hostage exchange.)</span></p>
+<p></p>
+<p><span style="color:#333333;font-size:16pt">14.3 Laocoon ardens summa decurrit ab arce,</span></p>
+<p><span style="color:#333333;font-size:16pt">       et procul &#x27;o miseri, quae tanta insania, cives?</span></p>
+<p><span style="color:#333333;font-size:16pt">       creditis avectos hostis? aut ulla putatis</span></p>
+<p><span style="color:#333333;font-size:16pt">       dona carere dolis Danaum?</span></p>
+<p><span style="font-style:italic;color:#333333;font-size:16pt">(Vergil 2.41-44.  Laocoon tries to warn the Trojans)</span></p>
+<p style="text-align:center"><span style="color:#333333;font-size:16pt"><img src="chapter-14-image-1.png" alt="Chapter 14 image"></span></p>
+<p style="text-align:center"><span style="font-style:italic;color:#333333">(Laocoon)</span></p>
+<h1><span style="text-decoration:underline">Topics this Chapter</span></h1>
+<p><span>1. </span><a href="#infinitive-forms"><span style="text-decoration:underline;color:#1155cc">Infinitive Forms</span></a></p>
+<p><span>2. </span><a href="#indirect-statement"><span style="text-decoration:underline;color:#1155cc">Indirect Statement</span></a></p>
+<p><span>3. </span><a href="#vocabulary"><span style="text-decoration:underline;color:#1155cc">Vocabulary</span></a></p>
+<p></p>
+<p style="text-align:center"><span><img src="chapter-14-image-2.png" alt="Chapter 14 image"></span></p>
+<p style="text-align:center"><span style="font-style:italic">(The Gallic Wicker Man)</span></p>
+<p></p>
+<a id="infinitive-forms"></a><h1 style="text-align:center"><span style="text-decoration:underline">Infinitive Forms</span></h1>
+<p></p>
+<p style="text-align:left"><span style="font-size:14pt">In order to learn about indirect statement, you have to learn all of the forms of this infinitive, which we will learn now.  Some of these forms are review from previous chapters (the present active and passive infinitives) and the remaining are new information.</span></p>
+<p></p>
+<p style="text-align:left"><span style="font-size:14pt">In Latin there are a total of five forms of the infinitive.  These forms can be split into three categories: </span><span style="font-weight:700;font-size:14pt">Two forms in the present tense, two forms in the perfect tense, and one in the future</span><span style="font-size:14pt">.</span></p>
+<p style="text-align:center"><span style="font-size:14pt"><img src="chapter-14-image-3.png" alt="Chapter 14 image"></span></p>
+<p></p>
+<p style="text-align:left"><span style="font-size:14pt">The present tense infinitives have already been introduced, but let’s take a quick chance to review them.</span></p>
+<p></p>
+<h1 style="text-align:left"><span style="text-decoration:underline;font-size:14pt">Present Active</span></h1>
+<p style="text-align:left"><span style="font-size:14pt">The present active infinitive can be found in the dictionary entry.  It </span><span style="font-weight:700;font-size:14pt">IS</span><span style="font-size:14pt"> the 2nd principal part of the entry and is translated as “to verb”.</span></p>
+<p></p>
+<p></p>
+<table><tr><td style="background-color:#c9daf8"><p style="text-align:center"></p><p style="text-align:center"><span style="font-weight:700;font-size:14pt">Present active infinitive </span><span style="font-size:14pt">= 2nd principal part</span></p><p style="text-align:center"></p><p style="text-align:center"><span style="font-size:14pt">Ex: amare = to love</span></p></td></tr></table>
+<h1><span style="text-decoration:underline;font-size:14pt">Present Passive</span></h1>
+<p><span style="font-size:14pt">The present passive infinitive can be constructed very easily by removing the final “e” from the active form and adding an “i”.  This form is translated as “to be verbed”.  There is an exception to this rule which occurs in 3rd conjugation verbs.  In 3rd conjugation the whole “ere” is removed instead of just the final “e” before adding the “i”.</span></p>
+<p><span style="font-size:14pt"><br></span></p>
+<p></p>
+<table><tr><td style="background-color:#c9daf8"><p style="text-align:center"></p><p style="text-align:center"><span style="font-weight:700;font-size:14pt">Present passive infinitive</span><span style="font-size:14pt"> = 2nd principal part- “e” + “i”</span></p><p style="text-align:center"></p><p style="text-align:center"><span style="font-size:14pt">Ex: amari = to be loved</span></p><p style="text-align:center"><span style="font-size:14pt">--------------------------------------</span></p><p style="text-align:center"><span style="font-size:14pt">3rd conjugation exception*</span></p><p style="text-align:center"></p><p style="text-align:center"><span style="font-weight:700;font-size:14pt">Present passive infinitive</span><span style="font-size:14pt"> = 2nd principal part- “ere” + “i”</span></p><p style="text-align:center"></p><p style="text-align:center"><span style="font-size:14pt">Ex: regi = to be ruled</span></p></td></tr></table>
+<p></p>
+<p></p>
+<p><span style="font-size:14pt">Let’s move on to the new infinitives.  Two of the last three can be grouped together.  There is the perfect active and the perfect passive infinitive.   At least there are no exceptions to the rule for these infinitives!</span></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<h1><span style="text-decoration:underline;font-size:14pt">Perfect Active</span></h1>
+<p><span style="font-size:14pt">The perfect active infinitive is formed by taking the perfect tense stem (which is the 3rd principal part minus the “i”) and adding the ending “isse”.  The word “have” is going to be used to translate this form just as it was used when you learned the perfect tense a few chapters ago.  It should be read as “to have verbed”</span></p>
+<p></p>
+<p></p>
+<p></p>
+<table><tr><td style="background-color:#c9daf8"><p style="text-align:center"></p><p style="text-align:center"><span style="font-weight:700;font-size:14pt">Perfect active infinitive </span><span style="font-size:14pt">= perfect stem + “isse”</span></p><p style="text-align:center"></p><p style="text-align:center"><span style="font-size:14pt">Ex: amavisse = to have loved</span></p></td></tr></table>
+<p></p>
+<p></p>
+<h1><span style="text-decoration:underline;font-size:14pt">Perfect Passive Infinitive </span></h1>
+<p><span style="font-size:14pt">Just like all perfect verbs that are passive, perfect passive infinitives will be made up of two words.  The first word is the 4th principal part.  The second is the word “esse”, because “esse” is the infinitive of the verb “sum”.  Also, just like when you learned the perfect passive verb system you learned that passive verbs would make sense when “by pirates” was added after.  The same goes here.  Just add the word “been” to your translation from the perfect active form and you’re done!</span></p>
+<p></p>
+<p></p>
+<table><tr><td style="background-color:#c9daf8"><p style="text-align:center"></p><p style="text-align:center"><span style="font-weight:700;font-size:14pt">Perfect passive infinitive </span><span style="font-size:14pt">= 4th part + esse</span></p><p style="text-align:center"></p><p style="text-align:center"><span style="font-size:14pt">Ex: amatum esse = to have been loved</span></p></td></tr></table>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<h1><span style="text-decoration:underline">Future Active Infinitive</span></h1>
+<p><span>The future active infinitive is easily formed.  This form is made up of two words just like the perfect passive.  The only difference is that the 1st word of the pair is now going to be the FAP.  The translation of this form goes as follows: “to be about to verb”.</span></p>
+<p></p>
+<p></p>
+<table><tr><td style="background-color:#c9daf8"><p style="text-align:center"></p><p style="text-align:center"><span style="font-weight:700">Future active infinitive </span><span>= FAP + esse</span></p><p style="text-align:center"></p><p style="text-align:center"><span>Ex: amaturum esse = to be about to love</span></p></td></tr></table>
+<p></p>
+<p></p>
+<p><span>There is technically a future passive infinitive.  In fact it even appears in the AP syllabus lines of Caesar.  However, it is extremely rare, and will not be taught here.</span></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<h1><span>The Complete Story of Infinitives.</span></h1>
+<p></p>
+<p><span>A well made chart always simplifies things for many students so below you will see a verb from each conjugation and an example of each infinitive type for each verb.</span></p>
+<p></p>
+<p></p>
+<table><tr><td><p style="text-align:left"></p></td><td><p style="text-align:left"><span>1st Conj</span></p></td><td><p style="text-align:left"><span>2nd Conj</span></p></td><td><p style="text-align:left"><span>3rd Conj</span></p></td><td><p style="text-align:left"><span>4th Conj</span></p></td></tr><tr><td style="background-color:#c9daf8"><p style="text-align:left"><span>Present Active</span></p></td><td style="background-color:#c9daf8"><p style="text-align:left"><span>amare</span></p></td><td style="background-color:#c9daf8"><p style="text-align:left"><span>videre</span></p></td><td style="background-color:#c9daf8"><p style="text-align:left"><span>regere</span></p></td><td style="background-color:#c9daf8"><p style="text-align:left"><span>punire</span></p></td></tr><tr><td style="background-color:#c9daf8"><p style="text-align:left"><span>Present Passive</span></p></td><td style="background-color:#c9daf8"><p style="text-align:left"><span>amari</span></p></td><td style="background-color:#c9daf8"><p style="text-align:left"><span>videri</span></p></td><td style="background-color:#c9daf8"><p style="text-align:left"><span>regi *</span></p></td><td style="background-color:#c9daf8"><p style="text-align:left"><span>puniri</span></p><p style="text-align:left"></p></td></tr><tr><td style="background-color:#d9ead3"><p style="text-align:left"><span>Perfect Active</span></p></td><td style="background-color:#d9ead3"><p style="text-align:left"><span>amavisse</span></p></td><td style="background-color:#d9ead3"><p style="text-align:left"><span>vidisse</span></p></td><td style="background-color:#d9ead3"><p style="text-align:left"><span>rexisse</span></p></td><td style="background-color:#d9ead3"><p style="text-align:left"><span>punivisse</span></p></td></tr><tr><td style="background-color:#d9ead3"><p style="text-align:left"><span>Perfect Passive</span></p></td><td style="background-color:#d9ead3"><p style="text-align:left"><span>Amatum esse</span></p></td><td style="background-color:#d9ead3"><p style="text-align:left"><span>Visum esse</span></p></td><td style="background-color:#d9ead3"><p style="text-align:left"><span>Rectum esse</span></p></td><td style="background-color:#d9ead3"><p style="text-align:left"><span>Punitum esse</span></p></td></tr><tr><td style="background-color:#fff2cc"><p style="text-align:left"><span>Future Active</span></p></td><td style="background-color:#fff2cc"><p style="text-align:left"><span>Amaturum esse</span></p></td><td style="background-color:#fff2cc"><p style="text-align:left"><span>Visurum esse</span></p></td><td style="background-color:#fff2cc"><p style="text-align:left"><span>Recturum esse</span></p></td><td style="background-color:#fff2cc"><p style="text-align:left"><span>Puniturum esse</span></p></td></tr></table>
+<p></p>
+<p style="text-align:center"><a href="https://youtu.be/O19pYgfzv94" target="_blank" rel="noopener"><span style="text-decoration:underline;color:#1155cc">WATCH THIS VIDEO FOR INFINITIVE REVIEW</span></a></p>
+<p></p>
+<p style="text-align:center"><span><img src="chapter-14-image-4.png" alt="Chapter 14 image"></span></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<a id="indirect-statement"></a><h1 style="text-align:center"><span style="text-decoration:underline">Indirect Statement</span></h1>
+<p><span>Welcome to Latin!  Indirect statement is crucial to understanding and mastering Latin.  Indirect statement finds its way into so many parts of Latin texts that it is hard to count.  It could easily be said that all the information you’ve learned up to this point combined is as important as this section so please, NOTA BENE!!</span></p>
+<p></p>
+<p><span>Direct and indirect speech can be a source of confusion for English learners. Let&#x27;s first define the terms, then look at how to talk about what someone said, and how to convert speech from direct to indirect or vice-versa.</span></p>
+<p><span>You can answer the question What did he say? in two ways:</span></p>
+<p><span>by repeating the words spoken (direct speech using a quotation)</span></p>
+<p><span>by reporting the words spoken (indirect or reported speech).</span></p>
+<p></p>
+<p><span style="text-decoration:underline">EXAMPLES OF DIRECT SPEECH</span></p>
+<p><span>She says, &quot;What time will you be at work?&quot;</span></p>
+<p><span>She said, &quot;What time will you be home?&quot; and I said, &quot;I don&#x27;t know! &quot;</span></p>
+<p><span>&quot;There&#x27;s a fly in my drink!&quot; screamed Simone.</span></p>
+<p><span>John said, &quot;There&#x27;s a giraffe outside of my window.&quot;</span></p>
+<p></p>
+<p><span>Notice, all of these examples use quotations.  Now, in Latin this would be difficult because the Romans didn’t use much if any punctuation (though modern editors have added it) and they for sure don’t use anything like quotations marks.  This does not mean, however, that the Romans didn’t use direct speech, for they surely did.  You will see direct speech used frequently in things like plays.  So, if you ever read any Terence or Plautus, then be prepared for that.  Most of the authors that are covered in a high school curriculum will used indirect speech more frequently.</span></p>
+<p></p>
+<p><span style="text-decoration:underline">INDIRECT SPEECH (Indirect Statement)</span></p>
+<p><span>Reported or indirect speech is usually used to talk about the past, so we normally change the tense of the words spoken. We use reporting verbs like &#x27;say&#x27;, &#x27;tell&#x27;, &#x27;ask&#x27;, and we may use the word &#x27;that&#x27; to introduce the reported words. Quotation marks are not used.</span></p>
+<p></p>
+<p></p>
+<p></p>
+<p><span style="text-decoration:underline">EXAMPLES</span></p>
+<p><span>She said that she had seen him. </span></p>
+<p><span>The reporter said that the criminal was found.</span></p>
+<p><span>The police officer saw that there was no murder weapon.</span></p>
+<p><span>I hear that there is pizza for lunch today.</span></p>
+<p></p>
+<p><span>You may notice that all of these sentences have the word “that” in common.  In English it is common to leave this word out and it will mean the same thing.  Just to keep things simple though every time you see an indirect statement in Latin you SHOULD use the word “that” in your translation.  </span></p>
+<p></p>
+<p><span>Indirect statements are considered noun clauses because the entire clause is acting as the direct object of the main verb.  Think about the first example above: She said that she had seen him.  The subject is “She”, the verb is “said” but what is the object?  The answer is the WHOLE remaining clause “that she had seen him.”</span></p>
+<p></p>
+<p><span style="text-decoration:underline">THE RULES</span></p>
+<p><span>Every indirect statement in Latin will have the following three things:</span></p>
+<p></p>
+<p></p>
+<table><tr><td style="background-color:#ead1dc"><p style="text-align:left"><span style="font-size:18pt">A verb of the head (think, hear, say, tell, imagine, etc.)</span></p><p style="text-align:left"></p><p style="text-align:left"><span style="font-size:18pt">The subject of the indirect statement clause will be in the accusative case</span></p><p style="text-align:left"></p><p style="text-align:left"><span style="font-size:18pt">The verb of the indirect statement clause will be an infinitive</span></p><p style="text-align:left"></p><p style="text-align:left"><span style="font-size:18pt">**Special note: “esse” is sometimes omitted from the infinitive in these forms.  In those cases, depend on the context to alert you to the possibility that you may have an infinitive form.</span></p></td></tr></table>
+<p></p>
+<p><span>The main thing to notice here is there is no word for “that” like there is used in English.  This makes things particularly difficult because it is the word “that” that most readers rely on to know that they are even reading an indirect statement.  It is the subordinating conjunction.  So if there is no Latin word for “that” in these instances what do we do?  The answer is that if you have all three of the things from the table above then you must imply the word “that” in your translation.</span></p>
+<p></p>
+<p><span>Let’s look at an extremely easy example.</span></p>
+<p></p>
+<p><span style="font-weight:700;font-size:18pt">Vir dicit puerum amare puellam.</span></p>
+<p></p>
+<p><span>This sentence above has an indirect statement in it.  Do you see the infinitive?  Do you see the verb of the head and the accusative being used as a subject?</span></p>
+<p></p>
+<p><span style="font-weight:700;color:#ff0000;font-size:18pt">Vir</span><span style="font-weight:700;font-size:18pt"> </span><span style="font-weight:700;text-decoration:underline;font-size:18pt">dicit</span><span style="font-weight:700;font-size:18pt"> </span><span style="font-weight:700;color:#0000ff;font-size:18pt">[puerum</span><span style="font-weight:700;font-size:18pt"> </span><span style="font-weight:700;text-decoration:underline;font-size:18pt">amare</span><span style="font-weight:700;font-size:18pt"> </span><span style="font-weight:700;color:#0000ff;font-size:18pt">puellam</span><span style="font-weight:700;font-size:18pt">.</span><span style="font-weight:700;color:#0000ff;font-size:18pt">]</span></p>
+<p></p>
+<p><span>Now, you’ll notice that in the annotated version above I have bracketed off the indirect statement.  The verb of the head is “dicit”, the word “puerum” is an accusative noun, and “amare” is an infinitive.  With all of these clues you have all the evidence you need.  You might notice that I have highlighted the brackets in a blue color.  This is because the whole clause from end to end is acting as the direct object of the verb “dicit”.  Inside of the brackets you will need a new subject (now in the accusative case), verb, and maybe a direct object.</span></p>
+<p></p>
+<p><span style="color:#ff0000;font-size:18pt">The man</span><span style="font-size:18pt"> </span><span style="text-decoration:underline;font-size:18pt">says</span><span style="font-size:18pt"> </span><span style="color:#0000ff;font-size:18pt">[</span><span style="font-size:18pt">that </span><span style="color:#0000ff;font-size:18pt">the boy</span><span style="font-size:18pt"> </span><span style="text-decoration:underline;font-size:18pt">loves</span><span style="font-size:18pt"> </span><span style="color:#0000ff;font-size:18pt">the girl</span><span style="font-size:18pt">.</span><span style="color:#0000ff;font-size:18pt">]</span></p>
+<p></p>
+<p><span>Note that I have implied the word “that” in my translation.  You might also ask this:  aren’t the subject AND the object inside of this clause in the accusative case?  The answer is YES!  Well, with Latin’s word order flexibility this has the potential to create a lot of ambiguity.  However, in most cases either context will make it very clear which is the subject or you can usually rely on the fact that the first noun in the accusative is the subject.</span></p>
+<p></p>
+<p><span>**A quick note on the word “se”.  If the reflexive pronoun “se” is used in an indirect statement it will alway be referring back to the original subject,  Here’s an example:</span></p>
+<p><span style="font-size:18pt">Puella dicit se in via ambulare.</span></p>
+<p></p>
+<p><span style="font-size:18pt">The girl says that she is walking on the road.</span></p>
+<p></p>
+<p><span>Notice that the word “she” is referring back the girl.</span></p>
+<p></p>
+<h1><span style="text-decoration:underline;font-size:18pt">Relative Time in Indirect Statement</span></h1>
+<p></p>
+<p><span>Now that the basics of indirect statement have been introduced, it is time to complicate things.  Earlier in this chapter you were given the five forms of the infinitives.  Each of these forms can be used in indirect statements and each of them can have a different interpretation depending on what tense the main verb is in.  In all of the examples above, the action of the main verb and the infinitive have happened at the same time as each other.  In that instance the present infinitives will be uses.  This will not always be the case though.  If the action of the infinitive had happened before that of the main verb, Latin would have used a perfect infinitive; if the action was expected, but hadn’t happened yet, Latin would have used a future infinitive.</span></p>
+<p></p>
+<p><span>The pattern showing the relation between the </span><span style="font-style:italic">time</span><span> of the main verb and the </span><span style="font-style:italic">tense</span><span> of the infinitive fits a pattern.</span></p>
+<p></p>
+<table><tr><td style="background-color:#d9ead3"><p style="text-align:center"><span>Time Before</span></p></td><td style="background-color:#cfe2f3"><p style="text-align:center"><span>Same Time</span></p></td><td style="background-color:#fff2cc"><p style="text-align:center"><span>Time After</span></p></td></tr><tr><td style="background-color:#d9ead3"><p style="text-align:center"><span>Perfect Infinitive</span></p></td><td style="background-color:#cfe2f3"><p style="text-align:center"><span>Present Infinitive</span></p></td><td style="background-color:#fff2cc"><p style="text-align:center"><span>Future Infinitive</span></p></td></tr><tr><td style="background-color:#d9ead3"><p style="text-align:center"><span>Ex: amavisse/amatum esse</span></p></td><td style="background-color:#cfe2f3"><p style="text-align:center"><span>Ex: amare/amari</span></p></td><td style="background-color:#fff2cc"><p style="text-align:center"><span>Ex: amaturum esse</span></p></td></tr></table>
+<p></p>
+<p><span style="font-weight:700">Remember, the infinitive that is used doesn’t indicate that actual time of the action, just the relative time of the action compared to the main verb.</span></p>
+<p></p>
+<p></p>
+<p><span>Consider the following examples:</span></p>
+<p></p>
+<p></p>
+<table><tr><td><p style="text-align:left"><span>Time of Main Verb</span></p></td><td><p style="text-align:left"></p></td><td><p style="text-align:left"></p></td><td><p style="text-align:left"><span>Relative Time</span></p></td></tr><tr><td><p style="text-align:left"><span>Present</span></p></td><td style="background-color:#e6b8af"><p style="text-align:left"><span>Dico eum </span><span style="font-weight:700">venisse</span><span>.</span></p></td><td style="background-color:#e6b8af"><p style="text-align:left"><span>I say that he arrived.</span></p></td><td style="background-color:#e6b8af"><p style="text-align:left"><span>Before</span></p></td></tr><tr><td><p style="text-align:left"></p></td><td style="background-color:#d9ead3"><p style="text-align:left"><span>Dico eum </span><span style="font-weight:700">venire</span><span>.</span></p></td><td style="background-color:#d9ead3"><p style="text-align:left"><span>I say that he is arriving.</span></p></td><td style="background-color:#d9ead3"><p style="text-align:left"><span>Same</span></p></td></tr><tr><td><p style="text-align:left"></p></td><td style="background-color:#c9daf8"><p style="text-align:left"><span>Dico eum </span><span style="font-weight:700">venturum esse</span><span>.</span></p></td><td style="background-color:#c9daf8"><p style="text-align:left"><span>I say that he will arrive.</span></p></td><td style="background-color:#c9daf8"><p style="text-align:left"><span>After</span></p></td></tr><tr><td style="background-color:#b7b7b7"><p style="text-align:left"></p></td><td style="background-color:#b7b7b7"><p style="text-align:left"></p></td><td style="background-color:#b7b7b7"><p style="text-align:left"></p></td><td style="background-color:#b7b7b7"><p style="text-align:left"></p></td></tr><tr><td><p style="text-align:left"><span>Past</span></p></td><td style="background-color:#e6b8af"><p style="text-align:left"><span>Dixi eum </span><span style="font-weight:700">venisse</span><span>.</span></p></td><td style="background-color:#e6b8af"><p style="text-align:left"><span>I said that he had arrived.</span></p></td><td style="background-color:#e6b8af"><p style="text-align:left"><span>Before</span></p></td></tr><tr><td><p style="text-align:left"></p></td><td style="background-color:#d9ead3"><p style="text-align:left"><span>Dixi eum </span><span style="font-weight:700">venire</span><span>.</span></p></td><td style="background-color:#d9ead3"><p style="text-align:left"><span>I said that he arrived.</span></p></td><td style="background-color:#d9ead3"><p style="text-align:left"><span>Same</span></p></td></tr><tr><td><p style="text-align:left"></p></td><td style="background-color:#c9daf8"><p style="text-align:left"><span>Dixi eum </span><span style="font-weight:700">venturum esse</span><span>.</span></p></td><td style="background-color:#c9daf8"><p style="text-align:left"><span>I said that he would arrive.</span></p></td><td style="background-color:#c9daf8"><p style="text-align:left"><span>After</span></p></td></tr></table>
+<p></p>
+<p></p>
+<p><span>Let’s take a look at one of the Basic Sentences to see an example in authentic Latin.</span></p>
+<p></p>
+<p><span style="color:#333333;font-size:16pt">14.3 Laocoon ardens summa decurrit ab arce,</span></p>
+<p><span style="color:#333333;font-size:16pt">       et procul &#x27;o miseri, quae tanta insania, cives?</span></p>
+<p><span style="color:#333333;font-size:16pt">       creditis avectos hostis? aut ulla putatis</span></p>
+<p><span style="color:#333333;font-size:16pt">       dona carere dolis Danaum?</span></p>
+<p></p>
+<p></p>
+<p><span>The chunk is long so let’s delve down into just the last actual sentence with the indirect statement.</span></p>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+<p><span>         </span></p>
+<p><span style="color:#333333;font-size:18pt">aut </span><span style="color:#0000ff;font-size:18pt">ulla</span><span style="color:#333333;font-size:18pt"> </span><span style="text-decoration:underline;color:#333333;font-size:18pt">putatis</span><span style="color:#0000ff;font-size:18pt"> [dona</span><span style="color:#333333;font-size:18pt"> </span><span style="text-decoration:underline;color:#333333;font-size:18pt">carere</span><span style="color:#333333;font-size:18pt"> </span><span style="color:#ff00ff;font-size:18pt">dolis</span><span style="color:#333333;font-size:18pt"> </span><span style="color:#00ff00;font-size:18pt">Danaum</span><span style="color:#0000ff;font-size:18pt">]</span><span style="color:#333333;font-size:18pt">?</span></p>
+<p></p>
+<p><span style="font-size:16pt">Or do </span><span style="text-decoration:underline;font-size:16pt">you think</span><span style="font-size:16pt"> [that </span><span style="color:#0000ff;font-size:16pt">any gifts</span><span style="font-size:16pt">  </span><span style="color:#00ff00;font-size:16pt">of the Greeks </span><span style="text-decoration:underline;font-size:16pt">are free</span><span style="font-size:16pt"> </span><span style="color:#ff00ff;font-size:16pt">from tricks</span><span style="font-size:16pt">]</span></p>
+<p><span>There are a couple of things you might notice about this sentence.  The first is that the word “that” is used in English but there is no analogue for it in Latin.  It must be implied based on the fact that indirect statement exists.  The second issue is that the adjective “ulla” has leaked out of the indirect statement.  The is something that would not normally happen in prose authors like Caesar, but in poetry it happens frequency and for a variety of reasons.  It may have happened that the words fit the meter or rhythm of the line or it could have been for emphasis.  Either way, English also does similar things in our own poetry.  The important thing to remember is that there are rules in Latin, but as in any language, the rules can and are often broken.</span></p>
+<p></p>
+<p><span>Let’s try one more Basic Sentence</span></p>
+<p></p>
+<p><span style="color:#333333;font-size:16pt">14.2 </span><span style="color:#0000ff;font-size:16pt">[obsides</span><span style="color:#333333;font-size:16pt"> </span><span style="color:#0000ff;font-size:16pt">sese</span><span style="color:#333333;font-size:16pt"> </span><span style="text-decoration:underline;color:#333333;font-size:16pt">daturos</span><span style="color:#0000ff;font-size:16pt">] [[quae</span><span style="color:#333333;font-size:16pt">que</span><span style="text-decoration:underline;color:#333333;font-size:16pt"> imperasset</span><span style="color:#0000ff;font-size:16pt">]</span><span style="color:#333333;font-size:16pt"> </span><span style="text-decoration:underline;color:#333333;font-size:16pt">facturos</span><span style="color:#0000ff;font-size:16pt">]</span><span style="color:#333333;font-size:16pt"> </span><span style="text-decoration:underline;color:#333333;font-size:16pt">polliciti sunt</span><span style="color:#333333;font-size:16pt">. </span></p>
+<p></p>
+<p><span style="text-decoration:underline;font-size:16pt">They promised</span><span style="font-size:16pt"> </span><span style="color:#0000ff;font-size:16pt">[</span><span style="font-size:16pt">that </span><span style="color:#0000ff;font-size:16pt">they</span><span style="font-size:16pt"> </span><span style="text-decoration:underline;font-size:16pt">would give</span><span style="font-size:16pt"> </span><span style="color:#0000ff;font-size:16pt">hostages]</span><span style="font-size:16pt"> and </span><span style="color:#0000ff;font-size:16pt">[</span><span style="font-size:16pt">that </span><span style="text-decoration:underline;font-size:16pt">they would do</span><span style="font-size:16pt"> </span><span style="color:#0000ff;font-size:16pt">[what</span><span style="font-size:16pt"> </span><span style="text-decoration:underline;font-size:16pt">he had ordered</span><span style="color:#0000ff;font-size:16pt">]]</span><span style="font-size:16pt">.</span></p>
+<p></p>
+<p><span>This sentence is short but FILLED with complicated grammatical information.  Let’s begin with the main verb, “polliciti sunt”.  This verb sets up two separate indirect statements connected by the word “-que”.  Both of these indirect statements act as the direct object of the verb. This is why I have colored the brackets in blue; they are acting like an accusative noun.  Inside of the second indirect statement there is a relative clause started by the word “quae”.  That relative clause is acting as the direct object of the verb “facturos”.  Please also note that both of the infinitives used in these clauses are missing the word “esse” which is relatively common as was noted earlier.</span></p>
+<p></p>
+<p><a href="https://youtu.be/IVuYPgsXHM0" target="_blank" rel="noopener"><span style="text-decoration:underline;color:#1155cc;font-size:20pt">WATCH THIS VIDEO FOR INDIRECT STATEMENT HELP</span></a></p>
+<p></p>
+<p><span><br></span></p>
+<a id="vocabulary"></a><p><span>Vocabulary&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><a href="https://quizlet.com/_3e8lki" target="_blank" rel="noopener"><span style="text-decoration:underline;color:#1155cc">Flash Cards</span></a></p>
+<p></p>
+<table><tr><td><p><span style="font-style:italic;font-size:14pt">Word</span></p></td><td><p><span style="font-style:italic;font-size:14pt">Definition</span></p></td></tr><tr><td><p><span style="font-size:14pt">Morbus, i m</span></p></td><td><p><span style="font-size:14pt">Sickness/disease</span></p></td></tr><tr><td><p><span style="font-size:14pt">Impero, are, avi , atum</span></p></td><td><p><span style="font-size:14pt">To command</span></p></td></tr><tr><td><p><span style="font-size:14pt">Ardeo, ere, arsi , arsum</span></p></td><td><p><span style="font-size:14pt">To burn/be eager</span></p></td></tr><tr><td><p><span style="font-size:14pt">Procul</span></p></td><td><p><span style="font-size:14pt">At a distance</span></p></td></tr><tr><td><p><span style="font-size:14pt">Civis, civis m/f</span></p></td><td><p><span style="font-size:14pt">Citizen </span></p></td></tr><tr><td><p><span style="font-size:14pt">Donum, i n</span></p></td><td><p><span style="font-size:14pt">Gift </span></p></td></tr><tr><td><p><span style="font-size:14pt">Careo, ere, ui</span></p></td><td><p><span style="font-size:14pt">To lack + abl</span></p></td></tr><tr><td><p><span style="font-size:14pt">Dolus, i m </span></p></td><td><p><span style="font-size:14pt">trick</span></p></td></tr><tr><td><p><span style="font-size:14pt">Moneo, monere, monui, monitum</span></p></td><td><p><span style="font-size:14pt">To warn</span></p></td></tr><tr><td><p><span style="font-size:14pt">Nego, are, avi, atum</span></p></td><td><p><span style="font-size:14pt">To deny</span></p></td></tr><tr><td><p><span style="font-size:14pt">Spero, are, avi , atum</span></p></td><td><p><span style="font-size:14pt">To hope</span></p></td></tr><tr><td><p><span style="font-size:14pt">Cognosco, ere, cognovi, cognitum</span></p></td><td><p><span style="font-size:14pt">To learn/understand</span></p></td></tr><tr><td><p><span style="font-size:14pt">Nescio, ire, nescivi, nescitum</span></p></td><td><p><span style="font-size:14pt">To not know</span></p></td></tr><tr><td><p><span style="font-size:14pt">Intellego, ere, intellexi, intellectum</span></p></td><td><p><span style="font-size:14pt">To understand</span></p></td></tr><tr><td><p><span style="font-size:14pt">Sentio, sentire, sensi, sensum</span></p></td><td><p><span style="font-size:14pt">To perceive/feel</span></p></td></tr><tr><td><p><span style="font-size:14pt">Sanguis, sanguinis m</span></p></td><td><p><span style="font-size:14pt">Blood</span></p></td></tr><tr><td><p><span style="font-size:14pt">Vis f (not fully declinable) </span></p></td><td><p><span style="font-size:14pt">Force /power</span></p></td></tr><tr><td><p><span style="font-size:14pt">Genus, generis n</span></p></td><td><p><span style="font-size:14pt">Origin/kind</span></p></td></tr><tr><td><p><span style="font-size:14pt">Mens, mentis f</span></p></td><td><p><span style="font-size:14pt">Mind</span></p></td></tr><tr><td><p><span style="font-size:14pt">Nemo (neminem acc)</span></p></td><td><p><span style="font-size:14pt">No one </span></p></td></tr></table>
+<p></p>
+<p></p>
+        </article>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("exercisesLink").addEventListener("click", (event) => {
+      event.preventDefault();
+      const exercisesUrl = new URL("chapter-14-exercises.html", window.location.href).href;
+      const opened = window.open(exercisesUrl, "_blank", "noopener");
+      if (!opened) {
+        window.location.href = exercisesUrl;
+      }
+    });
+  </script>
+</body>
+</html>
