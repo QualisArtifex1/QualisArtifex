@@ -511,8 +511,8 @@
       </div>
       <div class="mode-selector">
         <div class="mode-choices" role="group" aria-label="Choose vocabulary type">
-          <button id="requiredVocabulary" class="vocabulary-mode-btn" type="button" aria-pressed="true">Required Vocabulary</button>
-          <button id="nonRequiredVocabulary" class="vocabulary-mode-btn" type="button" aria-pressed="false">Non-Required Vocabulary</button>
+          <button id="requiredVocabulary" class="vocabulary-mode-btn" type="button" aria-pressed="true">All Words</button>
+          <button id="nonRequiredVocabulary" class="vocabulary-mode-btn" type="button" aria-pressed="false">Non-Required Vocabulary Only</button>
         </div>
         <p id="mode-note" class="mode-note">Showing the original required vocabulary lists.</p>
       </div>
@@ -748,9 +748,11 @@ function updateFooter() {
 }
 
 function switchMode(useNonRequired) {
+  const currentSheetName = SHEETS[active]?.name;
   activeMode = useNonRequired ? 'non' : 'required';
   SHEETS = useNonRequired ? NON_REQUIRED_SHEETS : REQUIRED_SHEETS;
-  active = 0;
+  const matchingSheet = SHEETS.findIndex(sheet => sheet.name === currentSheetName);
+  active = matchingSheet >= 0 ? matchingSheet : 0;
   searchEl.value = '';
   resetFlashcard();
   updateFooter();
