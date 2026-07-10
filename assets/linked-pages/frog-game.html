@@ -5,59 +5,123 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
 <title>Latin Frog — Declension Bridges</title>
 <style>
-  /* Enhanced CSS with better visuals */
-  html,body{margin:0;height:100%;background: linear-gradient(135deg, #a8d8ff 0%, #7db9e8 100%);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji",sans-serif; overflow: hidden;}
-  #wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;}
-  header{width:100%;max-width:980px;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;color:#16324f; background: rgba(255,255,255,0.8); border-radius: 0 0 16px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);}
-  header h1{font-size:22px;margin:0;font-weight:800;letter-spacing:0.4px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);}  
-  .pill{display:inline-flex;gap:12px;align-items:center;background: linear-gradient(to bottom, #f5fbff, #e3f2fd);border:2px solid #cfe9ff;border-radius:999px;padding:8px 16px;box-shadow:0 3px 8px rgba(0,0,0,0.08)}
-  #canvas{
-  flex:1;
-  width:100%;
-  max-width:980px;
-  background: linear-gradient(180deg, #70c050, #5bb140);
-  border-radius:20px;
-  box-shadow:0 12px 36px rgba(0,0,0,.2);
-  touch-action:none;
-  overflow: hidden;
-  position: relative;
-}
-  footer{width:100%;max-width:980px;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;color:#16324f; background: rgba(255,255,255,0.8); border-radius: 16px 16px 0 0; box-shadow: 0 -4px 12px rgba(0,0,0,0.1);}  
-  button{background: linear-gradient(to bottom, #16324f, #0f2238);color:white;border:none;border-radius:12px;padding:12px 18px;font-weight:700;box-shadow:0 4px 0 rgba(0,0,0,.2);cursor:pointer; transition: all 0.2s ease;}  
-  button:hover{transform: translateY(-2px); box-shadow: 0 6px 0 rgba(0,0,0,.2);}  
-  button:active{transform:translateY(1px); box-shadow: 0 2px 0 rgba(0,0,0,.2);}  
-  .legend{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  .tag{background:#fff;color:#234;border:1px solid #cde;border-radius:10px;padding:6px 12px;font-size:13px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}  
-  .toast{position:fixed;left:50%;top:10px;transform:translateX(-50%);background:#ffefef;color:#7a1515;border:1px solid #ffb6b6;padding:10px 16px;border-radius:10px;box-shadow:0 6px 16px rgba(0,0,0,.2);font-size:13px;z-index:9999;display:none}
-  /* Win overlay sits over the canvas, under the banner area */
-  #winOverlay{position:absolute;top:14%;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.96);border:3px solid #cfe9ff;border-radius:18px;padding:16px 20px;display:none;z-index:20;box-shadow:0 12px 32px rgba(0,0,0,.2); backdrop-filter: blur(10px);}  
-  #winOverlay .time{color:#16324f;font-weight:800;margin-right:10px; font-size: 18px;}  
-  @media (max-width:700px){header h1{font-size:18px} button{padding:10px 14px}}  
-  @media (max-width:480px){  
-  #wrap{ gap:0; }
-  header{
-    position:absolute; top:4px; left:0; right:0;
-    display:flex; justify-content:center; z-index:5;
-    background:transparent; pointer-events:none;
+  :root{
+    color-scheme:light;
+    --ink:#12332f;
+    --muted:#5e7772;
+    --panel:rgba(250,255,252,.88);
+    --line:rgba(30,91,80,.14);
+    --green:#167c66;
+    --green-dark:#0f5e50;
+    --mint:#dff6ec;
+    --sun:#f4c95d;
+    --shadow:0 18px 55px rgba(18,51,47,.18);
   }
-  header .pill{ pointer-events:auto; background: rgba(245, 251, 255, 0.9); } /* still tappable */  
-  footer{ display:none; }              /* hide legend to free space */  
-  header h1{ display:none; }                  /* free space */  
-  .pill{ padding:6px 12px; gap:8px; font-size:12px; border-width:1px; }
-  .pill b{ font-weight:700; }                 /* keep emphasis readable */  
-  .pill span{ white-space:nowrap; }           /* prevent wrapping */
-}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden}
+  body{
+    color:var(--ink);
+    font-family:Inter,ui-rounded,"SF Pro Rounded",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:
+      radial-gradient(circle at 15% 8%,rgba(255,255,255,.9),transparent 28%),
+      radial-gradient(circle at 88% 82%,rgba(138,217,190,.48),transparent 30%),
+      linear-gradient(145deg,#dff3ee 0%,#c9e9e0 48%,#b8ddd4 100%);
+  }
+  button,input{font:inherit}
+  #wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:12px;height:100%;padding:0 18px}
+  header,footer{width:100%;max-width:980px}
+  header{
+    display:flex;justify-content:space-between;align-items:center;gap:20px;
+    padding:14px 4px 2px;color:var(--ink)
+  }
+  .brand{display:flex;align-items:center;gap:11px;min-width:max-content}
+  .brand-mark{
+    width:42px;height:42px;display:grid;place-items:center;border-radius:14px;
+    font-size:24px;background:linear-gradient(145deg,#2b9d7c,#13725e);
+    box-shadow:0 8px 20px rgba(19,114,94,.28),inset 0 1px rgba(255,255,255,.35)
+  }
+  header h1{font-size:20px;line-height:1.05;margin:0;font-weight:850;letter-spacing:-.45px}
+  header h1 small{display:block;margin-top:4px;color:var(--muted);font-size:10px;font-weight:750;letter-spacing:1.25px;text-transform:uppercase}
+  .pill{
+    display:grid;grid-template-columns:repeat(4,minmax(68px,1fr));align-items:center;
+    padding:6px;background:var(--panel);border:1px solid rgba(255,255,255,.78);
+    border-radius:18px;box-shadow:0 8px 30px rgba(18,51,47,.1),inset 0 0 0 1px var(--line);
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)
+  }
+  .stat{position:relative;padding:6px 12px;text-align:center;white-space:nowrap}
+  .stat+.stat:before{content:"";position:absolute;left:0;top:20%;height:60%;width:1px;background:var(--line)}
+  .stat-label{display:block;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.9px;text-transform:uppercase}
+  .stat-value{display:block;margin-top:1px;color:var(--ink);font-size:14px;font-weight:850;letter-spacing:-.2px}
+  #canvas{
+    flex:1;width:100%;max-width:980px;position:relative;overflow:hidden;touch-action:none;
+    background:#5bbf9a;border:1px solid rgba(255,255,255,.7);border-radius:26px;
+    box-shadow:var(--shadow),0 2px 0 rgba(255,255,255,.7) inset
+  }
+  footer{
+    display:flex;justify-content:space-between;align-items:center;gap:16px;padding:0 2px 14px
+  }
+  .legend{display:flex;gap:7px;flex-wrap:wrap;align-items:center;min-width:0}
+  .tag{
+    display:inline-flex;align-items:center;min-height:32px;padding:6px 10px;color:#365d56;
+    background:rgba(250,255,252,.72);border:1px solid rgba(255,255,255,.75);border-radius:10px;
+    box-shadow:0 4px 16px rgba(18,51,47,.07);font-size:11px;line-height:1.25
+  }
+  .tag b{color:var(--ink)}
+  .actions{display:flex;gap:7px;flex-shrink:0}
+  button{
+    min-height:38px;padding:9px 14px;color:white;background:linear-gradient(180deg,#1b876f,#116452);
+    border:1px solid rgba(10,73,61,.18);border-radius:12px;font-size:12px;font-weight:800;
+    box-shadow:0 6px 14px rgba(15,94,80,.18),inset 0 1px rgba(255,255,255,.25);
+    cursor:pointer;transition:transform .16s ease,box-shadow .16s ease,filter .16s ease
+  }
+  button:hover{transform:translateY(-1px);filter:saturate(1.08);box-shadow:0 9px 18px rgba(15,94,80,.22),inset 0 1px rgba(255,255,255,.28)}
+  button:active{transform:translateY(1px);box-shadow:0 3px 8px rgba(15,94,80,.18)}
+  button:focus-visible,input:focus-visible{outline:3px solid rgba(244,201,93,.8);outline-offset:2px}
+  #clearUnlocksBtn{color:#4d6863;background:rgba(250,255,252,.74);border-color:var(--line);box-shadow:none}
+  #practiceBtn{color:#173a34;background:linear-gradient(180deg,#f7d878,#edbf45);border-color:#dbab31}
+  .toast{position:fixed;left:50%;top:16px;transform:translateX(-50%);background:#fff3f1;color:#852d27;border:1px solid #efb7b2;padding:10px 16px;border-radius:12px;box-shadow:var(--shadow);font-size:13px;z-index:9999;display:none}
+  #winOverlay{position:absolute;top:14%;left:50%;transform:translateX(-50%);align-items:center;justify-content:center;gap:12px;background:rgba(250,255,252,.94);border:1px solid rgba(255,255,255,.86);border-radius:20px;padding:18px 20px;display:none;z-index:20;box-shadow:var(--shadow);backdrop-filter:blur(18px)}
+  #winOverlay .time{color:var(--ink);font-weight:850;font-size:17px;white-space:nowrap}
+  #accOverlay>div,#practiceOverlay>div,#loginBox,#teacherOverlay>div{
+    border:1px solid rgba(255,255,255,.86)!important;border-radius:24px!important;
+    background:rgba(250,255,252,.96)!important;box-shadow:0 24px 70px rgba(10,45,40,.28)!important;
+    backdrop-filter:blur(22px)
+  }
+  #loginOverlay,#teacherOverlay{background:rgba(10,38,34,.66)!important;backdrop-filter:blur(10px)}
+  #loginBox{padding:26px!important;width:min(360px,calc(100vw - 32px))!important;gap:11px!important}
+  #loginBox h2{margin:0 0 8px;font-size:24px;letter-spacing:-.6px}
+  #loginBox input{width:100%;padding:12px 13px!important;color:var(--ink);background:#f3faf7;border:1px solid #c9ddd7;border-radius:11px}
+  #loginError{font-size:12px}
+  @media (max-width:800px){
+    #wrap{padding:0 10px;gap:8px}
+    header{gap:10px;padding-top:9px}.brand-mark{width:36px;height:36px;border-radius:11px;font-size:20px}
+    header h1{font-size:17px}.stat{padding:5px 8px}.pill{grid-template-columns:repeat(4,minmax(58px,1fr))}
+    footer{align-items:flex-end}.legend{max-width:52%}.actions{flex-wrap:wrap;justify-content:flex-end;max-width:48%}
+  }
+  @media (max-width:520px){
+    #wrap{gap:0;padding:0}
+    header{position:absolute;top:6px;left:8px;right:8px;width:auto;z-index:5;justify-content:center;pointer-events:none}
+    .brand{display:none}.pill{width:min(94vw,420px);pointer-events:auto;background:rgba(250,255,252,.88);border-radius:15px;padding:4px}
+    .stat{padding:4px 5px}.stat-label{font-size:8px}.stat-value{font-size:12px}
+    #canvas{border:0;border-radius:0;box-shadow:none}footer{display:none}
+    #winOverlay{top:14%;width:min(88vw,360px);padding:14px 16px;justify-content:space-between}
+    #winOverlay .time{font-size:14px}
+  }
+  @media (prefers-reduced-motion:reduce){button{transition:none}}
 </style>
 </head>
 <body>
 <div id="wrap">
   <header>
-    <h1>Latin Frogger 🐸</h1>
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">🐸</span>
+      <h1>Latin Frogger<small>Declension Bridges</small></h1>
+    </div>
     <div class="pill">
-      <span>Crossing <span id="level">1</span>/8</span>
-      <span>Lives <span id="lives">3</span></span>
-      <span>Time <span id="time">0.0</span>s</span>
-      <span>Best <span id="best">—</span></span>
+      <span class="stat"><span class="stat-label">Crossing</span><span class="stat-value"><span id="level">1</span> / 8</span></span>
+      <span class="stat"><span class="stat-label">Lives</span><span class="stat-value">♥ <span id="lives">3</span></span></span>
+      <span class="stat"><span class="stat-label">Time</span><span class="stat-value"><span id="time">0.0</span>s</span></span>
+      <span class="stat"><span class="stat-label">Best</span><span class="stat-value"><span id="best">—</span></span></span>
     </div>
   </header>
   <canvas id="canvas"></canvas>
@@ -106,7 +170,7 @@
       <span class="tag">Order — Nom Gen Dat Acc Abl (Sg) → Nom Gen Dat Acc Abl (Pl)</span>
       <span class="tag">Wrong tile = splash!</span>
     </div>
-    <div>
+    <div class="actions">
       <button id="restartBtn">Restart Run</button>
       <button id="clearUnlocksBtn">Reset Unlocks</button>
       <!-- Practice mode toggle button.  When enabled, the game presents
@@ -161,13 +225,13 @@
  * COLORS (no CSS vars; only double quotes)
  ***********************/
 const COLORS = {
-  sky:"#a8d8ff", grass1:"#70c050", grass2:"#5bb140",
-  meadow1:"#7dd56f", meadow2:"#66c15e", meadow3:"#8fe280",
-  river1:"#3aa7e0", river2:"#2f97d6",
-  bridge:"#d9bf8f", bridgeEdge:"#b79b6d", bridgeShadow:"rgba(0,0,0,.25)",
-  plank:"#ead5ae", plankLine:"#cdb68a", post:"#9c7b45", rope:"#d2b07a",
-  tile:"#f9efd9", tileText:"#2b2b2b", tileGlow:"#7bf5a3", tilePanel:"#fffaed", tileWrong:"#ffd6c7",
-  ui:"#16324f", ui2:"#f5fbff", accent:"#ffd24f",
+  sky:"#c8eee5", grass1:"#62b98a", grass2:"#3e9874",
+  meadow1:"#70c99a", meadow2:"#50ad82", meadow3:"#86d6a9",
+  river1:"#3fa8b5", river2:"#257f98",
+  bridge:"#b98b56", bridgeEdge:"#805c36", bridgeShadow:"rgba(20,47,42,.38)",
+  plank:"#d9b981", plankLine:"#bd925b", post:"#77502e", rope:"#d6b77e",
+  tile:"#fff9e9", tileText:"#173b35", tileGlow:"#a2f6c7", tilePanel:"#fffaf0", tileWrong:"#ffd8ce",
+  ui:"#12332f", ui2:"#f5fffb", accent:"#f4c95d",
   flower1:"#ff77aa", flower2:"#ffd24f", flower3:"#88ddff", flower4:"#ff9de1",
   bug:"#222", pad:"#6fb86a", padEdge:"#4f9f52",
   fish:"#ff7043", splash:"#9dd9ff",
@@ -253,48 +317,28 @@ let cheatBuffer = "";
  */
 const SEASON_THEMES = {
   spring: {
-    sky: "#bde0fe",
-    grass1: "#70c050",
-    grass2: "#5bb140",
-    meadow1: "#84d97a",
-    meadow2: "#65c55e",
-    river1: "#4bb4e6",
-    river2: "#3a9fd4",
-    pad: "#74c26f",
-    flowers: ["#ff77aa", "#ffd24f", "#88ddff", "#ff9de1"]
+    sky: "#d8f3ec", grass1: "#6bc493", grass2: "#48a97e",
+    meadow1: "#80d2a2", meadow2: "#58b98a",
+    river1: "#48b5bd", river2: "#2b8da5", pad: "#68b978",
+    flowers: ["#ff8eb5", "#f5cc63", "#8bd7e8", "#dba0ef"]
   },
   summer: {
-    sky: "#a8d8ff",
-    grass1: "#64b450",
-    grass2: "#4e983e",
-    meadow1: "#7dd56f",
-    meadow2: "#66c15e",
-    river1: "#3aa7e0",
-    river2: "#2f97d6",
-    pad: "#6fb86a",
-    flowers: ["#ffd24f", "#88ddff", "#ff9de1", "#ff77aa"]
+    sky: "#ccecf1", grass1: "#57b780", grass2: "#37966e",
+    meadow1: "#70c994", meadow2: "#4eae7f",
+    river1: "#38a9bc", river2: "#227f9f", pad: "#62ad70",
+    flowers: ["#f7cc62", "#77d4e6", "#df94e7", "#ff7faa"]
   },
   autumn: {
-    sky: "#ffd8a8",
-    grass1: "#dca45f",
-    grass2: "#c68b46",
-    meadow1: "#e5b76d",
-    meadow2: "#d2a156",
-    river1: "#e8985d",
-    river2: "#c87f43",
-    pad: "#b77a46",
-    flowers: ["#ffb347", "#ffa07a", "#ff77aa", "#ffd24f"]
+    sky: "#f4dfc3", grass1: "#bd9a5d", grass2: "#9c7c46",
+    meadow1: "#d2ad68", meadow2: "#b48c4d",
+    river1: "#4aa6ae", river2: "#337f94", pad: "#78965b",
+    flowers: ["#f2b45c", "#ec896e", "#d9849f", "#f1cf67"]
   },
   winter: {
-    sky: "#d0e7ff",
-    grass1: "#a3c6d1",
-    grass2: "#84acbc",
-    meadow1: "#b5d0e2",
-    meadow2: "#99bbd0",
-    river1: "#6ba4c9",
-    river2: "#4f7ba6",
-    pad: "#6fa0b6",
-    flowers: ["#c3d8e2", "#b2cadc", "#9fbdd6", "#8eaed0"]
+    sky: "#dcecf0", grass1: "#9bbcb7", grass2: "#769f99",
+    meadow1: "#aac8c5", meadow2: "#8aada9",
+    river1: "#639fb3", river2: "#477e9b", pad: "#6f9b91",
+    flowers: ["#d6e5e4", "#c1d9dc", "#a9cbd4", "#91b9cb"]
   }
 };
 
@@ -314,13 +358,13 @@ const DAY_COLORS = {
 // hand‑picked to provide a gentle nighttime appearance without losing
 // visibility of game elements.
 const NIGHT_COLORS = {
-  sky: "#0a223f",
-  grass1: "#1c3410",
-  grass2: "#152a0c",
-  meadow1: "#18361e",
-  meadow2: "#102a15",
-  river1: "#19456c",
-  river2: "#132d4b"
+  sky: "#173e4b",
+  grass1: "#245a4a",
+  grass2: "#19493e",
+  meadow1: "#2a6350",
+  meadow2: "#205142",
+  river1: "#23617a",
+  river2: "#194a68"
 };
 
 // Time state for the day/night cycle.  The value oscillates between 0 and 2
@@ -328,7 +372,7 @@ const NIGHT_COLORS = {
 // midnight, and 2 means the end of the cycle (wraps back to 0).
 let dayTime = 0;
 // Length of a full day/night cycle in seconds.
-const DAY_LENGTH = 40; // 40 seconds for a complete daylight→night→day cycle
+const DAY_LENGTH = 120; // slow, readable daylight→night→day transition
 // Star alpha controls the opacity of night stars and is derived from dayTime.
 let starAlpha = 0;
 
@@ -1180,8 +1224,8 @@ canvas.addEventListener("touchend", e=>{
 /***********************
  * WORLD & CRITTERS & RIVER DECOR
  ***********************/
-const bugs=[]; const flowers=[]; const BUG_COUNT=24; // more lively
-const lilyPads=[]; const LILY_COUNT=14;
+const bugs=[]; const flowers=[]; const BUG_COUNT=10;
+const lilyPads=[]; const LILY_COUNT=8;
 const fishes=[]; // fish jump animations
 
 // Ripple effects for water disturbance.  Each ripple has an expanding radius and fading
@@ -1199,9 +1243,9 @@ function initCritters(){
   // Clear ripple animations whenever the world resets.
   ripples.length = 0;
   for(let i=0;i<BUG_COUNT;i++) bugs.push({x:Math.random()*W,y:Math.random()*H,spd:0.3+Math.random()*0.6,ang:Math.random()*6.28,wob:Math.random()*6.28,r:2+Math.random()*2});
-  for(let i=0;i<LILY_COUNT;i++){ const y = RIVER_Y1 + 20 + Math.random()*(RIVER_Y2-RIVER_Y1-40); lilyPads.push({x:Math.random()*W, y, r:12+Math.random()*10, phase:Math.random()*6.28, drift:0.2+Math.random()*0.4}); }
-  for(let i=0;i<48;i++) flowers.push({x:Math.random()*W,y:Math.random()*(RIVER_Y1-24),c:[COLORS.flower1,COLORS.flower2,COLORS.flower3,COLORS.flower4][i%4],s:4+Math.random()*5,t:Math.random()*6.28});
-  for(let i=0;i<48;i++) flowers.push({x:Math.random()*W,y:RIVER_Y2+20+Math.random()*(H-(RIVER_Y2+20)),c:[COLORS.flower1,COLORS.flower2,COLORS.flower3,COLORS.flower4][i%4],s:4+Math.random()*5,t:Math.random()*6.28});
+  for(let i=0;i<LILY_COUNT;i++){const y=RIVER_Y1+24+Math.random()*(RIVER_Y2-RIVER_Y1-48);lilyPads.push({x:Math.random()*W,y,r:10+Math.random()*7,phase:Math.random()*6.28,drift:.15+Math.random()*.25,rot:(Math.random()-.5)*.5,flower:Math.random()<.22});}
+  for(let i=0;i<24;i++) flowers.push({x:Math.random()*W,y:Math.random()*(RIVER_Y1-24),c:[COLORS.flower1,COLORS.flower2,COLORS.flower3,COLORS.flower4][i%4],s:3+Math.random()*4,t:Math.random()*6.28});
+  for(let i=0;i<24;i++) flowers.push({x:Math.random()*W,y:RIVER_Y2+20+Math.random()*(H-(RIVER_Y2+20)),c:[COLORS.flower1,COLORS.flower2,COLORS.flower3,COLORS.flower4][i%4],s:3+Math.random()*4,t:Math.random()*6.28});
   for(let i=0;i<BEE_COUNT;i++) bees.push({x:Math.random()*W,y:Math.random()*H,a:Math.random()*6.28,sp:0.8+Math.random()*1.2});
   for(let i=0;i<60;i++) sparkles.push({x:Math.random()*W,y:Math.random()*H,t:Math.random()*6.28});
   // Decorative logs drifting across the river
@@ -1301,43 +1345,24 @@ function updateLilyPads(dt){
   }
 }
 function drawLilyPads(){
-  // Render lily pads with depth using a radial gradient, notch, and subtle highlight.
-  // Each pad gently bobs on the water surface and features a notch to resemble
-  // real lily leaves.
-  for (const p of lilyPads) {
-    const bob = Math.sin(p.phase) * 2;
-    ctx.save();
-    ctx.translate(p.x, p.y + bob);
-    // Create a radial gradient for the pad: lighter in the centre, darker at the edges.
-    const innerCol = "#89cd83";
-    const outerCol = COLORS.pad;
-    const grad = ctx.createRadialGradient(0, 0, p.r * 0.2, 0, 0, p.r);
-    grad.addColorStop(0, innerCol);
-    grad.addColorStop(1, outerCol);
-    ctx.fillStyle = grad;
-    // Draw an ellipse with a small notch by skipping a slice of the ellipse.  The notch
-    // adds realism without affecting gameplay.  The path starts slightly offset
-    // from 0 to leave a gap.
-    const notchAngle = Math.PI * 0.2; // size of the notch
-    ctx.beginPath();
-    ctx.ellipse(0, 0, p.r, p.r * 0.8, 0, notchAngle, Math.PI * 2 - notchAngle);
-    ctx.lineTo(0, 0);
-    ctx.closePath();
-    ctx.fill();
-    // Subtle highlight to simulate a water sheen on the leaf.
-    ctx.globalAlpha = 0.15;
-    ctx.fillStyle = "#ffffff";
-    ctx.beginPath();
-    ctx.ellipse(-p.r * 0.3, -p.r * 0.2, p.r * 0.45, p.r * 0.25, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.globalAlpha = 1;
-    // Outline for definition.  The outline follows the pad shape but does not
-    // include the notch for a cleaner edge.
-    ctx.strokeStyle = "rgba(0,0,0,0.15)";
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.ellipse(0, 0, p.r * 0.7, p.r * 0.56, 0, 0, Math.PI * 2);
-    ctx.stroke();
+  for(const p of lilyPads){
+    const bob=Math.sin(p.phase)*1.1,rx=p.r,ry=p.r*.62,notch=.28;
+    ctx.save();ctx.translate(p.x,p.y+bob);ctx.rotate(p.rot);
+    // Water shadow grounds the leaf.
+    ctx.fillStyle="rgba(15,70,75,.2)";ctx.beginPath();ctx.ellipse(1,3,rx*1.08,ry*.92,0,0,Math.PI*2);ctx.fill();
+    const padGrad=ctx.createRadialGradient(-rx*.28,-ry*.35,1,0,0,rx);
+    padGrad.addColorStop(0,"#9bd58d");padGrad.addColorStop(.58,COLORS.pad);padGrad.addColorStop(1,shadeColor(COLORS.pad,-.2));
+    ctx.fillStyle=padGrad;ctx.beginPath();ctx.moveTo(0,0);ctx.ellipse(0,0,rx,ry,0,notch,Math.PI*2-notch);ctx.closePath();ctx.fill();
+    ctx.strokeStyle="rgba(28,92,54,.52)";ctx.lineWidth=1.2;ctx.stroke();
+    // Stable veins radiate from the notch and never flicker.
+    ctx.strokeStyle="rgba(235,255,220,.28)";ctx.lineWidth=.8;
+    for(const a of [.72,1.35,2.05,2.78,3.5,4.22,5.05]){ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.cos(a)*rx*.76,Math.sin(a)*ry*.76);ctx.stroke();}
+    ctx.fillStyle="rgba(255,255,255,.22)";ctx.beginPath();ctx.ellipse(-rx*.3,-ry*.34,rx*.34,ry*.16,-.16,0,Math.PI*2);ctx.fill();
+    if(p.flower){
+      ctx.translate(-rx*.18,-ry*.18);ctx.fillStyle="#fff5fa";
+      for(let i=0;i<6;i++){ctx.save();ctx.rotate(i*Math.PI/3);ctx.beginPath();ctx.ellipse(0,-4,2.5,5,0,0,Math.PI*2);ctx.fill();ctx.restore();}
+      ctx.fillStyle="#f4c95d";ctx.beginPath();ctx.arc(0,0,2.2,0,Math.PI*2);ctx.fill();
+    }
     ctx.restore();
   }
 }
@@ -1460,14 +1485,14 @@ function drawWeather(){
  ***********************/
 function initLogs(){
   logs.length = 0;
-  const count = 5;
+  const count = 3;
   for(let i=0;i<count;i++){
-    const width = 40 + Math.random() * 60;
+    const width = 52 + Math.random() * 34;
     const x = Math.random() * W;
     const y = RIVER_Y1 + 30 + Math.random() * (RIVER_Y2 - RIVER_Y1 - 60);
-    const speed = 20 + Math.random() * 40;
+    const speed = 9 + Math.random() * 13;
     const dir = Math.random() < 0.5 ? 1 : -1;
-    logs.push({x, y, w: width, h: 6, speed, dir});
+    logs.push({x,y,w:width,h:10+Math.random()*3,speed,dir,rot:(Math.random()-.5)*.11,knots:[.28+Math.random()*.12,.64+Math.random()*.16],moss:Math.random()>.35,branch:Math.random()>.48});
   }
 }
 
@@ -1483,52 +1508,23 @@ function updateLogs(dt){
 }
 
 function drawLogs(){
-  ctx.save();
   for(const log of logs){
-    ctx.save();
-    // Translate to the log's position so we can draw relative to (0,0)
-    ctx.translate(log.x, log.y);
-    const w = log.w;
-    const h = log.h;
-    // Build a horizontal gradient across the log to simulate rounded wood with a lighter centre and darker edges.
-    const base = '#a67845';
-    const highlight = shadeColor(base, 0.25);
-    const shadow = shadeColor(base, -0.25);
-    const lg = ctx.createLinearGradient(0, 0, w, 0);
-    lg.addColorStop(0, shadow);
-    lg.addColorStop(0.25, base);
-    lg.addColorStop(0.5, highlight);
-    lg.addColorStop(0.75, base);
-    lg.addColorStop(1, shadow);
-    ctx.fillStyle = lg;
-    // Draw the main body of the log
-    ctx.beginPath();
-    ctx.rect(0, -h/2, w, h);
-    ctx.fill();
-    // Add subtle wood grain lines across the log.  Use semi‑transparent dark strokes
-    // spaced at irregular intervals for a natural look.
-    ctx.strokeStyle = shadeColor(base, -0.35);
-    ctx.lineWidth = 0.8;
-    ctx.globalAlpha = 0.3;
-    for(let x=4; x<w; x+=8){
-      const offset = (Math.random()-0.5)*2;
-      ctx.beginPath();
-      ctx.moveTo(x + offset, -h/2 + 1);
-      ctx.lineTo(x + offset, h/2 - 1);
-      ctx.stroke();
-    }
-    ctx.globalAlpha = 1;
-    // Draw rounded caps at each end using ellipses for a softer look
-    ctx.fillStyle = lg;
-    ctx.beginPath();
-    ctx.ellipse(0, 0, h/2, h/2, 0, 0, Math.PI*2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.ellipse(w, 0, h/2, h/2, 0, 0, Math.PI*2);
-    ctx.fill();
-    ctx.restore();
+    const w=log.w,h=log.h;ctx.save();ctx.translate(log.x,log.y+Math.sin(log.x*.02)*.8);ctx.rotate(log.rot);
+    // Submerged shadow and a rounded bark body.
+    ctx.fillStyle="rgba(13,63,70,.22)";ctx.beginPath();ctx.ellipse(w*.5,h*.48,w*.55,h*.55,0,0,Math.PI*2);ctx.fill();
+    const bark=ctx.createLinearGradient(0,-h/2,0,h/2);bark.addColorStop(0,"#b78956");bark.addColorStop(.42,"#8a5c36");bark.addColorStop(1,"#5f3d27");ctx.fillStyle=bark;roundRect(0,-h/2,w,h,h/2,true,false);
+    ctx.strokeStyle="rgba(67,38,23,.58)";ctx.lineWidth=1;roundRect(0,-h/2,w,h,h/2,false,true);
+    // Cut end and growth rings.
+    ctx.fillStyle="#c99b66";ctx.beginPath();ctx.ellipse(w,0,h*.52,h*.48,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle="rgba(93,56,31,.55)";ctx.beginPath();ctx.ellipse(w,0,h*.31,h*.28,0,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.arc(w,0,1.3,0,Math.PI*2);ctx.stroke();
+    // Fixed knots and bark strokes.
+    ctx.strokeStyle="rgba(50,29,19,.34)";ctx.lineCap="round";
+    for(const k of log.knots){ctx.beginPath();ctx.ellipse(w*k,-1.2,3.5,1.8,-.12,0,Math.PI*2);ctx.stroke();}
+    ctx.beginPath();ctx.moveTo(8,-1);ctx.bezierCurveTo(w*.3,-3,w*.55,2,w-9,-1);ctx.stroke();
+    if(log.branch){ctx.strokeStyle="#684229";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(w*.58,-h*.32);ctx.lineTo(w*.68,-h*.9);ctx.stroke();ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(w*.68,-h*.9);ctx.lineTo(w*.76,-h*1.08);ctx.stroke();}
+    if(log.moss){ctx.strokeStyle="#73925a";ctx.lineWidth=2.2;ctx.beginPath();ctx.moveTo(w*.12,-h*.38);ctx.quadraticCurveTo(w*.3,-h*.66,w*.46,-h*.4);ctx.stroke();}
+    // Thin waterline sells partial submersion.
+    ctx.strokeStyle="rgba(220,251,245,.32)";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(-4,h*.18);ctx.quadraticCurveTo(w*.5,h*.05,w+7,h*.2);ctx.stroke();ctx.restore();
   }
-  ctx.restore();
 }
 
 /***********************
@@ -3091,16 +3087,16 @@ function enterMeadow(){
     }
   }
   meadow = { players:[], t:0, bannerT:0, input:{left:false,right:false,up:false,down:false,dx:0,dy:0}, butterflies:[] };
-  const player = makeFrog(-40, H*0.7, { color: nextAvatar.color, pattern: nextAvatar.pattern, accessory: nextAvatar.accessory, skin: nextAvatar.skin });
-  player.vx = 180; meadow.players.push(player);
-  const aiCount = 8; // more frogs for joy
+  const player=makeFrog(W*.5,H*.72,{color:nextAvatar.color,pattern:nextAvatar.pattern,accessory:nextAvatar.accessory,skin:nextAvatar.skin});
+  player.r=27;player.vx=0;meadow.players.push(player);
+  const aiCount = 4;
+  const guestColors=["#4fa673","#7197c8","#d78492","#8d7fbd"];
+  const guestSpots=[[.27,.68],[.40,.59],[.60,.59],[.73,.68]];
   for(let i=0;i<aiCount;i++){
-    const f = makeFrog(W*0.3 + Math.random()*W*0.6, H*0.50 + Math.random()*H*0.35, {
-      color: rand(FROG_COLORS), pattern: rand(FROG_PATTERNS), ai:true
-    });
-    f.vx = (Math.random()*2-1)*160; f.vy=(Math.random()*2-1)*160; meadow.players.push(f);
+    const f=makeFrog(W*guestSpots[i][0],H*guestSpots[i][1],{color:guestColors[i],pattern:i===1?"spots":"none",ai:true});
+    f.r=22;f.vx=0;f.vy=0;meadow.players.push(f);
   }
-  for(let i=0;i<28;i++) meadow.butterflies.push({x:Math.random()*W,y:Math.random()*H, a:Math.random()*6.28, sp:0.9+Math.random()*1.2});
+  for(let i=0;i<10;i++) meadow.butterflies.push({x:Math.random()*W,y:H*.2+Math.random()*H*.55,a:Math.random()*6.28,sp:.65+Math.random()*.75});
   winOverlay.style.display = "none";
   // Evaluate achievements for this run.  In practice mode we do not
   // unlock new items so that cosmetic rewards remain exclusive to
@@ -3147,7 +3143,7 @@ function updateMeadow(dt){
     const ax = (held.has("ArrowRight")||held.has("d")||meadow.input.dx>0) - (held.has("ArrowLeft")||held.has("a")||meadow.input.dx<0);
     const ay = (held.has("ArrowDown")||held.has("s")||meadow.input.dy>0) - (held.has("ArrowUp")||held.has("w")||meadow.input.dy<0);
     const speed = 240;
-    if(meadow.t>0.8){ p.vx += ax*speed*dt; p.vy += ay*speed*dt; } else { p.vx = 180; }
+    if(meadow.t>0.8){p.vx+=ax*speed*dt;p.vy+=ay*speed*dt;}
     p.vx *= 0.90; p.vy *= 0.90;
     p.x += p.vx*dt; p.y += p.vy*dt;
     p.x = clamp(p.x, 20, W-20); p.y = clamp(p.y, 20, H-20);
@@ -3157,7 +3153,7 @@ function updateMeadow(dt){
   // AI frogs: frequent bouncy impulses
   for(let i=1;i<meadow.players.length;i++){
     const f = meadow.players[i];
-    if(f.hopLeft<=0 && Math.random()<0.08){ f.hopDur = 0.45 + Math.random()*0.25; f.hopLeft = f.hopDur; f.hopH = 28 + Math.random()*24; const a = Math.random()*Math.PI*2; const sp = 180 + Math.random()*220; f.vx += Math.cos(a)*sp; f.vy += Math.sin(a)*sp; addRing(f.x,f.y,12); }
+    if(f.hopLeft<=0 && Math.random()<0.018){f.hopDur=.5+Math.random()*.18;f.hopLeft=f.hopDur;f.hopH=18+Math.random()*16;const a=Math.random()*Math.PI*2;const sp=65+Math.random()*75;f.vx+=Math.cos(a)*sp;f.vy+=Math.sin(a)*sp;addRing(f.x,f.y,10);}
     f.vx *= 0.90; f.vy *= 0.90; f.x += f.vx*dt; f.y += f.vy*dt; f.x=clamp(f.x,20,W-20); f.y=clamp(f.y,20,H-20);
     f.hop += (Math.abs(f.vx)+Math.abs(f.vy))*0.02*dt + 2.8*dt; if(f.hopLeft>0) f.hopLeft-=dt;
   }
@@ -3173,39 +3169,35 @@ function updateMeadow(dt){
   for(const b of bees){ b.a += b.sp*dt; const R=18; const x0=b.x, y0=b.y; b.x = x0 + Math.cos(b.a)*R*1.4; b.y = y0 + Math.sin(2*b.a)*R*0.8; }
   // pollen sparkles
   for(const s of sparkles){ s.t+=dt; s.y += Math.sin(s.t*2)*0.3; s.x += Math.cos(s.t*1.7)*0.2; if(s.x<0) s.x=W; if(s.x>W) s.x=0; if(s.y<0) s.y=H; if(s.y>H) s.y=0; }
-  if(meadow.t>18){ meadow.bannerT = Math.min(1, meadow.bannerT + dt*0.3); finalTimeEl.textContent = lastRunElapsed.toFixed(1) + "s"; winOverlay.style.display = "inline-flex"; }
+  meadow.bannerT=Math.min(1,meadow.bannerT+dt*1.8);
+  if(meadow.t>5.5){finalTimeEl.textContent=lastRunElapsed.toFixed(1)+"s";winOverlay.style.display="inline-flex";}
 }
 
 function drawMeadowBackground(time){
-  const g1 = ctx.createLinearGradient(0,0,0,H); g1.addColorStop(0,COLORS.meadow1); g1.addColorStop(1,COLORS.meadow2);
-  ctx.fillStyle=g1; ctx.fillRect(0,0,W,H);
-  // Draw drifting clouds behind meadow elements
-  drawClouds();
-  // wind bands
-  ctx.save(); ctx.globalAlpha=0.12; ctx.fillStyle="#fff"; for(let y=20;y<H;y+=24){ const off=Math.sin(time*0.0013 + y*0.02)*10; ctx.fillRect(off,y,W-2*Math.abs(off),2);} ctx.restore();
-  // flowers carpet
-  for(const f of flowers){ const sway=Math.sin(time*0.003+f.t)*2; ctx.save(); ctx.translate(f.x,f.y); ctx.rotate(sway*0.03); ctx.strokeStyle="#2f6"; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,10+f.s*2); ctx.stroke(); ctx.fillStyle=f.c; ctx.beginPath(); ctx.arc(0,0,f.s,0,Math.PI*2); ctx.fill(); ctx.restore(); }
-  // sparkles (pollen or fireflies).  At night the sparkles dim slightly to
-  // allow stars to stand out.
-  ctx.save();
-  const pollenAlpha = 0.6 * (1 - 0.5 * starAlpha);
-  ctx.globalAlpha = pollenAlpha;
-  ctx.fillStyle = "rgba(255,255,255,0.8)";
-  for(const s of sparkles){ ctx.fillRect(s.x, s.y, 1.5, 1.5); }
-  ctx.restore();
-  // bees
-  for(const b of bees){ ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(Math.sin(b.a)*0.6); ctx.fillStyle="#ffe066"; ctx.beginPath(); ctx.ellipse(0,0,6,4,0,0,Math.PI*2); ctx.fill(); ctx.fillStyle="#000"; ctx.fillRect(-3,-1,6,2); ctx.restore(); }
+  // A composed golden-hour clearing replaces the former random meadow carpet.
+  const horizon=H*.48;
+  const sky=ctx.createLinearGradient(0,0,0,horizon);sky.addColorStop(0,"#8dc9c4");sky.addColorStop(.58,"#c6dfbd");sky.addColorStop(1,"#f1d99b");ctx.fillStyle=sky;ctx.fillRect(0,0,W,horizon+2);
+  const sun=ctx.createRadialGradient(W*.76,H*.16,2,W*.76,H*.16,H*.2);sun.addColorStop(0,"rgba(255,247,190,.92)");sun.addColorStop(.3,"rgba(250,216,126,.42)");sun.addColorStop(1,"rgba(250,216,126,0)");ctx.fillStyle=sun;ctx.fillRect(0,0,W,horizon);
+  // Layered hills make a quiet amphitheatre for the celebrating frogs.
+  ctx.fillStyle="#6fa478";ctx.beginPath();ctx.moveTo(0,horizon);ctx.quadraticCurveTo(W*.17,H*.25,W*.38,horizon);ctx.quadraticCurveTo(W*.62,H*.23,W*.82,horizon);ctx.quadraticCurveTo(W*.92,H*.34,W,horizon);ctx.closePath();ctx.fill();
+  ctx.fillStyle="#4f8767";ctx.beginPath();ctx.moveTo(0,horizon);ctx.quadraticCurveTo(W*.2,H*.34,W*.45,horizon);ctx.quadraticCurveTo(W*.7,H*.3,W,horizon);ctx.closePath();ctx.fill();
+  // Meadow and a pale winding stream leading toward the horizon.
+  const grass=ctx.createLinearGradient(0,horizon,0,H);grass.addColorStop(0,"#76b477");grass.addColorStop(1,"#3f825f");ctx.fillStyle=grass;ctx.fillRect(0,horizon,W,H-horizon);
+  const stream=ctx.createLinearGradient(0,horizon,0,H);stream.addColorStop(0,"#aad8ce");stream.addColorStop(1,"#71b7ad");ctx.fillStyle=stream;ctx.beginPath();ctx.moveTo(W*.48,horizon);ctx.bezierCurveTo(W*.55,H*.58,W*.35,H*.68,W*.23,H);ctx.lineTo(W*.72,H);ctx.bezierCurveTo(W*.67,H*.72,W*.51,H*.6,W*.52,horizon);ctx.closePath();ctx.fill();
+  ctx.strokeStyle="rgba(238,255,239,.38)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(W*.5,horizon+6);ctx.bezierCurveTo(W*.54,H*.6,W*.43,H*.7,W*.36,H*.94);ctx.stroke();
+  // A stone lily-dais gives the player's frog a clear place of honor.
+  ctx.fillStyle="rgba(29,84,72,.2)";ctx.beginPath();ctx.ellipse(W*.5,H*.755,W*.09,H*.034,0,0,Math.PI*2);ctx.fill();
+  const dais=ctx.createLinearGradient(0,H*.71,0,H*.77);dais.addColorStop(0,"#e5d8ad");dais.addColorStop(1,"#a99c78");ctx.fillStyle=dais;ctx.beginPath();ctx.ellipse(W*.5,H*.735,W*.082,H*.035,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle="rgba(77,76,57,.42)";ctx.lineWidth=1.5;ctx.stroke();ctx.fillStyle="rgba(255,255,235,.35)";ctx.beginPath();ctx.ellipse(W*.48,H*.725,W*.033,H*.01,-.12,0,Math.PI*2);ctx.fill();
+  // Foreground leaf clusters frame the celebration instead of filling it.
+  for(const side of [-1,1]){const baseX=side<0?22:W-22;for(let i=0;i<7;i++){const y=H-12-i*9;ctx.strokeStyle=i%2?"#2f6e51":"#4d8f62";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(baseX,H);ctx.quadraticCurveTo(baseX-side*(18+i*2),y+10,baseX-side*(10+i*3),y);ctx.stroke();ctx.fillStyle=i%3===0?"#efbd69":"#e8839e";ctx.beginPath();ctx.arc(baseX-side*(10+i*3),y,2.8,0,Math.PI*2);ctx.fill();}}
+  ctx.save();ctx.globalAlpha=.38;ctx.fillStyle="#fff8c8";for(let i=0;i<18;i++){const x=(i*97%W),y=horizon+((i*53)%(H-horizon));const pulse=.7+Math.sin(time*.003+i)*.3;ctx.beginPath();ctx.arc(x,y,1.4*pulse,0,Math.PI*2);ctx.fill();}ctx.restore();
+  const vignette=ctx.createRadialGradient(W/2,H*.55,H*.15,W/2,H*.55,W*.68);vignette.addColorStop(.45,"rgba(16,53,43,0)");vignette.addColorStop(1,"rgba(16,53,43,.16)");ctx.fillStyle=vignette;ctx.fillRect(0,0,W,H);
 }
 
 function drawButterflies(){
-  ctx.save();
   for(const bt of meadow.butterflies){
-    ctx.translate(bt.x,bt.y); ctx.rotate(Math.sin(bt.a)*0.3);
-    ctx.fillStyle="rgba(255,255,255,0.9)";
-    ctx.beginPath(); ctx.ellipse(-3,0,4,2,0,0,Math.PI*2); ctx.ellipse(3,0,4,2,0,0,Math.PI*2); ctx.fill();
-    ctx.setTransform(1,0,0,1,0,0);
+    ctx.save();ctx.translate(bt.x,bt.y);ctx.rotate(Math.sin(bt.a)*.3);ctx.fillStyle="rgba(255,244,204,.86)";const flap=1.6+Math.abs(Math.sin(bt.a*3))*2.2;ctx.beginPath();ctx.ellipse(-3,0,flap,2.2,-.2,0,Math.PI*2);ctx.ellipse(3,0,flap,2.2,.2,0,Math.PI*2);ctx.fill();ctx.fillStyle="#5b5941";ctx.fillRect(-.5,-2,1,4);ctx.restore();
   }
-  ctx.restore();
 }
 
 function drawFrogEntity(f){
@@ -3218,7 +3210,8 @@ function drawFrogEntity(f){
   if(f.skin === 'upsideDown'){
     sy = -sy;
   }
-  ctx.save(); ctx.translate(f.x, f.y - hopLift); ctx.scale(sx,sy);
+  const characterScale=(f.r||18)/18;
+  ctx.save();ctx.translate(f.x,f.y-hopLift);ctx.scale(sx*characterScale,sy*characterScale);
   ctx.globalAlpha=0.25; ctx.fillStyle="#000"; 
   // Cerberus side heads for meadow player frog (draw behind main body by painting first)
   if (cerberusModeActive && !f.ai) {
@@ -3281,6 +3274,7 @@ ctx.beginPath(); ctx.ellipse(0,12,18,6,0,0,Math.PI*2); ctx.fill(); ctx.globalAlp
       ctx.fillStyle = f.color;
     }
   }
+  const meadowFrogPaint=ctx.fillStyle;
   ctx.beginPath();
   ctx.ellipse(0,0,20,14,0,0,Math.PI*2);
   ctx.fill();
@@ -3305,12 +3299,12 @@ ctx.beginPath(); ctx.ellipse(0,12,18,6,0,0,Math.PI*2); ctx.fill(); ctx.globalAlp
     /* If fill operations fail, skip highlight gracefully. */
   }
   ctx.restore();
-  ctx.globalAlpha=0.5; ctx.fillStyle="#000";
+  ctx.globalAlpha=.22;ctx.fillStyle="#173a2f";
   if(f.pattern==="spots"){ for(let i=-1;i<=1;i++) for(let j=-1;j<=1;j++){ ctx.beginPath(); ctx.arc(i*7 + (j%2?3:0), j*5, 3, 0, Math.PI*2); ctx.fill(); } }
   else if(f.pattern==="stripes"){ for(let i=-16;i<=16;i+=6){ ctx.fillRect(i,-14,3,28); } }
   else if(f.pattern==="band"){ ctx.beginPath(); ctx.ellipse(0,0,20,14,0,0,Math.PI*2); ctx.clip(); ctx.globalAlpha=0.35; ctx.fillRect(-22,-4,44,8); }
   ctx.globalAlpha=1;
-  ctx.fillStyle="#fff"; ctx.beginPath(); ctx.arc(-8,-10,4,0,Math.PI*2); ctx.arc(8,-10,4,0,Math.PI*2); ctx.fill(); ctx.fillStyle="#111"; ctx.beginPath(); ctx.arc(-8,-10,1.8,0,Math.PI*2); ctx.arc(8,-10,1.8,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle=meadowFrogPaint;ctx.beginPath();ctx.arc(-8,-10,6,0,Math.PI*2);ctx.arc(8,-10,6,0,Math.PI*2);ctx.fill();ctx.fillStyle="#fffdf4";ctx.beginPath();ctx.arc(-8,-10.5,3.8,0,Math.PI*2);ctx.arc(8,-10.5,3.8,0,Math.PI*2);ctx.fill();ctx.fillStyle="#17362f";ctx.beginPath();ctx.arc(-7.5,-10.5,1.7,0,Math.PI*2);ctx.arc(8.5,-10.5,1.7,0,Math.PI*2);ctx.fill();ctx.fillStyle="rgba(242,139,139,.34)";ctx.beginPath();ctx.ellipse(-10,2,3.5,2,0,0,Math.PI*2);ctx.ellipse(10,2,3.5,2,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle="rgba(22,67,45,.72)";ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(-4,3);ctx.quadraticCurveTo(0,7,4,3);ctx.stroke();
   ctx.beginPath(); ctx.moveTo(-12,6-hop*4); ctx.lineTo(-18,10-hop*2); ctx.moveTo(12,6-hop*4); ctx.lineTo(18,10-hop*2); ctx.stroke();
   // Draw accessory within the frog's local coordinate system
   drawAccessoryOnFrog(f);
@@ -3320,8 +3314,8 @@ ctx.beginPath(); ctx.ellipse(0,12,18,6,0,0,Math.PI*2); ctx.fill(); ctx.globalAlp
   // outline in a temporary save/restore block so stroke settings do not
   // interfere with subsequent drawing operations.
   ctx.save();
-  ctx.lineWidth = 2;
-  ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+  ctx.lineWidth=1.6;
+  ctx.strokeStyle='rgba(20,67,47,.6)';
   ctx.beginPath();
   ctx.ellipse(0, 0, 20, 14, 0, 0, Math.PI * 2);
   ctx.stroke();
@@ -3330,9 +3324,12 @@ ctx.beginPath(); ctx.ellipse(0,12,18,6,0,0,Math.PI*2); ctx.fill(); ctx.globalAlp
 }
 
 function drawMeadowOverlay(){
-  if(meadow.bannerT>0){
-    ctx.save(); ctx.globalAlpha=meadow.bannerT; ctx.fillStyle="rgba(255,255,255,0.9)"; ctx.fillRect(W*0.22,H*0.06,W*0.56,66); ctx.fillStyle="#234"; ctx.font="bold 28px ui-sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText("You Win! Enjoy the meadow 🏆", W/2, H*0.06+33); ctx.restore();
-  }
+  if(meadow.bannerT<=0)return;
+  const exitFade=meadow.t>4.2?Math.max(0,1-(meadow.t-4.2)/1.1):1;
+  const a=meadow.bannerT*exitFade;if(a<=0)return;
+  const cardW=Math.min(IS_SMALL?W*.9:W*.72,520),cardH=86,x=(W-cardW)/2,y=IS_SMALL?64:H*.065;
+  ctx.save();ctx.globalAlpha=a;ctx.fillStyle="rgba(250,255,247,.93)";ctx.shadowColor="rgba(20,62,51,.22)";ctx.shadowBlur=24;roundRect(x,y,cardW,cardH,24,true,false);ctx.shadowColor="transparent";ctx.strokeStyle="rgba(255,255,255,.78)";ctx.lineWidth=1.5;roundRect(x+1,y+1,cardW-2,cardH-2,23,false,true);
+  const victoryTitleSize=IS_SMALL?Math.max(17,Math.min(20,W*.052)):Math.max(21,Math.min(31,W*.037));ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#173d34";ctx.font=`850 ${victoryTitleSize}px system-ui, sans-serif`;ctx.fillText("All Eight Bridges Crossed",W/2,y+31);ctx.fillStyle="#58746c";ctx.font=`700 ${Math.max(10,Math.min(14,W*.018))}px system-ui, sans-serif`;ctx.fillText(`Declension run complete  •  ${lastRunElapsed.toFixed(1)} seconds`,W/2,y+61);ctx.restore();
 }
 
 /***********************
@@ -3587,10 +3584,49 @@ function drawPsychedelicOverlay(time){
  * DRAW — BRIDGES SCENE
  ***********************/
 function drawRiver(time){
-  const grad = ctx.createLinearGradient(0,RIVER_Y1,0,RIVER_Y2); grad.addColorStop(0,COLORS.river1); grad.addColorStop(1,COLORS.river2);
+  const grad = ctx.createLinearGradient(0,RIVER_Y1,0,RIVER_Y2); grad.addColorStop(0,COLORS.river1); grad.addColorStop(.55,COLORS.river2); grad.addColorStop(1,shadeColor(COLORS.river2,-.12));
   ctx.fillStyle=grad; ctx.fillRect(0,RIVER_Y1,W,RIVER_Y2-RIVER_Y1);
-  ctx.fillStyle="rgba(0,0,0,.08)"; ctx.fillRect(0,RIVER_Y1-2,W,2); ctx.fillRect(0,RIVER_Y2,W,2);
-  ctx.save(); ctx.globalAlpha=0.15; ctx.fillStyle="#fff"; for(let y=RIVER_Y1+10;y<RIVER_Y2-10;y+=22){ const off=Math.sin(performance.now()*0.0009 + y*0.002)*7; ctx.fillRect(off,y,W-2*Math.abs(off),2);} ctx.restore();
+  ctx.fillStyle="rgba(12,69,72,.13)"; ctx.fillRect(0,RIVER_Y1-2,W,2); ctx.fillRect(0,RIVER_Y2,W,2);
+  ctx.save();
+  ctx.globalAlpha=.2;ctx.strokeStyle="#dffdf8";ctx.lineWidth=1.5;ctx.lineCap="round";
+  for(let y=RIVER_Y1+14;y<RIVER_Y2-10;y+=24){
+    const off=Math.sin(time*.0012+y*.018)*12;
+    for(let x=-36+off;x<W;x+=92){ctx.beginPath();ctx.moveTo(x,y);ctx.quadraticCurveTo(x+22,y-3,x+46,y);ctx.stroke();}
+  }
+  const sheen=ctx.createLinearGradient(0,RIVER_Y1,W,RIVER_Y2);sheen.addColorStop(0,"rgba(255,255,255,.13)");sheen.addColorStop(.5,"rgba(255,255,255,0)");sheen.addColorStop(1,"rgba(255,255,255,.08)");ctx.fillStyle=sheen;ctx.fillRect(0,RIVER_Y1,W,RIVER_Y2-RIVER_Y1);
+  ctx.restore();
+}
+
+// Layered banks and foreground reeds give the pond a calm, illustrated
+// diorama feel without competing with the answer grid.
+function drawStorybookPond(time){
+  const sway=Math.sin(time*.0014);
+  ctx.save();
+  // Soft shoreline shelves.
+  const topBank=ctx.createLinearGradient(0,RIVER_Y1-16,0,RIVER_Y1+18);
+  topBank.addColorStop(0,"rgba(25,91,67,.28)");topBank.addColorStop(.55,"rgba(127,190,124,.7)");topBank.addColorStop(1,"rgba(28,103,83,.18)");
+  ctx.fillStyle=topBank;ctx.beginPath();ctx.moveTo(0,RIVER_Y1-9);
+  for(let x=0;x<=W;x+=40)ctx.lineTo(x,RIVER_Y1+Math.sin(x*.024)*4);
+  ctx.lineTo(W,RIVER_Y1-20);ctx.lineTo(0,RIVER_Y1-20);ctx.closePath();ctx.fill();
+  const bottomBank=ctx.createLinearGradient(0,RIVER_Y2-12,0,RIVER_Y2+24);
+  bottomBank.addColorStop(0,"rgba(27,91,75,.2)");bottomBank.addColorStop(.45,"rgba(112,176,111,.75)");bottomBank.addColorStop(1,"rgba(31,103,72,.22)");
+  ctx.fillStyle=bottomBank;ctx.beginPath();ctx.moveTo(0,RIVER_Y2+8);
+  for(let x=0;x<=W;x+=40)ctx.lineTo(x,RIVER_Y2+Math.sin(x*.021+1.4)*4);
+  ctx.lineTo(W,RIVER_Y2+24);ctx.lineTo(0,RIVER_Y2+24);ctx.closePath();ctx.fill();
+  // Reeds are clustered at the corners, keeping the board area quiet.
+  const clusters=[18,58,W-62,W-20];
+  for(const cx of clusters){
+    for(let i=-2;i<=2;i++){
+      const x=cx+i*7;const h=20+((i+3)*7%18);const dir=cx<W/2?1:-1;
+      ctx.strokeStyle=i%2?"#347e5c":"#4c9a68";ctx.lineWidth=2.2;ctx.lineCap="round";
+      ctx.beginPath();ctx.moveTo(x,RIVER_Y2+18);ctx.quadraticCurveTo(x+dir*(5+sway*2),RIVER_Y2-h*.45,x+dir*(8+sway*3),RIVER_Y2-h);ctx.stroke();
+      if(i%2===0){ctx.fillStyle="#8c6841";ctx.beginPath();ctx.ellipse(x+dir*(8+sway*3),RIVER_Y2-h-3,2.5,7,.12*dir,0,Math.PI*2);ctx.fill();}
+    }
+  }
+  // Gentle edge vignette makes the bridge read like the stage.
+  const vignette=ctx.createRadialGradient(W/2,(RIVER_Y1+RIVER_Y2)/2,Math.min(W,H)*.18,W/2,(RIVER_Y1+RIVER_Y2)/2,Math.max(W,H)*.7);
+  vignette.addColorStop(.45,"rgba(9,43,39,0)");vignette.addColorStop(1,"rgba(9,43,39,.16)");ctx.fillStyle=vignette;ctx.fillRect(0,0,W,H);
+  ctx.restore();
 }
 function drawFlowers(time){ for(const f of flowers){ const sway=Math.sin(time*0.003+f.t)*2; ctx.save(); ctx.translate(f.x,f.y); ctx.rotate(sway*0.03); ctx.strokeStyle="#2f6"; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,10+f.s*2); ctx.stroke(); ctx.fillStyle=f.c; ctx.beginPath(); ctx.arc(0,0,f.s,0,Math.PI*2); ctx.fill(); ctx.restore(); } }
 function drawBugs(time){ for(const b of bugs){ b.wob+=0.04; b.ang+=(Math.random()*0.5-0.25)*0.2; b.x+=Math.cos(b.ang)*b.spd; b.y+=Math.sin(b.ang)*b.spd + Math.sin(b.wob)*0.2; if(b.x<0) b.x=W; if(b.x>W) b.x=0; if(b.y<0) b.y=H; if(b.y>H) b.y=0; ctx.fillStyle=COLORS.bug; ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=0.3; ctx.beginPath(); ctx.arc(b.x,b.y,b.r+2,0,Math.PI*2); ctx.fillStyle = "#fffaad"; ctx.fill(); ctx.globalAlpha=1; } }
@@ -3601,7 +3637,7 @@ function drawBridge(){
   const bw=TILE_COLS*(bridge.tileSize+bridge.spacing)-bridge.spacing;
   const bh=TILE_ROWS*(bridge.tileSize+bridge.spacing)-bridge.spacing;
   const bx=bridge.x0-pad, by=bridge.y0-pad;
-  ctx.fillStyle=COLORS.bridgeShadow; ctx.globalAlpha=0.22; ctx.fillRect(bx+6,by+8 + Math.sin(performance.now()*0.002)*2,bw+pad*2,bh+pad*2); ctx.globalAlpha=1;
+  ctx.save();ctx.fillStyle=COLORS.bridgeShadow;ctx.globalAlpha=.3;ctx.shadowColor="rgba(14,42,37,.34)";ctx.shadowBlur=20;roundRect(bx+7,by+10 + Math.sin(performance.now()*.002)*2,bw+pad*2,bh+pad*2,16,true,false);ctx.restore();
   // Draw the bridge's outer edge with a vertical gradient to give it a raised appearance.
   {
     const edgeGrad = ctx.createLinearGradient(0, by, 0, by + bh + pad * 2);
@@ -3612,7 +3648,7 @@ function drawBridge(){
     edgeGrad.addColorStop(0, shadeColor(COLORS.bridgeEdge, 0));
     edgeGrad.addColorStop(1, shadeColor(COLORS.bridgeEdge, -0.1));
     ctx.fillStyle = edgeGrad;
-    ctx.fillRect(bx, by, bw + pad * 2, bh + pad * 2);
+    roundRect(bx, by, bw + pad * 2, bh + pad * 2, 14, true, false);
   }
   // Draw the bridge's interior with its own gradient to suggest thickness.
   {
@@ -3625,7 +3661,7 @@ function drawBridge(){
     innerGrad.addColorStop(0, shadeColor(COLORS.bridge, 0));
     innerGrad.addColorStop(1, shadeColor(COLORS.bridge, -0.05));
     ctx.fillStyle = innerGrad;
-    ctx.fillRect(bx + 6, by + 6, bw + pad * 2 - 12, bh + pad * 2 - 12);
+    roundRect(bx + 6, by + 6, bw + pad * 2 - 12, bh + pad * 2 - 12, 10, true, false);
   }
   // Draw posts with individual gradients to appear cylindrical.
   const postW = 10, postH = 18;
@@ -3656,7 +3692,7 @@ function drawBridge(){
     // wood grain, and a solid grey for collapsed (dead) tiles.
     if(tile.dead){
       ctx.fillStyle = "#999";
-      ctx.fillRect(x, y, bridge.tileSize, bridge.tileSize);
+      roundRect(x,y,bridge.tileSize,bridge.tileSize,6,true,false);
 
       // Draw side edges on the plank for a subtle 3D effect.  Darker shades on the right and bottom edges
       // create the illusion of depth, while lighter shades on the top and left edges act as highlights.
@@ -3686,12 +3722,12 @@ function drawBridge(){
       grad.addColorStop(0, shadeColor(COLORS.plank, 0.05));
       grad.addColorStop(1, shadeColor(COLORS.plank, -0.05));
       ctx.fillStyle = grad;
-      ctx.fillRect(x, y, bridge.tileSize, bridge.tileSize);
+      roundRect(x,y,bridge.tileSize,bridge.tileSize,6,true,false);
     }
-    ctx.strokeStyle=COLORS.plankLine; ctx.lineWidth=1; for(let i=1;i<=3;i++){ const py=y+i*(bridge.tileSize/4); ctx.beginPath(); ctx.moveTo(x+2,py); ctx.lineTo(x+bridge.tileSize-2,py); ctx.stroke(); }
-    ctx.fillStyle="rgba(0,0,0,.15)"; ctx.beginPath(); ctx.arc(x+6,y+6,1.6,0,Math.PI*2); ctx.arc(x+bridge.tileSize-6,y+6,1.6,0,Math.PI*2); ctx.arc(x+6,y+bridge.tileSize-6,1.6,0,Math.PI*2); ctx.arc(x+bridge.tileSize-6,y+bridge.tileSize-6,1.6,0,Math.PI*2); ctx.fill();
-    const padIn = 6; const panelR = 8; ctx.fillStyle=COLORS.tilePanel; roundRect(x+padIn,y+padIn,bridge.tileSize-padIn*2,bridge.tileSize-padIn*2,panelR,true,false);
-    if(tile.glow>0){ ctx.save(); ctx.shadowColor=COLORS.tileGlow; ctx.shadowBlur=18*tile.glow; ctx.fillStyle="rgba(255,255,255,.01)"; ctx.fillRect(x,y,bridge.tileSize,bridge.tileSize); ctx.restore(); tile.glow=Math.max(0,tile.glow-0.02); }
+    ctx.save();ctx.strokeStyle="rgba(112,76,42,.24)";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x+7,y+bridge.tileSize*.72);ctx.bezierCurveTo(x+bridge.tileSize*.32,y+bridge.tileSize*.64,x+bridge.tileSize*.66,y+bridge.tileSize*.82,x+bridge.tileSize-7,y+bridge.tileSize*.69);ctx.stroke();ctx.restore();
+    ctx.fillStyle="rgba(62,48,31,.24)"; ctx.beginPath(); ctx.arc(x+6,y+6,1.35,0,Math.PI*2);ctx.arc(x+bridge.tileSize-6,y+6,1.35,0,Math.PI*2);ctx.fill();
+    const padIn = 6; const panelR = 9;ctx.save();ctx.fillStyle="rgba(70,48,28,.18)";roundRect(x+padIn,y+padIn+2,bridge.tileSize-padIn*2,bridge.tileSize-padIn*2,panelR,true,false);ctx.fillStyle=COLORS.tilePanel;ctx.shadowColor="rgba(44,63,55,.12)";ctx.shadowBlur=3;roundRect(x+padIn,y+padIn,bridge.tileSize-padIn*2,bridge.tileSize-padIn*2,panelR,true,false);ctx.strokeStyle="rgba(255,255,255,.72)";ctx.lineWidth=1;roundRect(x+padIn+1,y+padIn+1,bridge.tileSize-padIn*2-2,bridge.tileSize-padIn*2-2,panelR-1,false,true);ctx.restore();
+    if(tile.glow>0){ctx.save();ctx.globalAlpha=tile.glow*.72;ctx.fillStyle="rgba(116,231,158,.55)";ctx.shadowColor=COLORS.tileGlow;ctx.shadowBlur=22;roundRect(x+3,y+3,bridge.tileSize-6,bridge.tileSize-6,9,true,false);ctx.globalAlpha=tile.glow;ctx.strokeStyle="#eafff1";ctx.lineWidth=2;roundRect(x+5,y+5,bridge.tileSize-10,bridge.tileSize-10,8,false,true);ctx.restore();tile.glow=Math.max(0,tile.glow-.025);}
     if(tile.crack>0){ const k=tile.crack; ctx.strokeStyle="#333"; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x+bridge.tileSize*0.2,y+bridge.tileSize*0.2); ctx.lineTo(x+bridge.tileSize*0.8,y+bridge.tileSize*0.8); ctx.moveTo(x+bridge.tileSize*0.8,y+bridge.tileSize*0.2); ctx.lineTo(x+bridge.tileSize*0.2,y+bridge.tileSize*0.8); ctx.stroke(); tile.crack=Math.max(0,k-0.03); if(tile.crack===0) tile.dead=true; }
     // text is large/high contrast for readability
     // If practice mode is active and this row's case is disabled, overlay
@@ -3711,29 +3747,26 @@ function drawBridge(){
       ctx.shadowColor = "transparent";
     }
   }
-  if(targetRow>=0 && targetRow<TILE_ROWS){ const {x,y,half} = getTileCenter(targetRow, selectedCol, true); ctx.save(); ctx.strokeStyle = COLORS.accent; ctx.lineWidth = 4; ctx.setLineDash([10,6]); ctx.strokeRect(x-half-2, y-half-2, (half*2)+4, (half*2)+4); ctx.setLineDash([]); ctx.restore(); }
-  ctx.fillStyle=COLORS.tileText; ctx.font=`bold ${Math.max(18, bridge.tileSize*0.48)}px ui-sans-serif`; ctx.fillText(bridge.declension+" Declension", W/2, bridge.y0-32);
+  if(targetRow>=0 && targetRow<TILE_ROWS){const {x,y,half}=getTileCenter(targetRow,selectedCol,true);const bob=Math.sin(performance.now()*.006)*2;ctx.save();ctx.fillStyle="rgba(244,201,93,.16)";roundRect(x-half-3,y-half-3,(half*2)+6,(half*2)+6,10,true,false);ctx.strokeStyle=COLORS.accent;ctx.lineWidth=3;ctx.shadowColor=COLORS.accent;ctx.shadowBlur=12;roundRect(x-half-2,y-half-2,(half*2)+4,(half*2)+4,9,false,true);ctx.shadowBlur=5;ctx.fillStyle=COLORS.accent;ctx.beginPath();ctx.moveTo(x-6,y-half-9+bob);ctx.lineTo(x+6,y-half-9+bob);ctx.lineTo(x,y-half-3+bob);ctx.closePath();ctx.fill();ctx.restore();}
+  const title=bridge.declension+" Declension";ctx.font=`800 ${Math.max(16,bridge.tileSize*.38)}px ui-rounded, system-ui`;const titleW=ctx.measureText(title).width+28;const titleY=bridge.y0-34;const titleX=IS_SMALL?W/2:Math.max(titleW/2+14,bridge.x0-titleW/2-16);ctx.save();ctx.fillStyle="rgba(250,255,252,.9)";ctx.shadowColor="rgba(14,42,37,.2)";ctx.shadowBlur=12;roundRect(titleX-titleW/2,titleY-15,titleW,30,15,true,false);ctx.shadowColor="transparent";ctx.fillStyle=COLORS.tileText;ctx.fillText(title,titleX,titleY);ctx.restore();
 }
 
 function roundRect(x,y,w,h,r,fill,stroke){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); if(fill) ctx.fill(); if(stroke) ctx.stroke(); }
 function fitText(text, x, y, maxW){
-  // Base size from tile, boosted on phones
+  // Fit every ending inside its own card; long forms may shrink further.
   const base = bridge ? bridge.tileSize : 22;
-  // Increase starting and minimum font sizes for better legibility.
-  const start = Math.floor(base * (IS_SMALL ? 0.70 : 0.55));  // bigger on phones and desktop
-  const minSize = Math.max(IS_SMALL ? 20 : 18, Math.floor(base * (IS_SMALL ? 0.58 : 0.46)));
+  const start = Math.floor(base * (IS_SMALL ? 0.54 : 0.48));
+  const minSize = Math.max(13, Math.floor(base * 0.30));
 
   let size = start;
-  ctx.font = `${size}px ui-sans-serif`;
+  ctx.font = `750 ${size}px system-ui, sans-serif`;
   while (ctx.measureText(text).width > maxW && size > minSize) {
-    size--; ctx.font = `${size}px ui-sans-serif`;
+    size--; ctx.font = `750 ${size}px system-ui, sans-serif`;
   }
 
-  // subtle outline for contrast
-  ctx.lineWidth = Math.max(1, Math.round(size * 0.10));
-  ctx.strokeStyle = "rgba(0,0,0,0.28)";
+  ctx.lineWidth = Math.max(1, size * 0.045);
+  ctx.strokeStyle = "rgba(255,255,255,.7)";
   ctx.strokeText(text, x, y);
-
   ctx.fillText(text, x, y);
 }
 
@@ -3756,7 +3789,7 @@ const baseY = Math.round(frogBase * 0.73);
   // accessory drawing helper to size decorations relative to the frog.
   frog.r = baseX;
 
-  ctx.save(); ctx.translate(frog.x,frog.y); ctx.scale(sx,sy);
+  ctx.save();ctx.translate(frog.x,frog.y-hop*baseY*1.2);ctx.scale(sx,sy);
   // body fill prioritises special skins first, then rainbow, then plain colour
   // Choose body fill based on special skins, rainbow state, or plain colour.
   if (frog.skin === 'metalSkin') {
@@ -3791,8 +3824,17 @@ const baseY = Math.round(frogBase * 0.73);
     g.addColorStop(1, "#ba68c8");
     ctx.fillStyle = g;
   } else {
-    ctx.fillStyle = frog.color;
+    const baseCol=/^#[0-9a-f]{6}$/i.test(frog.color||"")?frog.color:"#3aa34a";
+    const bodyGrad=ctx.createRadialGradient(-baseX*.3,-baseY*.55,2,0,0,baseX*1.15);
+    bodyGrad.addColorStop(0,shadeColor(baseCol,.22));bodyGrad.addColorStop(.58,baseCol);bodyGrad.addColorStop(1,shadeColor(baseCol,-.18));ctx.fillStyle=bodyGrad;
   }
+  const frogPaint=ctx.fillStyle;
+  // A soft contact shadow and broad, readable limbs establish the character
+  // as a small illustrated creature rather than a floating oval.
+  ctx.save();ctx.scale(1/sx,1/sy);ctx.globalAlpha=.2;ctx.fillStyle="#173a34";ctx.beginPath();ctx.ellipse(0,baseY+9+hop*9,baseX*1.05,5-hop*2,0,0,Math.PI*2);ctx.fill();ctx.restore();
+  ctx.fillStyle=frogPaint;
+  ctx.beginPath();ctx.ellipse(-baseX*.78,baseY*.38,baseX*.48,baseY*.38,-.32,0,Math.PI*2);ctx.ellipse(baseX*.78,baseY*.38,baseX*.48,baseY*.38,.32,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle="rgba(24,75,48,.72)";ctx.lineWidth=3.2;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(-baseX*.48,baseY*.2);ctx.quadraticCurveTo(-baseX*.72,baseY*.82,-baseX*.95,baseY*.82);ctx.moveTo(baseX*.48,baseY*.2);ctx.quadraticCurveTo(baseX*.72,baseY*.82,baseX*.95,baseY*.82);ctx.stroke();
   
   // Cerberus side heads for bridge frog (draw behind main body by painting first)
   if (cerberusModeActive) {
@@ -3808,17 +3850,25 @@ const baseY = Math.round(frogBase * 0.73);
   // separate the frog from the background without altering its
   // dimensions.  Use a semi‑transparent dark colour so the outline
   // reads on both light and dark backgrounds.
-  ctx.lineWidth = 2;
-  ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+  ctx.lineWidth = 1.8;
+  ctx.strokeStyle = 'rgba(19, 66, 43, 0.65)';
   ctx.stroke();
+  // Pear-shaped highlight adds the soft painted volume used throughout the pond.
+  ctx.save();ctx.globalAlpha=.18;ctx.fillStyle="#fff";ctx.beginPath();ctx.ellipse(-baseX*.28,-baseY*.38,baseX*.48,baseY*.32,-.2,0,Math.PI*2);ctx.fill();ctx.restore();
   // simple pattern on bridge frog
   ctx.globalAlpha=0.35; ctx.fillStyle="#000";
   if(frog.pattern==="spots"){ for(let i=-1;i<=1;i++) for(let j=-1;j<=1;j++){ ctx.beginPath(); ctx.arc(i*8 + (j%2?4:0), j*6, 3, 0, Math.PI*2); ctx.fill(); } }
   else if(frog.pattern==="stripes"){ for(let i=-18;i<=18;i+=7){ ctx.fillRect(i,-14,3,28); } }
   else if(frog.pattern==="band"){ ctx.fillRect(-24,-4,48,8); }
   ctx.globalAlpha=1;
-  ctx.fillStyle="#fff"; ctx.beginPath(); ctx.arc(-9,-12,5,0,Math.PI*2); ctx.arc(9,-12,5,0,Math.PI*2); ctx.fill(); ctx.fillStyle="#111"; ctx.beginPath(); ctx.arc(-9,-12,2.5,0,Math.PI*2); ctx.arc(9,-12,2.5,0,Math.PI*2); ctx.fill();
-  ctx.strokeStyle="#2b7c35"; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(-14,10); ctx.lineTo(-20,18); ctx.moveTo(14,10); ctx.lineTo(20,18); ctx.stroke();
+  // Raised eye sockets, warm cheeks and a tiny smile make reactions legible.
+  ctx.fillStyle=frogPaint;ctx.beginPath();ctx.arc(-baseX*.43,-baseY*.72,baseX*.34,0,Math.PI*2);ctx.arc(baseX*.43,-baseY*.72,baseX*.34,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='rgba(19,66,43,.58)';ctx.lineWidth=1.4;ctx.stroke();
+  ctx.fillStyle="#fffdf4";ctx.beginPath();ctx.arc(-baseX*.43,-baseY*.76,baseX*.22,0,Math.PI*2);ctx.arc(baseX*.43,-baseY*.76,baseX*.22,0,Math.PI*2);ctx.fill();
+  const lookX=frog.jumping?1.2:0;ctx.fillStyle="#16352e";ctx.beginPath();ctx.arc(-baseX*.43+lookX,-baseY*.75,baseX*.105,0,Math.PI*2);ctx.arc(baseX*.43+lookX,-baseY*.75,baseX*.105,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle="rgba(244,140,135,.38)";ctx.beginPath();ctx.ellipse(-baseX*.55,baseY*.08,baseX*.16,baseY*.1,0,0,Math.PI*2);ctx.ellipse(baseX*.55,baseY*.08,baseX*.16,baseY*.1,0,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle="rgba(18,65,43,.74)";ctx.lineWidth=1.6;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(-baseX*.22,baseY*.12);ctx.quadraticCurveTo(0,baseY*.33,baseX*.22,baseY*.12);ctx.stroke();
+  ctx.strokeStyle="rgba(24,75,48,.76)";ctx.lineWidth=2.2;ctx.beginPath();ctx.moveTo(-baseX*.88,baseY*.82);ctx.lineTo(-baseX*1.08,baseY*.9);ctx.moveTo(-baseX*.88,baseY*.82);ctx.lineTo(-baseX*.98,baseY*1.02);ctx.moveTo(baseX*.88,baseY*.82);ctx.lineTo(baseX*1.08,baseY*.9);ctx.moveTo(baseX*.88,baseY*.82);ctx.lineTo(baseX*.98,baseY*1.02);ctx.stroke();
   // Draw accessory on the frog while still in its local coordinate
   // system so it scales and positions correctly.  This call must
   // occur before restoring the context.
@@ -3895,6 +3945,7 @@ function loop(now){
     // Foreground elements
     drawFlowers(now);
     drawRiver(now);
+    drawStorybookPond(now);
     // Decorative logs drifting across the river
     updateLogs(dt);
     drawLogs();
@@ -3928,17 +3979,8 @@ function loop(now){
     drawUnlockBanner();
     updateTimer();
   } else if(phase===PHASE_MEADOW){
-    // Meadow phase: draw environment then entities.  Use day/night colours.
+    // A self-contained golden-hour victory garden keeps the finale composed.
     drawMeadowBackground(now);
-    // Draw distant mountains and sky elements behind the meadow.
-    drawStars(now);
-    drawBackdrop();
-    // Parallax layers (hills and mythical creatures) appear behind
-    // clouds and birds in the meadow as well.  Draw them after the
-    // backdrop and before clouds.
-    if (typeof drawParallax === 'function') drawParallax();
-    drawClouds();
-    drawBirds();
     // Update game state for the meadow
     updateMeadow(dt);
     // Decorative butterflies fluttering around
