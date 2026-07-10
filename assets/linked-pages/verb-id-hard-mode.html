@@ -2,9 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111d32">
   <title>Latin Verb Practice Game</title>
   <!-- Google Fonts for a Classical Feel -->
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     /* Global and layout styling with classical colors and gradients */
     body {
@@ -220,14 +224,529 @@
         box-sizing: border-box;
       }
     }
+
+    /* 2026 visual refresh: an editorial, museum-inspired study interface. */
+    :root {
+      --ink: #172136;
+      --ink-soft: #526078;
+      --navy: #111d32;
+      --navy-2: #1c2e4c;
+      --paper: #fffdf8;
+      --paper-deep: #f4efe5;
+      --line: #ddd5c5;
+      --gold: #c89b48;
+      --gold-light: #ecd39d;
+      --crimson: #9e3f4e;
+      --success: #26745a;
+      --danger: #a33d48;
+      --shadow: 0 28px 80px rgba(8, 19, 37, .18);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      padding: clamp(16px, 4vw, 56px) 16px;
+      font-family: 'Inter', sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% 15%, rgba(200, 155, 72, .18), transparent 28rem),
+        radial-gradient(circle at 88% 82%, rgba(158, 63, 78, .14), transparent 30rem),
+        linear-gradient(145deg, #0c1729 0%, #182b47 52%, #0e1a2e 100%);
+      background-attachment: fixed;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .22;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23fff' stroke-opacity='.07'%3E%3Cpath d='M40 0v80M0 40h80'/%3E%3Ccircle cx='40' cy='40' r='23'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .container {
+      position: relative;
+      width: min(1120px, 100%);
+      max-width: none;
+      margin: 0 auto;
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid rgba(236, 211, 157, .55);
+      border-radius: 24px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .container::before {
+      content: '';
+      display: block;
+      height: 5px;
+      background: linear-gradient(90deg, var(--crimson), var(--gold), var(--crimson));
+    }
+
+    .view { min-height: 680px; }
+
+    .masthead {
+      position: relative;
+      padding: clamp(42px, 7vw, 76px) clamp(24px, 7vw, 76px) 56px;
+      overflow: hidden;
+      color: #fff;
+      background: linear-gradient(130deg, var(--navy) 0%, var(--navy-2) 100%);
+    }
+
+    .masthead::after {
+      content: 'SPQR';
+      position: absolute;
+      right: clamp(10px, 5vw, 58px);
+      bottom: -34px;
+      font: 700 clamp(90px, 18vw, 190px)/1 'Cinzel', serif;
+      letter-spacing: -.08em;
+      color: rgba(255, 255, 255, .035);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 0 18px;
+      color: var(--gold-light);
+      font: 600 12px/1 'Inter', sans-serif;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before { content: ''; width: 36px; height: 1px; background: currentColor; }
+
+    h1, h2, h3 { color: inherit; }
+
+    h1 {
+      max-width: 760px;
+      margin: 0;
+      font: 600 clamp(38px, 6vw, 68px)/1.06 'Cinzel', serif;
+      letter-spacing: -.035em;
+      text-align: left;
+    }
+
+    .lede {
+      max-width: 620px;
+      margin: 20px 0 0;
+      color: rgba(255, 255, 255, .72);
+      font-size: clamp(16px, 2vw, 19px);
+      line-height: 1.65;
+    }
+
+    .setup-content { padding: clamp(26px, 5vw, 54px) clamp(20px, 6vw, 64px) 60px; }
+
+    .section-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font: 600 clamp(25px, 4vw, 34px)/1.2 'Cinzel', serif;
+      text-align: left;
+      color: var(--ink);
+    }
+
+    .section-heading p { max-width: 500px; margin: 0; color: var(--ink-soft); line-height: 1.55; }
+
+    .filter-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+
+    fieldset {
+      min-width: 0;
+      margin: 0;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 7px 22px rgba(23, 33, 54, .045);
+    }
+
+    fieldset.wide { grid-column: 1 / -1; }
+
+    legend {
+      padding: 0 9px;
+      color: var(--ink);
+      font: 700 12px/1 'Inter', sans-serif;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .choice-row { display: flex; flex-wrap: wrap; gap: 9px; }
+    .checkbox-group, .radio-group { display: block; margin: 0; font-size: 14px; }
+    .checkbox-group label, .radio-group label { display: block; cursor: pointer; }
+    .checkbox-group input, .radio-group input { position: absolute; opacity: 0; pointer-events: none; }
+    .checkbox-group span, .radio-group span {
+      display: flex;
+      min-height: 40px;
+      align-items: center;
+      justify-content: center;
+      padding: 9px 14px;
+      border: 1px solid #d8dce3;
+      border-radius: 9px;
+      color: #4b5870;
+      background: #fbfbfa;
+      font-weight: 600;
+      transition: .18s ease;
+    }
+
+    .checkbox-group label:hover span, .radio-group label:hover span { border-color: var(--gold); color: var(--ink); transform: translateY(-1px); }
+    .checkbox-group input:checked + span, .radio-group input:checked + span {
+      border-color: var(--navy-2);
+      color: #fff;
+      background: var(--navy-2);
+      box-shadow: 0 6px 14px rgba(28, 46, 76, .16);
+    }
+    .checkbox-group input:focus-visible + span, .radio-group input:focus-visible + span { outline: 3px solid rgba(200, 155, 72, .38); outline-offset: 2px; }
+
+    .mode-card { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .mode-option span { min-height: 76px; align-items: flex-start; flex-direction: column; padding: 14px 16px; text-align: left; }
+    .mode-title { display: block; font-size: 15px; }
+    .mode-copy { display: block; margin-top: 4px; font-size: 12px; font-weight: 400; opacity: .78; }
+
+    .setup-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-top: 28px;
+      padding-top: 28px;
+      border-top: 1px solid var(--line);
+    }
+
+    .setup-note { display: flex; gap: 10px; margin: 0; color: var(--ink-soft); font-size: 13px; line-height: 1.5; }
+    .setup-note::before { content: '↳'; color: var(--gold); font-weight: 700; }
+
+    button {
+      min-height: 48px;
+      padding: 12px 24px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--crimson);
+      color: #fff;
+      font: 700 14px/1 'Inter', sans-serif;
+      letter-spacing: .02em;
+      box-shadow: 0 10px 20px rgba(158, 63, 78, .2);
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    button:hover { background: #b04a5b; transform: translateY(-2px); box-shadow: 0 13px 24px rgba(158, 63, 78, .27); }
+    button:focus-visible { outline: 3px solid var(--gold-light); outline-offset: 3px; }
+    button:active { transform: translateY(0); }
+    .button-arrow { margin-left: 18px; font-size: 18px; }
+
+    .practice-shell { min-height: 720px; background: var(--paper-deep); }
+    #topBar {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      margin: 0;
+      padding: 20px clamp(20px, 5vw, 52px);
+      color: #fff;
+      background: var(--navy);
+    }
+    #scoreDisplay, #timerDisplay { font: 600 13px/1 'Inter', sans-serif; letter-spacing: .05em; }
+    #timerDisplay { justify-self: end; }
+    .round-label { color: var(--gold-light); font: 600 12px/1 'Inter', sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+    .progress-track { grid-column: 1 / -1; height: 3px; margin-top: 17px; overflow: hidden; border-radius: 10px; background: rgba(255,255,255,.13); }
+    .progress-fill { width: 0; height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); transition: width .35s ease; }
+
+    .practice-content { padding: clamp(28px, 5vw, 56px); }
+    #questionDisplay {
+      margin-bottom: 28px;
+      padding: clamp(28px, 6vw, 56px);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      text-align: center;
+      background: var(--paper);
+      box-shadow: 0 18px 50px rgba(23, 33, 54, .09);
+    }
+    .question-kicker { margin: 0 0 15px; color: var(--crimson); font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    #verbFormDisplay { margin: 0 0 8px; color: var(--ink); font: 600 clamp(42px, 8vw, 72px)/1 'Cinzel', serif; letter-spacing: -.025em; }
+    #principalPartsDisplay { margin: 0; color: var(--ink-soft); font: 500 14px/1.5 'Inter', sans-serif; }
+    #verbInput {
+      width: min(560px, 100%);
+      max-width: none;
+      margin: 20px auto 0;
+      padding: 17px 19px;
+      border: 1px solid #c9cfd8;
+      border-radius: 11px;
+      color: var(--ink);
+      background: #fff;
+      font: 600 20px/1.2 'Inter', sans-serif;
+      text-align: center;
+      box-shadow: inset 0 1px 3px rgba(23,33,54,.05);
+    }
+    #verbInput:focus { outline: 3px solid rgba(200, 155, 72, .28); border-color: var(--gold); }
+
+    #answerChoices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .practice-option {
+      margin: 0;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      text-align: left;
+      background: rgba(255,255,255,.75);
+    }
+    .practice-option:nth-child(3) { grid-column: 1 / -1; }
+    .practice-option h3 { margin: 0 0 12px; color: var(--ink-soft); font: 700 11px/1 'Inter', sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+    .option-button {
+      min-height: 38px;
+      margin: 3px 5px 3px 0;
+      padding: 9px 13px;
+      border: 1px solid #d4d9e0;
+      border-radius: 8px;
+      color: var(--ink);
+      background: #fff;
+      box-shadow: none;
+      font-size: 13px;
+    }
+    .option-button:hover { border-color: var(--gold); color: var(--ink); background: #fffdf7; transform: translateY(-1px); box-shadow: none; }
+    .option-button.selected { border-color: var(--navy-2); color: #fff; background: var(--navy-2); box-shadow: 0 5px 12px rgba(28,46,76,.16); }
+
+    .answer-actions { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 18px; margin-top: 24px; }
+    #correctAnswerDisplay { margin: 0; color: var(--ink); font-size: 14px; font-style: normal; line-height: 1.6; text-align: left; }
+    #correctAnswerDisplay[data-result="correct"] { color: var(--success); }
+    #correctAnswerDisplay[data-result="incorrect"] { color: var(--danger); }
+
+    #finalView { padding: clamp(28px, 6vw, 64px); background: var(--paper); }
+    .final-header { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: end; padding-bottom: 30px; border-bottom: 1px solid var(--line); }
+    .final-header h1 { color: var(--ink); font-size: clamp(34px, 6vw, 56px); }
+    .final-summary { display: flex; gap: 10px; }
+    .stat-card { min-width: 130px; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper-deep); }
+    .stat-card span { display: block; color: var(--ink-soft); font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .stat-card p { margin: 6px 0 0; color: var(--ink); font: 600 18px/1.25 'Cinzel', serif; }
+    .review-heading { margin: 36px 0 16px; color: var(--ink); font: 600 25px/1.25 'Cinzel', serif; text-align: left; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+    #recordTable { min-width: 760px; margin: 0; }
+    #recordTable th, #recordTable td { padding: 13px; border: 0; border-bottom: 1px solid var(--line); font-size: 12px; line-height: 1.45; }
+    #recordTable th { color: var(--ink-soft); background: var(--paper-deep); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+    #recordTable tr:last-child td { border-bottom: 0; }
+    #restartBtn { margin-top: 24px; }
+
+    .hidden { display: none !important; }
+    .fade-in { animation: fadeIn .35s ease both; }
+    .fade-out { animation: fadeOut .18s ease both; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    @keyframes fadeOut { to { opacity: 0; transform: translateY(-5px); } }
+
+    @media (max-width: 760px) {
+      body { padding: 0; background: var(--paper); }
+      .container { border: 0; border-radius: 0; box-shadow: none; }
+      .filter-grid, #answerChoices, .final-header { grid-template-columns: 1fr; }
+      fieldset.wide, .practice-option:nth-child(3) { grid-column: auto; }
+      .section-heading { align-items: flex-start; flex-direction: column; }
+      .setup-footer { align-items: stretch; flex-direction: column; }
+      #startPracticeBtn { width: 100%; }
+      .final-summary { flex-wrap: wrap; }
+    }
+
+    @media (max-width: 520px) {
+      .masthead { padding-bottom: 42px; }
+      .mode-card { grid-template-columns: 1fr; }
+      #topBar { grid-template-columns: 1fr 1fr; }
+      .round-label { grid-column: 1 / -1; grid-row: 1; margin-bottom: 14px; text-align: center; }
+      #scoreDisplay { grid-column: 1; grid-row: 2; }
+      #timerDisplay { grid-column: 2; grid-row: 2; }
+      .answer-actions { grid-template-columns: 1fr; }
+      #checkAnswerBtn { width: 100%; }
+      .choice-row { gap: 7px; }
+      .checkbox-group span, .radio-group span { min-height: 38px; padding: 8px 11px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+
+    /* Parchment restoration + synopsis layout */
+    :root {
+      --ink: #3b2e1a;
+      --ink-soft: #735f45;
+      --navy: #59401f;
+      --navy-2: #73532c;
+      --paper: #fffaf0;
+      --paper-deep: #f7ecd5;
+      --line: #c8aa78;
+      --gold: #b58900;
+      --gold-light: #e0c27d;
+      --crimson: #8c3e35;
+      --success: #376b42;
+      --danger: #9f3b32;
+      --shadow: 0 24px 70px rgba(67, 46, 18, .22);
+    }
+
+    body {
+      font-family: 'Lora', serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 14% 12%, rgba(181, 137, 0, .13), transparent 29rem),
+        radial-gradient(circle at 85% 86%, rgba(140, 62, 53, .1), transparent 30rem),
+        linear-gradient(135deg, #fdf6e3 0%, #f2e3c5 52%, #ead4ae 100%);
+    }
+
+    body::before {
+      opacity: .22;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E");
+    }
+
+    .container { border-color: #b9955f; background: var(--paper); }
+    .container::before { background: linear-gradient(90deg, #6e4328, var(--gold), #6e4328); }
+
+    .masthead {
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(255, 250, 240, .88), rgba(246, 232, 204, .92)),
+        repeating-linear-gradient(0deg, transparent 0 4px, rgba(91, 62, 25, .025) 4px 5px);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead::after { color: rgba(87, 57, 26, .045); }
+    .masthead .eyebrow { color: var(--crimson); }
+    .masthead .lede { color: var(--ink-soft); }
+
+    h1, .section-heading h2, .review-heading { font-family: 'Cinzel', serif; }
+    .section-heading p, .setup-note, #principalPartsDisplay, #correctAnswerDisplay { font-family: 'Lora', serif; }
+    fieldset, .practice-option, #questionDisplay, .stat-card { background: rgba(255, 252, 245, .86); }
+    .checkbox-group span, .radio-group span { font-family: 'Lora', serif; background: #fffaf0; border-color: #d8c5a4; color: #624d32; }
+    .checkbox-group input:checked + span, .radio-group input:checked + span { border-color: #74512c; background: linear-gradient(145deg, #8d6535, #694520); }
+    button { font-family: 'Lora', serif; background: linear-gradient(135deg, #a47719, #8c3e35); }
+    button:hover { background: linear-gradient(135deg, #8e6715, #753029); }
+    .practice-shell { background: linear-gradient(135deg, #f9f0df, #f1dfc0); }
+    #topBar, .synopsis-topbar { background: linear-gradient(100deg, #4c331e, #72502c); }
+    .option-button { font-family: 'Lora', serif; background: #fffaf0; border-color: #d3bd98; }
+    .option-button.selected { border-color: #6c4927; background: #76512c; }
+    .option-button.selected.answer-correct {
+      border-color: #2f6840;
+      color: #fff;
+      background: linear-gradient(145deg, #4f8a5c, #346b43);
+      box-shadow: 0 6px 14px rgba(47, 104, 64, .24);
+    }
+    .option-button.selected.answer-incorrect {
+      border-color: #8c342e;
+      color: #fff;
+      background: linear-gradient(145deg, #b3544b, #923a33);
+      box-shadow: 0 6px 14px rgba(140, 52, 46, .24);
+    }
+    .option-button.selected.answer-correct::after { content: ' ✓'; }
+    .option-button.selected.answer-incorrect::after { content: ' ✕'; }
+
+    /* Quick-answer matrix: categories are columns; every answer runs top to bottom. */
+    #answerChoices.matrix-columns {
+      display: grid;
+      grid-template-columns: .7fr .95fr 1.35fr .9fr 1.05fr;
+      align-items: stretch;
+      gap: 12px;
+    }
+    #answerChoices.matrix-columns .practice-option { grid-column: auto; display: flex; flex-direction: column; }
+    #answerChoices.matrix-columns .option-button { width: 100%; margin: 0 0 8px; text-align: center; }
+    #answerChoices.matrix-columns .option-button:last-child { margin-bottom: 0; }
+
+    #synopsisOptions { grid-column: 1 / -1; }
+    .synopsis-options-grid { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: 12px; }
+    .synopsis-options-grid fieldset { height: 100%; }
+
+    #synopsisView { min-height: 720px; background: linear-gradient(135deg, #fbf3e4, #f1dfbf); }
+    .synopsis-topbar {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding: 20px clamp(20px, 5vw, 52px);
+      color: #fff8e8;
+    }
+    #synopsisTimerDisplay { justify-self: end; }
+    .synopsis-content { padding: clamp(24px, 5vw, 52px); }
+    .synopsis-intro {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 26px;
+      padding: 24px 28px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255, 250, 240, .88);
+      box-shadow: 0 12px 34px rgba(79, 51, 20, .08);
+    }
+    .synopsis-intro h1 { margin: 0 0 8px; color: var(--ink); font-size: clamp(28px, 5vw, 42px); }
+    .synopsis-intro p { margin: 5px 0; color: var(--ink-soft); line-height: 1.55; }
+    #synopsisPrompt { text-align: right; }
+    .synopsis-section { margin-top: 18px; padding: 20px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255, 252, 245, .88); }
+    .synopsis-section h3 { margin: 0 0 15px; color: var(--crimson); font: 700 13px/1 'Cinzel', serif; letter-spacing: .1em; }
+    .synopsis-grid { display: grid; gap: 10px; }
+    .synopsis-grid.cols-6 { grid-template-columns: repeat(6, minmax(130px, 1fr)); }
+    .synopsis-grid.cols-4 { grid-template-columns: repeat(4, minmax(140px, 1fr)); }
+    .synopsis-grid.cols-5 { grid-template-columns: repeat(5, minmax(145px, 1fr)); }
+    .synopsis-grid.cols-3 { grid-template-columns: repeat(3, minmax(160px, 1fr)); }
+    .synopsis-grid.cols-2 { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
+    .synopsis-field { position: relative; display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+    .synopsis-field label { min-height: 30px; color: var(--ink-soft); font: 700 10px/1.35 'Inter', sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+    .synopsis-field input {
+      width: 100%;
+      min-width: 0;
+      padding: 11px 34px 11px 11px;
+      border: 1px solid #cbb58e;
+      border-radius: 8px;
+      color: var(--ink);
+      background: #fffdf7;
+      font: 600 14px/1.2 'Lora', serif;
+    }
+    .synopsis-field input:focus { outline: 3px solid rgba(181, 137, 0, .2); border-color: var(--gold); }
+    .synopsis-field input.correct { border-color: var(--success); background: #edf6ed; }
+    .synopsis-field input.incorrect { border-color: var(--danger); background: #fff0ec; }
+    .feedback-icon { position: absolute; right: 11px; top: 43px; font-weight: 700; }
+    .feedback-icon.correct { color: var(--success); }
+    .feedback-icon.incorrect { color: var(--danger); }
+    .correct-answer-feedback { display: block; color: var(--danger); font-size: 11px; line-height: 1.35; }
+    .synopsis-actions { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-top: 24px; }
+    #synopsisRoundFeedback { color: var(--ink-soft); font-size: 14px; }
+
+    /* Preserve the original synopsis groupings and table orientation. */
+    .synopsis-table-wrap { width: 100%; overflow-x: auto; margin-top: 10px; border: 1px solid #c8aa78; border-radius: 9px; }
+    .synopsis-table-wrap + .synopsis-table-wrap { margin-top: 14px; }
+    .synopsis-table { width: 100%; min-width: 620px; border-collapse: collapse; table-layout: fixed; background: rgba(255, 250, 240, .7); }
+    .synopsis-table th, .synopsis-table td { padding: 10px; border-right: 1px solid #d6c19c; border-bottom: 1px solid #d6c19c; text-align: center; vertical-align: top; }
+    .synopsis-table tr:last-child > * { border-bottom: 0; }
+    .synopsis-table tr > *:last-child { border-right: 0; }
+    .synopsis-table thead th { color: #5f462b; background: #f1e2c6; font: 700 11px/1.3 'Cinzel', serif; letter-spacing: .04em; text-transform: uppercase; }
+    .synopsis-table tbody th { width: 110px; color: #5f462b; background: #f6ead3; font: 700 11px/1.3 'Cinzel', serif; letter-spacing: .05em; text-transform: uppercase; vertical-align: middle; }
+    .synopsis-table .synopsis-field { display: block; }
+    .synopsis-table .synopsis-field input { min-width: 130px; }
+    .synopsis-table .feedback-icon { top: 12px; }
+    .synopsis-table .correct-answer-feedback { margin-top: 6px; }
+    .synopsis-table-wide, .synopsis-table-five { min-width: 820px; }
+    .synopsis-table-three { min-width: 620px; }
+    .compact-table-wrap { max-width: 600px; }
+    .compact-table { min-width: 460px; }
+    .compact-table tbody th { width: 150px; }
+
+    @media (max-width: 940px) {
+      #answerChoices.matrix-columns { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .synopsis-grid.cols-6, .synopsis-grid.cols-5 { grid-template-columns: repeat(3, minmax(150px, 1fr)); }
+      .synopsis-grid.cols-4 { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
+      .synopsis-options-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 620px) {
+      #answerChoices.matrix-columns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .synopsis-intro { grid-template-columns: 1fr; }
+      #synopsisPrompt { text-align: left; }
+      .synopsis-grid.cols-6, .synopsis-grid.cols-5, .synopsis-grid.cols-4, .synopsis-grid.cols-3, .synopsis-grid.cols-2 { grid-template-columns: 1fr; }
+      .synopsis-actions { align-items: stretch; flex-direction: column; }
+      #checkSynopsisBtn { width: 100%; }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <!-- SETUP VIEW -->
-    <div id="setupView" class="fade-in">
-      <h1>Latin Verb Practice Game</h1>
-      <p>Select your filters and number of rounds, then click "Start Practice".</p>
+    <main id="setupView" class="view fade-in">
+      <header class="masthead">
+        <p class="eyebrow">Qualis Artifex · Latin Studio</p>
+        <h1>Master the architecture of Latin verbs.</h1>
+        <p class="lede">Build a focused practice set, identify each form, and review your results—all in one deliberate study session.</p>
+      </header>
       
       <!-- Hidden principal parts boxes (auto-filled) -->
       <div class="input-group hidden">
@@ -247,151 +766,246 @@
         <input type="text" id="pp4" readonly>
       </div>
       
-      <!-- Filter Options -->
-      <fieldset>
-        <legend>Mood</legend>
-        <div class="checkbox-group">
-          <label><input type="checkbox" name="filterMood" value="indicative" checked> Indicative</label>
+      <section class="setup-content" aria-labelledby="setupHeading">
+        <div class="section-heading">
+          <h2 id="setupHeading">Design your session</h2>
+          <p>Every category starts selected. Narrow the set to rehearse exactly what you need.</p>
         </div>
-        <div class="checkbox-group">
-          <label><input type="checkbox" name="filterMood" value="subjunctive" checked> Subjunctive</label>
+
+        <!-- Filter Options -->
+        <div class="filter-grid">
+          <fieldset class="standard-filter">
+            <legend>Mood</legend>
+            <div class="choice-row">
+              <div class="checkbox-group"><label><input type="checkbox" name="filterMood" value="indicative" checked><span>Indicative</span></label></div>
+              <div class="checkbox-group"><label><input type="checkbox" name="filterMood" value="subjunctive" checked><span>Subjunctive</span></label></div>
+            </div>
+          </fieldset>
+
+          <fieldset class="standard-filter">
+            <legend>Voice</legend>
+            <div class="choice-row">
+              <div class="checkbox-group"><label><input type="checkbox" name="filterVoice" value="active" checked><span>Active</span></label></div>
+              <div class="checkbox-group"><label><input type="checkbox" name="filterVoice" value="passive" checked><span>Passive</span></label></div>
+            </div>
+          </fieldset>
+
+          <fieldset class="wide standard-filter">
+            <legend>Tense</legend>
+            <div class="choice-row">
+              <div class="checkbox-group"><label><input type="checkbox" name="filterTense" value="present" checked><span>Present</span></label></div>
+              <div class="checkbox-group"><label><input type="checkbox" name="filterTense" value="imperfect" checked><span>Imperfect</span></label></div>
+              <div class="checkbox-group"><label><input type="checkbox" name="filterTense" value="future" checked><span>Future</span></label></div>
+              <div class="checkbox-group"><label><input type="checkbox" name="filterTense" value="perfect" checked><span>Perfect</span></label></div>
+              <div class="checkbox-group"><label><input type="checkbox" name="filterTense" value="pluperfect" checked><span>Pluperfect</span></label></div>
+              <div class="checkbox-group"><label><input type="checkbox" name="filterTense" value="futureperfect" checked><span>Future Perfect</span></label></div>
+            </div>
+          </fieldset>
+
+          <fieldset class="standard-filter">
+            <legend>Person</legend>
+            <div class="choice-row">
+              <div class="checkbox-group"><label><input type="checkbox" name="filterPerson" value="1" checked><span>1st</span></label></div>
+              <div class="checkbox-group"><label><input type="checkbox" name="filterPerson" value="2" checked><span>2nd</span></label></div>
+              <div class="checkbox-group"><label><input type="checkbox" name="filterPerson" value="3" checked><span>3rd</span></label></div>
+            </div>
+          </fieldset>
+
+          <fieldset class="standard-filter">
+            <legend>Number</legend>
+            <div class="choice-row">
+              <div class="checkbox-group"><label><input type="checkbox" name="filterNumber" value="s" checked><span>Singular</span></label></div>
+              <div class="checkbox-group"><label><input type="checkbox" name="filterNumber" value="p" checked><span>Plural</span></label></div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Rounds</legend>
+            <div class="choice-row">
+              <div class="radio-group"><label><input type="radio" name="roundCount" value="1"><span>1</span></label></div>
+              <div class="radio-group"><label><input type="radio" name="roundCount" value="5" checked><span>5</span></label></div>
+              <div class="radio-group"><label><input type="radio" name="roundCount" value="10"><span>10</span></label></div>
+              <div class="radio-group"><label><input type="radio" name="roundCount" value="15"><span>15</span></label></div>
+              <div class="radio-group"><label><input type="radio" name="roundCount" value="20"><span>20</span></label></div>
+              <div class="radio-group"><label><input type="radio" name="roundCount" value="25"><span>25</span></label></div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Challenge style</legend>
+            <div class="mode-card">
+              <div class="radio-group mode-option">
+                <label><input type="radio" name="practiceMode" value="identify" checked><span><strong class="mode-title">Matrix Select</strong><small class="mode-copy">Choose answers top to bottom</small></span></label>
+              </div>
+              <div class="radio-group mode-option">
+                <label><input type="radio" name="practiceMode" value="produce" id="hardModeToggle"><span><strong class="mode-title">Produce</strong><small class="mode-copy">Type the correct form</small></span></label>
+              </div>
+              <div class="radio-group mode-option">
+                <label><input type="radio" name="practiceMode" value="synopsis" id="synopsisModeToggle"><span><strong class="mode-title">Synopsis</strong><small class="mode-copy">Complete all principal forms</small></span></label>
+              </div>
+            </div>
+          </fieldset>
+
+          <div id="synopsisOptions" class="hidden">
+            <div class="synopsis-options-grid">
+              <fieldset>
+                <legend>Conjugation</legend>
+                <div class="choice-row">
+                  <div class="checkbox-group"><label><input type="checkbox" name="synopsisConjugation" value="1" checked><span>1st</span></label></div>
+                  <div class="checkbox-group"><label><input type="checkbox" name="synopsisConjugation" value="2" checked><span>2nd</span></label></div>
+                  <div class="checkbox-group"><label><input type="checkbox" name="synopsisConjugation" value="3" checked><span>3rd</span></label></div>
+                  <div class="checkbox-group"><label><input type="checkbox" name="synopsisConjugation" value="3io" checked><span>3rd-io</span></label></div>
+                  <div class="checkbox-group"><label><input type="checkbox" name="synopsisConjugation" value="4" checked><span>4th</span></label></div>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend>Synopsis person</legend>
+                <div class="choice-row">
+                  <div class="radio-group"><label><input type="radio" name="synopsisPerson" value="1"><span>1st</span></label></div>
+                  <div class="radio-group"><label><input type="radio" name="synopsisPerson" value="2"><span>2nd</span></label></div>
+                  <div class="radio-group"><label><input type="radio" name="synopsisPerson" value="3" checked><span>3rd</span></label></div>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend>Synopsis number</legend>
+                <div class="choice-row">
+                  <div class="radio-group"><label><input type="radio" name="synopsisNumber" value="s" checked><span>Singular</span></label></div>
+                  <div class="radio-group"><label><input type="radio" name="synopsisNumber" value="p"><span>Plural</span></label></div>
+                </div>
+              </fieldset>
+            </div>
+          </div>
         </div>
-      </fieldset>
-      <fieldset>
-        <legend>Tense</legend>
-        <div class="checkbox-group">
-          <label><input type="checkbox" name="filterTense" value="present" checked> Present</label>
+
+        <div class="setup-footer">
+          <p id="setupMessage" class="setup-note" role="status" aria-live="polite">Macrons are optional when typing answers. Your timer begins when the session starts.</p>
+          <button id="startPracticeBtn" type="button">Begin session <span class="button-arrow" aria-hidden="true">→</span></button>
         </div>
-        <div class="checkbox-group">
-          <label><input type="checkbox" name="filterTense" value="imperfect" checked> Imperfect</label>
-        </div>
-        <div class="checkbox-group">
-          <label><input type="checkbox" name="filterTense" value="future" checked> Future</label>
-        </div>
-        <div class="checkbox-group">
-          <label><input type="checkbox" name="filterTense" value="perfect" checked> Perfect</label>
-        </div>
-        <div class="checkbox-group">
-          <label><input type="checkbox" name="filterTense" value="pluperfect" checked> Pluperfect</label>
-        </div>
-        <div class="checkbox-group">
-          <label><input type="checkbox" name="filterTense" value="futureperfect" checked> Future Perfect</label>
-        </div>
-      </fieldset>
-      <fieldset>
-        <legend>Voice</legend>
-        <div class="checkbox-group">
-          <label><input type="checkbox" name="filterVoice" value="active" checked> Active</label>
-        </div>
-        <div class="checkbox-group">
-          <label><input type="checkbox" name="filterVoice" value="passive" checked> Passive</label>
-        </div>
-      </fieldset>
-      <fieldset>
-        <legend>Person</legend>
-        <div class="checkbox-group">
-          <label><input type="checkbox" name="filterPerson" value="1" checked> 1</label>
-        </div>
-        <div class="checkbox-group">
-          <label><input type="checkbox" name="filterPerson" value="2" checked> 2</label>
-        </div>
-        <div class="checkbox-group">
-          <label><input type="checkbox" name="filterPerson" value="3" checked> 3</label>
-        </div>
-      </fieldset>
-      <fieldset>
-        <legend>Number</legend>
-        <div class="checkbox-group">
-          <label><input type="checkbox" name="filterNumber" value="s" checked> Singular</label>
-        </div>
-        <div class="checkbox-group">
-          <label><input type="checkbox" name="filterNumber" value="p" checked> Plural</label>
-        </div>
-      </fieldset>
-      <fieldset>
-        <legend>Number of Rounds</legend>
-        <div class="radio-group">
-          <label><input type="radio" name="roundCount" value="5" checked> 5</label>
-        </div>
-        <div class="radio-group">
-          <label><input type="radio" name="roundCount" value="10"> 10</label>
-        </div>
-        <div class="radio-group">
-          <label><input type="radio" name="roundCount" value="15"> 15</label>
-        </div>
-        <div class="radio-group">
-          <label><input type="radio" name="roundCount" value="20"> 20</label>
-        </div>
-        <div class="radio-group">
-          <label><input type="radio" name="roundCount" value="25"> 25</label>
-        </div>
-      </fieldset>
-      <!-- Mode selection -->
-      <fieldset>
-        <legend>Mode</legend>
-        <div class="checkbox-group">
-          <label><input type="checkbox" id="hardModeToggle"> Hard Mode</label>
-        </div>
-      </fieldset>
-      <button id="startPracticeBtn">Start Practice</button>
-    </div>
+      </section>
+    </main>
     
     <!-- PRACTICE VIEW -->
-    <div id="practiceView" class="hidden fade-in">
+    <main id="practiceView" class="practice-shell hidden fade-in">
       <div id="topBar">
         <span id="scoreDisplay">Score: 0 / 0</span>
+        <span id="roundDisplay" class="round-label">Question 1 of 5</span>
         <span id="timerDisplay">Time: 0s</span>
+        <div class="progress-track" aria-hidden="true"><div id="progressFill" class="progress-fill"></div></div>
       </div>
-      <div id="questionDisplay">
-        <h2 id="verbFormDisplay"></h2>
-        <div id="principalPartsDisplay"></div>
-        <!-- Input for the hard mode. Hidden by default; shown only in Hard Mode -->
-        <input type="text" id="verbInput" class="verb-input" placeholder="Type the verb form here" autocomplete="off">
-      </div>
-      <!-- Answer option containers in the order: Person, Number, Tense, Voice, Mood -->
-      <div id="answerChoices">
-        <div class="practice-option" id="optionPerson">
-          <h3>Person</h3>
+      <div class="practice-content">
+        <section id="questionDisplay" aria-labelledby="verbFormDisplay">
+          <p id="questionKicker" class="question-kicker">Identify this form</p>
+          <h2 id="verbFormDisplay"></h2>
+          <div id="principalPartsDisplay"></div>
+          <!-- Input for the hard mode. Hidden by default; shown only in Hard Mode -->
+          <input type="text" id="verbInput" class="verb-input" placeholder="Type the Latin form" aria-label="Latin verb form" autocomplete="off" spellcheck="false">
+        </section>
+        <!-- Answer option containers in the order: Person, Number, Tense, Voice, Mood -->
+        <div id="answerChoices" class="matrix-columns">
+          <div class="practice-option" id="optionPerson"><h3>Person</h3></div>
+          <div class="practice-option" id="optionNumber"><h3>Number</h3></div>
+          <div class="practice-option" id="optionTense"><h3>Tense</h3></div>
+          <div class="practice-option" id="optionVoice"><h3>Voice</h3></div>
+          <div class="practice-option" id="optionMood"><h3>Mood</h3></div>
         </div>
-        <div class="practice-option" id="optionNumber">
-          <h3>Number</h3>
-        </div>
-        <div class="practice-option" id="optionTense">
-          <h3>Tense</h3>
-        </div>
-        <div class="practice-option" id="optionVoice">
-          <h3>Voice</h3>
-        </div>
-        <div class="practice-option" id="optionMood">
-          <h3>Mood</h3>
+        <div class="answer-actions">
+          <div id="correctAnswerDisplay" role="status" aria-live="polite"></div>
+          <button id="checkAnswerBtn" type="button">Check answer</button>
         </div>
       </div>
-      <div id="correctAnswerDisplay"></div>
-      <button id="checkAnswerBtn">Check Answer</button>
-    </div>
+    </main>
+
+    <!-- SYNOPSIS VIEW -->
+    <main id="synopsisView" class="hidden fade-in">
+      <div class="synopsis-topbar">
+        <span id="synopsisScoreDisplay">Round 1 of 1</span>
+        <span class="round-label">Verb synopsis</span>
+        <span id="synopsisTimerDisplay">Time 00:00</span>
+      </div>
+      <div class="synopsis-content">
+        <header class="synopsis-intro">
+          <div>
+            <h1>Verb Synopsis</h1>
+            <p><strong>Principal Parts:</strong> <span id="synopsisPrincipalParts"></span></p>
+          </div>
+          <p id="synopsisPrompt">Complete the forms for the <strong>3rd Person Singular</strong>.</p>
+        </header>
+
+        <section class="synopsis-section" aria-labelledby="synIndicativeHeading">
+          <h3 id="synIndicativeHeading">Indicative</h3>
+          <div class="synopsis-table-wrap">
+            <table class="synopsis-table">
+              <thead><tr><th scope="col"></th><th scope="col">Present</th><th scope="col">Imperfect</th><th scope="col">Future</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Active</th><td><div class="synopsis-field"><input aria-label="Indicative Active Present" type="text" id="syn-ind-pres-act" autocomplete="off" spellcheck="false"></div></td><td><div class="synopsis-field"><input aria-label="Indicative Active Imperfect" type="text" id="syn-ind-imp-act" autocomplete="off" spellcheck="false"></div></td><td><div class="synopsis-field"><input aria-label="Indicative Active Future" type="text" id="syn-ind-fut-act" autocomplete="off" spellcheck="false"></div></td></tr>
+                <tr><th scope="row">Passive</th><td><div class="synopsis-field"><input aria-label="Indicative Passive Present" type="text" id="syn-ind-pres-pass" autocomplete="off" spellcheck="false"></div></td><td><div class="synopsis-field"><input aria-label="Indicative Passive Imperfect" type="text" id="syn-ind-imp-pass" autocomplete="off" spellcheck="false"></div></td><td><div class="synopsis-field"><input aria-label="Indicative Passive Future" type="text" id="syn-ind-fut-pass" autocomplete="off" spellcheck="false"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="synopsis-table-wrap">
+            <table class="synopsis-table">
+              <thead><tr><th scope="col"></th><th scope="col">Perfect</th><th scope="col">Pluperfect</th><th scope="col">Future Perfect</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Active</th><td><div class="synopsis-field"><input aria-label="Indicative Active Perfect" type="text" id="syn-ind-perf-act" autocomplete="off" spellcheck="false"></div></td><td><div class="synopsis-field"><input aria-label="Indicative Active Pluperfect" type="text" id="syn-ind-plup-act" autocomplete="off" spellcheck="false"></div></td><td><div class="synopsis-field"><input aria-label="Indicative Active Future Perfect" type="text" id="syn-ind-futperf-act" autocomplete="off" spellcheck="false"></div></td></tr>
+                <tr><th scope="row">Passive</th><td><div class="synopsis-field"><input aria-label="Indicative Passive Perfect" type="text" id="syn-ind-perf-pass" autocomplete="off" spellcheck="false"></div></td><td><div class="synopsis-field"><input aria-label="Indicative Passive Pluperfect" type="text" id="syn-ind-plup-pass" autocomplete="off" spellcheck="false"></div></td><td><div class="synopsis-field"><input aria-label="Indicative Passive Future Perfect" type="text" id="syn-ind-futperf-pass" autocomplete="off" spellcheck="false"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="synopsis-section" aria-labelledby="synSubjunctiveHeading">
+          <h3 id="synSubjunctiveHeading">Subjunctive</h3>
+          <div class="synopsis-table-wrap">
+            <table class="synopsis-table synopsis-table-wide">
+              <thead><tr><th scope="col"></th><th scope="col">Present</th><th scope="col">Imperfect</th><th scope="col">Perfect</th><th scope="col">Pluperfect</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Active</th><td><div class="synopsis-field"><input aria-label="Subjunctive Active Present" type="text" id="syn-subj-pres-act" autocomplete="off" spellcheck="false"></div></td><td><div class="synopsis-field"><input aria-label="Subjunctive Active Imperfect" type="text" id="syn-subj-imp-act" autocomplete="off" spellcheck="false"></div></td><td><div class="synopsis-field"><input aria-label="Subjunctive Active Perfect" type="text" id="syn-subj-perf-act" autocomplete="off" spellcheck="false"></div></td><td><div class="synopsis-field"><input aria-label="Subjunctive Active Pluperfect" type="text" id="syn-subj-plup-act" autocomplete="off" spellcheck="false"></div></td></tr>
+                <tr><th scope="row">Passive</th><td><div class="synopsis-field"><input aria-label="Subjunctive Passive Present" type="text" id="syn-subj-pres-pass" autocomplete="off" spellcheck="false"></div></td><td><div class="synopsis-field"><input aria-label="Subjunctive Passive Imperfect" type="text" id="syn-subj-imp-pass" autocomplete="off" spellcheck="false"></div></td><td><div class="synopsis-field"><input aria-label="Subjunctive Passive Perfect" type="text" id="syn-subj-perf-pass" autocomplete="off" spellcheck="false"></div></td><td><div class="synopsis-field"><input aria-label="Subjunctive Passive Pluperfect" type="text" id="syn-subj-plup-pass" autocomplete="off" spellcheck="false"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="synopsis-section" aria-labelledby="synImperativeHeading">
+          <h3 id="synImperativeHeading">Imperative</h3>
+          <div class="synopsis-table-wrap compact-table-wrap"><table class="synopsis-table compact-table"><tbody><tr><th scope="row">Singular</th><td><div class="synopsis-field"><input aria-label="Imperative Singular" type="text" id="syn-imp-sing" autocomplete="off" spellcheck="false"></div></td></tr><tr><th scope="row">Plural</th><td><div class="synopsis-field"><input aria-label="Imperative Plural" type="text" id="syn-imp-plur" autocomplete="off" spellcheck="false"></div></td></tr></tbody></table></div>
+        </section>
+
+        <section class="synopsis-section" aria-labelledby="synInfinitiveHeading">
+          <h3 id="synInfinitiveHeading">Infinitives</h3>
+          <div class="synopsis-table-wrap"><table class="synopsis-table synopsis-table-five"><thead><tr><th scope="col">Pres Act</th><th scope="col">Pres Pass</th><th scope="col">Perf Act</th><th scope="col">Perf Pass</th><th scope="col">Future Act</th></tr></thead><tbody><tr><td><div class="synopsis-field"><input aria-label="Present Active Infinitive" type="text" id="syn-inf-pres-act" autocomplete="off" spellcheck="false"></div></td><td><div class="synopsis-field"><input aria-label="Present Passive Infinitive" type="text" id="syn-inf-pres-pass" autocomplete="off" spellcheck="false"></div></td><td><div class="synopsis-field"><input aria-label="Perfect Active Infinitive" type="text" id="syn-inf-perf-act" autocomplete="off" spellcheck="false"></div></td><td><div class="synopsis-field"><input aria-label="Perfect Passive Infinitive" type="text" id="syn-inf-perf-pass" autocomplete="off" spellcheck="false"></div></td><td><div class="synopsis-field"><input aria-label="Future Active Infinitive" type="text" id="syn-inf-fut-act" autocomplete="off" spellcheck="false"></div></td></tr></tbody></table></div>
+        </section>
+
+        <section class="synopsis-section" aria-labelledby="synParticipleHeading">
+          <h3 id="synParticipleHeading">Participles</h3>
+          <div class="synopsis-table-wrap"><table class="synopsis-table synopsis-table-three"><thead><tr><th scope="col">PAP (Pres Active)</th><th scope="col">PPP (Perf Passive)</th><th scope="col">FAP (Future Active)</th></tr></thead><tbody><tr><td><div class="synopsis-field"><input aria-label="Present Active Participle" type="text" id="syn-part-pap" autocomplete="off" spellcheck="false"></div></td><td><div class="synopsis-field"><input aria-label="Perfect Passive Participle" type="text" id="syn-part-ppp" autocomplete="off" spellcheck="false"></div></td><td><div class="synopsis-field"><input aria-label="Future Active Participle" type="text" id="syn-part-fap" autocomplete="off" spellcheck="false"></div></td></tr></tbody></table></div>
+        </section>
+
+        <div class="synopsis-actions">
+          <div id="synopsisRoundFeedback" role="status" aria-live="polite">Macrons are optional. Empty answers will be marked incorrect.</div>
+          <button id="checkSynopsisBtn" type="button">Check all 30 answers</button>
+        </div>
+      </div>
+    </main>
     
     <!-- FINAL VIEW -->
-    <div id="finalView" class="hidden fade-in">
-      <h1>Session Complete!</h1>
-      <p id="finalScoreDisplay"></p>
-      <p id="finalTimeDisplay"></p>
-      <h2>Review of Your Answers</h2>
-      <table id="recordTable">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Verb (Principal Parts)</th>
-            <th>Your Answer</th>
-            <th>Correct Answer</th>
-            <th>Result</th>
-          </tr>
-        </thead>
-        <tbody id="recordTableBody">
-          <!-- Records inserted dynamically -->
-        </tbody>
-      </table>
-      <button id="restartBtn">Restart</button>
-    </div>
+    <main id="finalView" class="view hidden fade-in">
+      <header class="final-header">
+        <div><p class="eyebrow" style="color: var(--crimson)">Session complete</p><h1>Review your work.</h1></div>
+        <div class="final-summary">
+          <div class="stat-card"><span>Score</span><p id="finalScoreDisplay"></p></div>
+          <div class="stat-card"><span>Time</span><p id="finalTimeDisplay"></p></div>
+        </div>
+      </header>
+      <h2 class="review-heading">Answer review</h2>
+      <div class="table-wrap">
+        <table id="recordTable">
+          <thead><tr><th>#</th><th>Verb (Principal Parts)</th><th>Your Answer</th><th>Correct Answer</th><th>Result</th></tr></thead>
+          <tbody id="recordTableBody"><!-- Records inserted dynamically --></tbody>
+        </table>
+      </div>
+      <button id="restartBtn" type="button">Practice again</button>
+    </main>
     
     <!-- Confetti Canvas -->
     <canvas id="confettiCanvas" class="confetti hidden"></canvas>
@@ -1091,6 +1705,71 @@
       });
       return forms;
     }
+
+    /***********************
+     * SYNOPSIS HELPERS
+     ***********************/
+    function dispatchConjugation(pp1, pp2, pp3, pp4, mood, tense, voice, person, number) {
+      const conjugation = autoDetectConjugation(pp1, pp2);
+      const conjugators = {
+        "1": conjugateVerb1,
+        "2": conjugateVerb2,
+        "3": conjugateVerb3,
+        "3io": conjugateVerb3io,
+        "4": conjugateVerb4
+      };
+      return conjugators[conjugation]
+        ? conjugators[conjugation](pp1, pp2, pp3, pp4, mood, tense, voice, person, number)
+        : "";
+    }
+
+    function getImperative(pp1, pp2, number) {
+      const conjugation = autoDetectConjugation(pp1, pp2);
+      let stem = "";
+      let singular = "";
+      switch (conjugation) {
+        case "1": stem = removeDiacritics(pp2).slice(0, -3); singular = stem + "a"; break;
+        case "2": stem = removeDiacritics(pp2).slice(0, -2); singular = stem; break;
+        case "3":
+        case "3io": stem = removeDiacritics(pp2).slice(0, -3); singular = stem + "e"; return number === "s" ? singular : stem + "ite";
+        case "4": stem = removeDiacritics(pp2).slice(0, -3); singular = stem + "i"; break;
+        default: return "";
+      }
+      return number === "s" ? singular : singular + "te";
+    }
+
+    function getInfinitive(pp1, pp2, pp3, pp4, formType) {
+      const conjugation = autoDetectConjugation(pp1, pp2);
+      const infinitive = removeDiacritics(pp2);
+      const perfectStem = removeDiacritics(pp3).slice(0, -1);
+      const fourthPart = removeDiacritics(pp4);
+      switch (formType) {
+        case "presentActive": return infinitive;
+        case "presentPassive":
+          return (conjugation === "3" || conjugation === "3io")
+            ? infinitive.slice(0, -3) + "i"
+            : infinitive.slice(0, -1) + "i";
+        case "perfectActive": return perfectStem + "isse";
+        case "perfectPassive": return fourthPart + " esse";
+        case "futureActive": return fourthPart.slice(0, -2) + "urum esse";
+        default: return "";
+      }
+    }
+
+    function getParticiple(pp1, pp2, pp4, formType) {
+      const conjugation = autoDetectConjugation(pp1, pp2);
+      const infinitive = removeDiacritics(pp2);
+      const fourthPart = removeDiacritics(pp4);
+      if (formType === "ppp") return fourthPart.replace(/um$/, "us");
+      if (formType === "fap") return fourthPart.slice(0, -2) + "urus";
+      if (formType === "pap") {
+        if (conjugation === "1") return infinitive.slice(0, -3) + "ans";
+        if (conjugation === "2") return infinitive.slice(0, -2) + "ens";
+        if (conjugation === "3") return infinitive.slice(0, -3) + "ens";
+        return infinitive.slice(0, -3) + "iens";
+      }
+      return "";
+    }
     
     /***********************
      * GAME STATE VARIABLES
@@ -1111,17 +1790,25 @@
     let allowedNumber = [];
     // Determines whether the session is in Hard Mode (fill-in-the-blank) or Easy Mode (multiple selection)
     let hardMode = false;
+    let practiceMode = "identify";
+    let currentSynopsisAnswers = {};
+    let allowedConjugations = [];
+    let synopsisPerson = "3";
+    let synopsisNumber = "s";
     // Holds the principal parts of the current verb for recording purposes
     let currentPrincipalParts = [];
     
     /***********************
      * TIMER FUNCTIONS
      ***********************/
-    function startTimer() {
+    function startTimer(displayId = "timerDisplay") {
       sessionStartTime = Date.now();
+      document.getElementById(displayId).textContent = "Time 00:00";
       timerInterval = setInterval(() => {
         const elapsed = Math.floor((Date.now() - sessionStartTime) / 1000);
-        document.getElementById("timerDisplay").textContent = "Time: " + elapsed + "s";
+        const minutes = String(Math.floor(elapsed / 60)).padStart(2, "0");
+        const seconds = String(elapsed % 60).padStart(2, "0");
+        document.getElementById(displayId).textContent = "Time " + minutes + ":" + seconds;
       }, 1000);
     }
     function stopTimer() {
@@ -1139,22 +1826,37 @@
       const radios = document.querySelectorAll('input[name="roundCount"]:checked');
       return radios.length ? parseInt(radios[0].value) : 5;
     }
+    function getSelectedRadioValue(name) {
+      const radio = document.querySelector('input[name="' + name + '"]:checked');
+      return radio ? radio.value : null;
+    }
     
     /***********************
      * SESSION INITIALIZATION & QUESTION GENERATION
      ***********************/
     function initializeSession() {
+      practiceMode = getSelectedRadioValue("practiceMode") || "identify";
+      totalRounds = getSelectedRoundCount();
+      currentRound = 0;
+      sessionCorrectCount = 0;
+      sessionRecords = [];
+      answerRevealed = false;
+
+      if (practiceMode === "synopsis") {
+        allowedConjugations = getCheckedValues("synopsisConjugation");
+        synopsisPerson = getSelectedRadioValue("synopsisPerson") || "3";
+        synopsisNumber = getSelectedRadioValue("synopsisNumber") || "s";
+        startTimer("synopsisTimerDisplay");
+        nextSynopsis();
+        return;
+      }
+
       allowedMood = getCheckedValues("filterMood");
       allowedTense = getCheckedValues("filterTense");
       allowedVoice = getCheckedValues("filterVoice");
       allowedPerson = getCheckedValues("filterPerson");
       allowedNumber = getCheckedValues("filterNumber");
       
-      totalRounds = getSelectedRoundCount();
-      currentRound = 0;
-      sessionCorrectCount = 0;
-      sessionRecords = [];
-      answerRevealed = false;
       updateScoreDisplay();
       startTimer();
       nextQuestion();
@@ -1185,7 +1887,7 @@
       
       const filteredForms = allForms.filter(row =>
         allowedMood.includes(row.mood) &&
-        allowedTense.includes(row.tense) &&
+        allowedTense.includes(row.tense.toLowerCase()) &&
         allowedVoice.includes(row.voice) &&
         allowedPerson.includes(row.person) &&
         allowedNumber.includes(row.number)
@@ -1201,6 +1903,8 @@
 
       currentRound++;
       updateScoreDisplay();
+      document.getElementById("roundDisplay").textContent = "Question " + currentRound + " of " + totalRounds;
+      document.getElementById("progressFill").style.width = (((currentRound - 1) / totalRounds) * 100) + "%";
 
       // Store principal parts for recording later
       currentPrincipalParts = randomVerb;
@@ -1208,6 +1912,7 @@
       // Update the principal parts display and clear previous feedback
       document.getElementById("principalPartsDisplay").textContent = "(" + randomVerb.join(", ") + ")";
       document.getElementById("correctAnswerDisplay").textContent = "";
+      delete document.getElementById("correctAnswerDisplay").dataset.result;
       // Reset option headers and remove previous option buttons
       resetOptionHeaders();
 
@@ -1239,6 +1944,7 @@
           // Show the input field in Hard Mode
           inputEl.style.display = "block";
           inputEl.value = "";
+          window.setTimeout(() => inputEl.focus(), 50);
         }
         // Display the selected morphological categories directly in the headers
         const numberLabel = (currentAnswer.number === "s") ? "Singular" : "Plural";
@@ -1249,11 +1955,134 @@
         displayFixedValue("optionMood", currentAnswer.mood);
       }
 
-      document.getElementById("checkAnswerBtn").textContent = "Check Answer";
+      document.getElementById("questionKicker").textContent = hardMode ? "Produce the requested form" : "Identify this form";
+      document.getElementById("checkAnswerBtn").textContent = "Check answer";
+    }
+
+    function nextSynopsis() {
+      answerRevealed = false;
+      currentRound++;
+
+      const filteredVerbLibrary = verbLibrary.filter(verb => {
+        const conjugation = autoDetectConjugation(verb.principalParts[0], verb.principalParts[1]);
+        return allowedConjugations.includes(conjugation);
+      });
+      if (filteredVerbLibrary.length === 0) {
+        document.getElementById("synopsisRoundFeedback").textContent = "No verbs match the selected conjugations.";
+        return;
+      }
+
+      const randomVerb = filteredVerbLibrary[Math.floor(Math.random() * filteredVerbLibrary.length)].principalParts;
+      currentPrincipalParts = randomVerb;
+      const personText = { "1": "1st", "2": "2nd", "3": "3rd" }[synopsisPerson];
+      const numberText = synopsisNumber === "s" ? "Singular" : "Plural";
+      document.getElementById("synopsisPrincipalParts").textContent = randomVerb.join(", ");
+      document.getElementById("synopsisPrompt").innerHTML = "Complete the forms for the <strong>" + personText + " Person " + numberText + "</strong>.";
+
+      currentSynopsisAnswers = {
+        "syn-ind-pres-act": dispatchConjugation(...randomVerb, "indicative", "present", "active", synopsisPerson, synopsisNumber),
+        "syn-ind-imp-act": dispatchConjugation(...randomVerb, "indicative", "imperfect", "active", synopsisPerson, synopsisNumber),
+        "syn-ind-fut-act": dispatchConjugation(...randomVerb, "indicative", "future", "active", synopsisPerson, synopsisNumber),
+        "syn-ind-perf-act": dispatchConjugation(...randomVerb, "indicative", "perfect", "active", synopsisPerson, synopsisNumber),
+        "syn-ind-plup-act": dispatchConjugation(...randomVerb, "indicative", "pluperfect", "active", synopsisPerson, synopsisNumber),
+        "syn-ind-futperf-act": dispatchConjugation(...randomVerb, "indicative", "futurePerfect", "active", synopsisPerson, synopsisNumber),
+        "syn-ind-pres-pass": dispatchConjugation(...randomVerb, "indicative", "present", "passive", synopsisPerson, synopsisNumber),
+        "syn-ind-imp-pass": dispatchConjugation(...randomVerb, "indicative", "imperfect", "passive", synopsisPerson, synopsisNumber),
+        "syn-ind-fut-pass": dispatchConjugation(...randomVerb, "indicative", "future", "passive", synopsisPerson, synopsisNumber),
+        "syn-ind-perf-pass": dispatchConjugation(...randomVerb, "indicative", "perfect", "passive", synopsisPerson, synopsisNumber),
+        "syn-ind-plup-pass": dispatchConjugation(...randomVerb, "indicative", "pluperfect", "passive", synopsisPerson, synopsisNumber),
+        "syn-ind-futperf-pass": dispatchConjugation(...randomVerb, "indicative", "futurePerfect", "passive", synopsisPerson, synopsisNumber),
+        "syn-subj-pres-act": dispatchConjugation(...randomVerb, "subjunctive", "present", "active", synopsisPerson, synopsisNumber),
+        "syn-subj-imp-act": dispatchConjugation(...randomVerb, "subjunctive", "imperfect", "active", synopsisPerson, synopsisNumber),
+        "syn-subj-perf-act": dispatchConjugation(...randomVerb, "subjunctive", "perfect", "active", synopsisPerson, synopsisNumber),
+        "syn-subj-plup-act": dispatchConjugation(...randomVerb, "subjunctive", "pluperfect", "active", synopsisPerson, synopsisNumber),
+        "syn-subj-pres-pass": dispatchConjugation(...randomVerb, "subjunctive", "present", "passive", synopsisPerson, synopsisNumber),
+        "syn-subj-imp-pass": dispatchConjugation(...randomVerb, "subjunctive", "imperfect", "passive", synopsisPerson, synopsisNumber),
+        "syn-subj-perf-pass": dispatchConjugation(...randomVerb, "subjunctive", "perfect", "passive", synopsisPerson, synopsisNumber),
+        "syn-subj-plup-pass": dispatchConjugation(...randomVerb, "subjunctive", "pluperfect", "passive", synopsisPerson, synopsisNumber),
+        "syn-imp-sing": getImperative(randomVerb[0], randomVerb[1], "s"),
+        "syn-imp-plur": getImperative(randomVerb[0], randomVerb[1], "p"),
+        "syn-inf-pres-act": getInfinitive(...randomVerb, "presentActive"),
+        "syn-inf-pres-pass": getInfinitive(...randomVerb, "presentPassive"),
+        "syn-inf-perf-act": getInfinitive(...randomVerb, "perfectActive"),
+        "syn-inf-perf-pass": getInfinitive(...randomVerb, "perfectPassive"),
+        "syn-inf-fut-act": getInfinitive(...randomVerb, "futureActive"),
+        "syn-part-pap": getParticiple(randomVerb[0], randomVerb[1], randomVerb[3], "pap"),
+        "syn-part-ppp": getParticiple(randomVerb[0], randomVerb[1], randomVerb[3], "ppp"),
+        "syn-part-fap": getParticiple(randomVerb[0], randomVerb[1], randomVerb[3], "fap")
+      };
+
+      document.querySelectorAll("#synopsisView input[type='text']").forEach(input => {
+        input.value = "";
+        input.disabled = false;
+        input.classList.remove("correct", "incorrect");
+        input.closest(".synopsis-field").querySelectorAll(".correct-answer-feedback, .feedback-icon").forEach(element => element.remove());
+      });
+      document.getElementById("synopsisScoreDisplay").textContent = "Round " + currentRound + " of " + totalRounds;
+      document.getElementById("synopsisRoundFeedback").textContent = "Macrons are optional. Empty answers will be marked incorrect.";
+      document.getElementById("checkSynopsisBtn").textContent = "Check all 30 answers";
+      const firstInput = document.getElementById("syn-ind-pres-act");
+      window.setTimeout(() => firstInput.focus(), 50);
+    }
+
+    function normalizeSynopsisAnswer(value) {
+      return removeDiacritics(value).toLowerCase().trim().replace(/\s+/g, " ");
+    }
+
+    function checkSynopsis() {
+      if (answerRevealed) {
+        if (currentRound < totalRounds) nextSynopsis();
+        else endSession();
+        return;
+      }
+
+      answerRevealed = true;
+      let correctCount = 0;
+      const totalInputs = Object.keys(currentSynopsisAnswers).length;
+      Object.keys(currentSynopsisAnswers).forEach(id => {
+        const input = document.getElementById(id);
+        const field = input.closest(".synopsis-field");
+        const isCorrect = normalizeSynopsisAnswer(input.value) === normalizeSynopsisAnswer(currentSynopsisAnswers[id]);
+        const icon = document.createElement("span");
+        icon.className = "feedback-icon " + (isCorrect ? "correct" : "incorrect");
+        icon.textContent = isCorrect ? "✓" : "✕";
+        input.classList.add(isCorrect ? "correct" : "incorrect");
+        input.disabled = true;
+        field.appendChild(icon);
+        if (isCorrect) {
+          correctCount++;
+        } else {
+          const correction = document.createElement("span");
+          correction.className = "correct-answer-feedback";
+          correction.textContent = "Correct: " + currentSynopsisAnswers[id];
+          field.appendChild(correction);
+        }
+      });
+
+      sessionCorrectCount += correctCount;
+      document.getElementById("synopsisScoreDisplay").textContent = "Round " + currentRound + " of " + totalRounds + " · " + correctCount + " / " + totalInputs;
+      document.getElementById("synopsisRoundFeedback").textContent = correctCount + " of " + totalInputs + " forms correct this round.";
+      document.getElementById("checkSynopsisBtn").textContent = currentRound < totalRounds ? "Next verb →" : "See results →";
+      sessionRecords.push({
+        mode: "synopsis",
+        verb: "(" + currentPrincipalParts.join(", ") + ")",
+        studentAnswer: "Completed synopsis",
+        correctAnswer: "30 forms",
+        result: correctCount + "/" + totalInputs
+      });
     }
     
     function updateScoreDisplay() {
-      document.getElementById("scoreDisplay").textContent = "Score: " + sessionCorrectCount + " / " + (currentRound - 1);
+      const answeredRounds = answerRevealed ? currentRound : Math.max(0, currentRound - 1);
+      document.getElementById("scoreDisplay").textContent = "Score " + sessionCorrectCount + " / " + answeredRounds;
+    }
+
+    function formatOptionLabel(value) {
+      const labels = {
+        "1": "1st", "2": "2nd", "3": "3rd", s: "Singular", p: "Plural",
+        futureperfect: "Future Perfect", futurePerfect: "Future Perfect"
+      };
+      return labels[value] || value.charAt(0).toUpperCase() + value.slice(1);
     }
     
     /***********************
@@ -1265,13 +2094,19 @@
       container.innerHTML = "<h3>" + headerText + "</h3>";
       options.forEach(opt => {
         const btn = document.createElement("button");
-        btn.textContent = opt;
+        btn.textContent = formatOptionLabel(opt);
         btn.dataset.value = opt;
         btn.classList.add("option-button");
+        btn.type = "button";
+        btn.setAttribute("aria-pressed", "false");
         btn.addEventListener("click", function() {
           if (!answerRevealed) {
-            Array.from(container.querySelectorAll("button")).forEach(b => b.classList.remove("selected"));
+            Array.from(container.querySelectorAll("button")).forEach(b => {
+              b.classList.remove("selected");
+              b.setAttribute("aria-pressed", "false");
+            });
             btn.classList.add("selected");
+            btn.setAttribute("aria-pressed", "true");
           }
         });
         container.appendChild(btn);
@@ -1329,6 +2164,14 @@
         return selected === correct;
       }
     }
+
+    function markMatrixSelection(containerId, isCorrect) {
+      const selectedButton = document.querySelector("#" + containerId + " button.selected");
+      if (!selectedButton) return;
+      selectedButton.classList.remove("answer-correct", "answer-incorrect");
+      selectedButton.classList.add(isCorrect ? "answer-correct" : "answer-incorrect");
+      selectedButton.setAttribute("aria-label", selectedButton.textContent + (isCorrect ? " — correct" : " — incorrect"));
+    }
     
     function checkAnswer() {
       if (!answerRevealed) {
@@ -1340,7 +2183,9 @@
           const selectedVoice = getSelectedOption("optionVoice");
           const selectedMood = getSelectedOption("optionMood");
           if (!selectedPerson || !selectedNumber || !selectedTense || !selectedVoice || !selectedMood) {
-            alert("Please make a selection in every category.");
+            const feedback = document.getElementById("correctAnswerDisplay");
+            feedback.textContent = "Choose one option in every category before checking your answer.";
+            feedback.dataset.result = "incorrect";
             return;
           }
           const personOk = isAnswerCorrect(selectedPerson, currentAnswer.person);
@@ -1348,6 +2193,11 @@
           const tenseOk = isAnswerCorrect(selectedTense, currentAnswer.tense);
           const voiceOk = isAnswerCorrect(selectedVoice, currentAnswer.voice);
           const moodOk = isAnswerCorrect(selectedMood, currentAnswer.mood);
+          markMatrixSelection("optionPerson", personOk);
+          markMatrixSelection("optionNumber", numberOk);
+          markMatrixSelection("optionTense", tenseOk);
+          markMatrixSelection("optionVoice", voiceOk);
+          markMatrixSelection("optionMood", moodOk);
           const isCorrect = personOk && numberOk && tenseOk && voiceOk && moodOk;
           const easyDisplay = "Correct Answer: " +
             "Person: " + currentAnswer.person + ", " +
@@ -1356,11 +2206,13 @@
             "Voice: " + currentAnswer.voice + ", " +
             "Mood: " + currentAnswer.mood;
           document.getElementById("correctAnswerDisplay").textContent = easyDisplay;
+          document.getElementById("correctAnswerDisplay").dataset.result = isCorrect ? "correct" : "incorrect";
           flashFeedback(isCorrect);
           if (isCorrect) sessionCorrectCount++;
-          updateScoreDisplay();
           answerRevealed = true;
-          document.getElementById("checkAnswerBtn").textContent = (currentRound < totalRounds) ? "Next Verb" : "Finish";
+          updateScoreDisplay();
+          document.getElementById("progressFill").style.width = ((currentRound / totalRounds) * 100) + "%";
+          document.getElementById("checkAnswerBtn").textContent = (currentRound < totalRounds) ? "Next verb →" : "See results →";
           // Record this question for review
           const record = {
             mode: "easy",
@@ -1394,7 +2246,10 @@
           const inputEl = document.getElementById("verbInput");
           const userInput = inputEl ? inputEl.value.trim() : "";
           if (!userInput) {
-            alert("Please type the verb form.");
+            const feedback = document.getElementById("correctAnswerDisplay");
+            feedback.textContent = "Type a Latin verb form before checking your answer.";
+            feedback.dataset.result = "incorrect";
+            inputEl.focus();
             return;
           }
           const expected = currentAnswer.form;
@@ -1409,11 +2264,13 @@
                        "Mood: " + currentAnswer.mood;
           const feedbackHTML = "Correct form: " + expected + "<br>(" + info + ")";
           document.getElementById("correctAnswerDisplay").innerHTML = feedbackHTML;
+          document.getElementById("correctAnswerDisplay").dataset.result = isCorrect ? "correct" : "incorrect";
           flashFeedback(isCorrect);
           if (isCorrect) sessionCorrectCount++;
-          updateScoreDisplay();
           answerRevealed = true;
-          document.getElementById("checkAnswerBtn").textContent = (currentRound < totalRounds) ? "Next Verb" : "Finish";
+          updateScoreDisplay();
+          document.getElementById("progressFill").style.width = ((currentRound / totalRounds) * 100) + "%";
+          document.getElementById("checkAnswerBtn").textContent = (currentRound < totalRounds) ? "Next verb →" : "See results →";
           const record = {
             mode: "hard",
             verb: "(" + currentPrincipalParts.join(", ") + ")",
@@ -1460,15 +2317,20 @@
     function endSession() {
       stopTimer();
       document.getElementById("practiceView").classList.add("hidden");
+      document.getElementById("synopsisView").classList.add("hidden");
       document.getElementById("finalView").classList.remove("hidden");
-      document.getElementById("finalScoreDisplay").textContent = "Your Score: " + sessionCorrectCount + " / " + totalRounds;
+      const totalPossibleScore = practiceMode === "synopsis" ? totalRounds * 30 : totalRounds;
+      document.getElementById("finalScoreDisplay").textContent = sessionCorrectCount + " / " + totalPossibleScore;
       const elapsed = Math.floor((Date.now() - sessionStartTime) / 1000);
-      document.getElementById("finalTimeDisplay").textContent = "Time Elapsed: " + elapsed + " seconds";
+      const minutes = Math.floor(elapsed / 60);
+      const seconds = String(elapsed % 60).padStart(2, "0");
+      document.getElementById("finalTimeDisplay").textContent = minutes + ":" + seconds;
       buildRecordTable();
       
-      if (sessionCorrectCount === totalRounds) {
+      if (sessionCorrectCount === totalPossibleScore) {
         showConfetti();
         const optimeMsg = document.createElement("h1");
+        optimeMsg.className = "optime-message";
         optimeMsg.textContent = "Optime!";
         optimeMsg.style.color = "#2e7d32";
         optimeMsg.style.textAlign = "center";
@@ -1489,7 +2351,10 @@
         tr.appendChild(tdVerb);
         const tdStudent = document.createElement("td");
         const tdCorrect = document.createElement("td");
-        if (record.mode === "easy") {
+        if (record.mode === "synopsis") {
+          tdStudent.textContent = record.studentAnswer;
+          tdCorrect.textContent = record.correctAnswer;
+        } else if (record.mode === "easy") {
           tdStudent.textContent = "Person: " + record.studentAnswer.person +
             ", Number: " + (record.studentAnswer.number === "s" ? "Singular" : "Plural") +
             ", Tense: " + record.studentAnswer.tense +
@@ -1574,21 +2439,48 @@
      * EVENT LISTENERS
      ***********************/
     document.getElementById("startPracticeBtn").addEventListener("click", function() {
+      practiceMode = getSelectedRadioValue("practiceMode") || "identify";
+      const requiredGroups = practiceMode === "synopsis"
+        ? ["synopsisConjugation"]
+        : ["filterMood", "filterTense", "filterVoice", "filterPerson", "filterNumber"];
+      const missingGroup = requiredGroups.find(name => getCheckedValues(name).length === 0);
+      if (missingGroup) {
+        document.getElementById("setupMessage").textContent = "Select at least one option in every category to begin.";
+        document.getElementById("setupMessage").style.color = "var(--danger)";
+        return;
+      }
       // Determine if Hard Mode is enabled before starting the session
-      hardMode = document.getElementById("hardModeToggle").checked;
+      hardMode = practiceMode === "produce";
       // Fade-out setup view then show practice view
       const setupView = document.getElementById("setupView");
       setupView.classList.add("fade-out");
       setTimeout(() => {
         setupView.classList.add("hidden");
         setupView.classList.remove("fade-out");
-        const practiceView = document.getElementById("practiceView");
-        practiceView.classList.remove("hidden");
-        practiceView.classList.add("fade-in");
+        const targetView = document.getElementById(practiceMode === "synopsis" ? "synopsisView" : "practiceView");
+        targetView.classList.remove("hidden");
+        targetView.classList.add("fade-in");
         initializeSession();
       }, 5);
     });
     document.getElementById("checkAnswerBtn").addEventListener("click", checkAnswer);
+    document.getElementById("checkSynopsisBtn").addEventListener("click", checkSynopsis);
+    document.getElementById("verbInput").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") checkAnswer();
+    });
+    document.querySelectorAll('input[name="practiceMode"]').forEach(radio => {
+      radio.addEventListener("change", function() {
+        const synopsisSelected = this.value === "synopsis";
+        document.querySelectorAll(".standard-filter").forEach(fieldset => fieldset.classList.toggle("hidden", synopsisSelected));
+        document.getElementById("synopsisOptions").classList.toggle("hidden", !synopsisSelected);
+        const preferredRounds = document.querySelector('input[name="roundCount"][value="' + (synopsisSelected ? "1" : "5") + '"]');
+        if (preferredRounds) preferredRounds.checked = true;
+        document.getElementById("setupMessage").textContent = synopsisSelected
+          ? "A synopsis contains 30 forms. Choose a conjugation, person, and number."
+          : "Macrons are optional when typing answers. Your timer begins when the session starts.";
+        document.getElementById("setupMessage").style.color = "";
+      });
+    });
     document.getElementById("restartBtn").addEventListener("click", function() {
       const finalView = document.getElementById("finalView");
       finalView.classList.add("fade-out");
@@ -1599,7 +2491,7 @@
         setupView.classList.remove("hidden");
         setupView.classList.add("fade-in");
         // Clear extra messages
-        const optimeMsg = finalView.querySelector("h1:not(:first-child)");
+        const optimeMsg = finalView.querySelector(".optime-message");
         if (optimeMsg) finalView.removeChild(optimeMsg);
       }, 5);
     });
@@ -1770,4 +2662,3 @@
   </script>
 </body>
 </html>
-
