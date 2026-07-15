@@ -1,6 +1,5 @@
 (() => {
-  const culturalNotesUrl =
-    "https://pliny-vergil-cultural-notes.qualisartifex.chatgpt.site/";
+  const culturalNotesUrl = "./assets/linked-pages/cultural-notes/index.html";
 
   function addCulturalNotesLink() {
     const heading = [...document.querySelectorAll("h2")].find(
