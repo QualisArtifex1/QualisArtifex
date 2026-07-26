@@ -2,17 +2,32 @@
   const culturalNotesUrl = "./assets/linked-pages/cultural-notes/index.html";
 
   function addCulturalNotesLink() {
+    const existingCulturalNotesLinks = [
+      ...document.querySelectorAll("[data-cultural-notes-link]"),
+    ];
     const heading = [...document.querySelectorAll("h2")].find(
       (element) => element.textContent.trim() === "AP Reading",
     );
 
-    if (!heading) return;
+    if (!heading) {
+      existingCulturalNotesLinks.forEach((link) => link.remove());
+      return;
+    }
 
     const panel =
       heading.closest('[role="region"]') ||
       heading.closest("section") ||
       heading.parentElement;
-    if (!panel || panel.querySelector("[data-cultural-notes-link]")) return;
+    if (!panel) {
+      existingCulturalNotesLinks.forEach((link) => link.remove());
+      return;
+    }
+
+    existingCulturalNotesLinks
+      .filter((link) => !panel.contains(link))
+      .forEach((link) => link.remove());
+
+    if (panel.querySelector("[data-cultural-notes-link]")) return;
 
     const existingLink = [...panel.querySelectorAll("a")].find(
       (element) => element.textContent.trim() === "Commentary",
