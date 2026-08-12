@@ -8,9 +8,64 @@
       content="Qualis Artifex, a sepia-toned classical Latin resource library."
     />
     <title>Qualis Artifex</title>
+    <link
+      rel="preload"
+      as="image"
+      href="./assets/parchment-home-background.avif"
+      type="image/avif"
+      fetchpriority="high"
+    />
+    <link
+      rel="preload"
+      as="image"
+      href="./assets/generated-website-images/cards/01-annotated-manuscript-card.avif"
+      type="image/avif"
+    />
     <script defer src="./assets/cultural-notes-link.js"></script>
-    <script type="module" crossorigin src="./assets/index-CGXMf5Lf.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-6m4sA5XB.css">
+    <script type="module" crossorigin src="./assets/index-d5a90473.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-4a42eae3.css">
+    <style>
+      @property --active-border-angle {
+        syntax: "<angle>";
+        inherits: false;
+        initial-value: 0deg;
+      }
+
+      @keyframes active-border-spin {
+        to {
+          --active-border-angle: 360deg;
+        }
+      }
+
+      .library-card.is-active::after {
+        z-index: 6;
+        padding: 2px;
+        border-radius: inherit;
+        background: conic-gradient(
+          from var(--active-border-angle),
+          transparent 0 12%,
+          rgba(199, 154, 70, 0.3) 22%,
+          #f1cc7a 37%,
+          #fff5d1 48%,
+          #a86f2c 61%,
+          transparent 78% 100%
+        );
+        box-shadow: none;
+        -webkit-mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        animation: active-border-spin 3.4s linear infinite;
+        will-change: background;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .library-card.is-active::after {
+          animation: none;
+        }
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
