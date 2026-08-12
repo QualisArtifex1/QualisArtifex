@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chapter 1 Narrative | Latin Textbook</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #222831;
+      --muted: #64717f;
+      --paper: #fffdf8;
+      --panel: #ffffff;
+      --line: #d8cdb7;
+      --accent: #9f2832;
+      --accent-dark: #6f1821;
+      --soft: #f4efe5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+    a { color: var(--accent-dark); }
+    .topbar {
+      border-bottom: 1px solid var(--line);
+      background: #fffaf0;
+    }
+    .topbar-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 9px;
+    }
+    .kicker {
+      margin: 0 0 4px;
+      color: var(--accent-dark);
+      font-size: .8rem;
+      font-weight: 850;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 13px;
+      border: 1px solid var(--accent-dark);
+      border-radius: 6px;
+      background: var(--accent-dark);
+      color: #fff;
+      font-weight: 750;
+      text-decoration: none;
+      line-height: 1.2;
+      cursor: pointer;
+      font-size: .92rem;
+      white-space: nowrap;
+    }
+    .button.secondary {
+      background: #fffaf0;
+      color: var(--accent-dark);
+    }
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 30px 20px 60px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 10px 22px rgba(63, 50, 25, .08);
+      padding: 26px;
+    }
+    .intro {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+    .sentence-work {
+      display: grid;
+      gap: 14px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: sentence;
+    }
+    .sentence-row {
+      counter-increment: sentence;
+      display: grid;
+      grid-template-columns: minmax(230px, .9fr) minmax(260px, 1.1fr);
+      gap: 14px;
+      align-items: stretch;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffdfa;
+    }
+    .sentence-text {
+      position: relative;
+      padding-left: 2.1rem;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.15rem;
+      line-height: 1.45;
+    }
+    .sentence-text::before {
+      content: counter(sentence) ".";
+      position: absolute;
+      left: 0;
+      color: var(--accent-dark);
+      font-weight: 800;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: .95rem;
+    }
+    .reading {
+      margin: 0 0 24px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.24rem;
+      line-height: 1.75;
+    }
+    .translation-panel {
+      border-top: 1px solid var(--line);
+      margin-top: 24px;
+      padding-top: 20px;
+    }
+    .section-label {
+      display: block;
+      margin: 0 0 8px;
+      color: var(--accent-dark);
+      font-size: .82rem;
+      font-weight: 850;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .answer-box {
+      width: 100%;
+      min-height: 72px;
+      resize: vertical;
+      border: 1px solid #baa676;
+      border-radius: 6px;
+      background: #fffefa;
+      padding: 9px 10px;
+      color: var(--ink);
+      font: 1rem/1.45 Inter, ui-sans-serif, system-ui, sans-serif;
+    }
+    .answer-box.translation {
+      min-height: 280px;
+    }
+    .answer-box:focus {
+      outline: 3px solid rgba(159, 40, 50, .18);
+      border-color: var(--accent);
+    }
+    @media (max-width: 760px) {
+      .topbar-inner { align-items: flex-start; flex-direction: column; }
+      .top-actions { justify-content: flex-start; }
+      .card { padding: 18px; }
+      .sentence-row { grid-template-columns: 1fr; }
+      .sentence-text, .reading { font-size: 1.08rem; }
+    }
+    @media print {
+      .topbar { position: static; }
+      .top-actions { display: none; }
+      body { background: #fff; }
+      main { padding: 0; max-width: none; }
+      .card { border: 0; box-shadow: none; padding: 0; }
+      .sentence-row { break-inside: avoid; border-color: #aaa; background: #fff; }
+      .answer-box { border: 1px solid #999; background: #fff; min-height: 62px; }
+      .answer-box.translation { min-height: 360px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <p class="kicker">Latin Textbook</p>
+        <h1>Chapter 1: The Forum</h1>
+      </div>
+      <div class="top-actions">
+        <a class="button secondary" href="chapter-1.html">Back to Chapter 1</a>
+        <button class="button" type="button" id="exportPdf">Export Translation as PDF</button>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section class="card">
+      <p class="intro">A chapter-specific reading from the narrative collection.</p>
+      <p class="reading">Forum Romanum est locus magnus. Templum est altum. Via est longa. Statua est clara. Mercator est laetus. Puella est parva. Populus est magnus et laetus. Forum est locus clarus.</p>
+      <div class="translation-panel">
+        <label class="section-label" for="narrativeTranslation">Translation</label>
+        <textarea class="answer-box translation" id="narrativeTranslation" data-answer-id="narrative-translation" aria-label="Narrative translation"></textarea>
+      </div>
+    </section>
+  </main>
+  <script>
+    const storagePrefix = "latin-chapter-1-narrative:";
+    document.querySelectorAll(".answer-box").forEach((field) => {
+      const key = storagePrefix + field.dataset.answerId;
+      field.value = localStorage.getItem(key) || "";
+      field.addEventListener("input", () => localStorage.setItem(key, field.value));
+    });
+    document.getElementById("exportPdf").addEventListener("click", () => {
+      window.print();
+    });
+  </script>
+</body>
+</html>

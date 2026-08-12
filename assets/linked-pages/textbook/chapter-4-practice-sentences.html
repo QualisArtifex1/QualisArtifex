@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chapter 4 Practice Sentences | Latin Textbook</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #222831;
+      --muted: #64717f;
+      --paper: #fffdf8;
+      --panel: #ffffff;
+      --line: #d8cdb7;
+      --accent: #9f2832;
+      --accent-dark: #6f1821;
+      --soft: #f4efe5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+    a { color: var(--accent-dark); }
+    .topbar {
+      border-bottom: 1px solid var(--line);
+      background: #fffaf0;
+    }
+    .topbar-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 9px;
+    }
+    .kicker {
+      margin: 0 0 4px;
+      color: var(--accent-dark);
+      font-size: .8rem;
+      font-weight: 850;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 13px;
+      border: 1px solid var(--accent-dark);
+      border-radius: 6px;
+      background: var(--accent-dark);
+      color: #fff;
+      font-weight: 750;
+      text-decoration: none;
+      line-height: 1.2;
+      cursor: pointer;
+      font-size: .92rem;
+      white-space: nowrap;
+    }
+    .button.secondary {
+      background: #fffaf0;
+      color: var(--accent-dark);
+    }
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 30px 20px 60px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 10px 22px rgba(63, 50, 25, .08);
+      padding: 26px;
+    }
+    .intro {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+    .sentence-work {
+      display: grid;
+      gap: 14px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: sentence;
+    }
+    .sentence-row {
+      counter-increment: sentence;
+      display: grid;
+      grid-template-columns: minmax(230px, .9fr) minmax(260px, 1.1fr);
+      gap: 14px;
+      align-items: stretch;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffdfa;
+    }
+    .sentence-text {
+      position: relative;
+      padding-left: 2.1rem;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.15rem;
+      line-height: 1.45;
+    }
+    .sentence-text::before {
+      content: counter(sentence) ".";
+      position: absolute;
+      left: 0;
+      color: var(--accent-dark);
+      font-weight: 800;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: .95rem;
+    }
+    .reading {
+      margin: 0 0 24px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.24rem;
+      line-height: 1.75;
+    }
+    .translation-panel {
+      border-top: 1px solid var(--line);
+      margin-top: 24px;
+      padding-top: 20px;
+    }
+    .section-label {
+      display: block;
+      margin: 0 0 8px;
+      color: var(--accent-dark);
+      font-size: .82rem;
+      font-weight: 850;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .answer-box {
+      width: 100%;
+      min-height: 72px;
+      resize: vertical;
+      border: 1px solid #baa676;
+      border-radius: 6px;
+      background: #fffefa;
+      padding: 9px 10px;
+      color: var(--ink);
+      font: 1rem/1.45 Inter, ui-sans-serif, system-ui, sans-serif;
+    }
+    .answer-box.translation {
+      min-height: 280px;
+    }
+    .answer-box:focus {
+      outline: 3px solid rgba(159, 40, 50, .18);
+      border-color: var(--accent);
+    }
+    @media (max-width: 760px) {
+      .topbar-inner { align-items: flex-start; flex-direction: column; }
+      .top-actions { justify-content: flex-start; }
+      .card { padding: 18px; }
+      .sentence-row { grid-template-columns: 1fr; }
+      .sentence-text, .reading { font-size: 1.08rem; }
+    }
+    @media print {
+      .topbar { position: static; }
+      .top-actions { display: none; }
+      body { background: #fff; }
+      main { padding: 0; max-width: none; }
+      .card { border: 0; box-shadow: none; padding: 0; }
+      .sentence-row { break-inside: avoid; border-color: #aaa; background: #fff; }
+      .answer-box { border: 1px solid #999; background: #fff; min-height: 62px; }
+      .answer-box.translation { min-height: 360px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <p class="kicker">Latin Textbook</p>
+        <h1>Chapter 4 Practice Sentences</h1>
+      </div>
+      <div class="top-actions">
+        <a class="button secondary" href="chapter-4.html">Back to Chapter 4</a>
+        <button class="button" type="button" id="exportPdf">Export Answers as PDF</button>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section class="card">
+      <p class="intro">Twenty practice sentences for Chapter 4.</p>
+      <ol class="sentence-work">
+        <li class="sentence-row">
+          <div class="sentence-text">Liber magistri magnus est.</div>
+          <textarea class="answer-box" data-answer-id="sentence-1" aria-label="Translation for sentence 1"></textarea>
+        </li>
+        <li class="sentence-row">
+          <div class="sentence-text">Rosa puellae pulchra est.</div>
+          <textarea class="answer-box" data-answer-id="sentence-2" aria-label="Translation for sentence 2"></textarea>
+        </li>
+        <li class="sentence-row">
+          <div class="sentence-text">Servus domini laborat.</div>
+          <textarea class="answer-box" data-answer-id="sentence-3" aria-label="Translation for sentence 3"></textarea>
+        </li>
+        <li class="sentence-row">
+          <div class="sentence-text">Puella aquam bibere vult.</div>
+          <textarea class="answer-box" data-answer-id="sentence-4" aria-label="Translation for sentence 4"></textarea>
+        </li>
+        <li class="sentence-row">
+          <div class="sentence-text">Puer librum legere potest.</div>
+          <textarea class="answer-box" data-answer-id="sentence-5" aria-label="Translation for sentence 5"></textarea>
+        </li>
+        <li class="sentence-row">
+          <div class="sentence-text">Agricola, quod terram amat, laetus est.</div>
+          <textarea class="answer-box" data-answer-id="sentence-6" aria-label="Translation for sentence 6"></textarea>
+        </li>
+        <li class="sentence-row">
+          <div class="sentence-text">Magistra, quod clara est, pueros docet.</div>
+          <textarea class="answer-box" data-answer-id="sentence-7" aria-label="Translation for sentence 7"></textarea>
+        </li>
+        <li class="sentence-row">
+          <div class="sentence-text">Puer vocem amicae audit.</div>
+          <textarea class="answer-box" data-answer-id="sentence-8" aria-label="Translation for sentence 8"></textarea>
+        </li>
+        <li class="sentence-row">
+          <div class="sentence-text">Dominus vinum bibere vult.</div>
+          <textarea class="answer-box" data-answer-id="sentence-9" aria-label="Translation for sentence 9"></textarea>
+        </li>
+        <li class="sentence-row">
+          <div class="sentence-text">Servus, quod fessus est, dormire vult.</div>
+          <textarea class="answer-box" data-answer-id="sentence-10" aria-label="Translation for sentence 10"></textarea>
+        </li>
+        <li class="sentence-row">
+          <div class="sentence-text">Corona reginae clara est.</div>
+          <textarea class="answer-box" data-answer-id="sentence-11" aria-label="Translation for sentence 11"></textarea>
+        </li>
+        <li class="sentence-row">
+          <div class="sentence-text">Gladius militis longus est.</div>
+          <textarea class="answer-box" data-answer-id="sentence-12" aria-label="Translation for sentence 12"></textarea>
+        </li>
+        <li class="sentence-row">
+          <div class="sentence-text">Carmen poetae pulchrum est.</div>
+          <textarea class="answer-box" data-answer-id="sentence-13" aria-label="Translation for sentence 13"></textarea>
+        </li>
+        <li class="sentence-row">
+          <div class="sentence-text">Rex nuntium audire vult.</div>
+          <textarea class="answer-box" data-answer-id="sentence-14" aria-label="Translation for sentence 14"></textarea>
+        </li>
+        <li class="sentence-row">
+          <div class="sentence-text">Nauta navem videre potest.</div>
+          <textarea class="answer-box" data-answer-id="sentence-15" aria-label="Translation for sentence 15"></textarea>
+        </li>
+        <li class="sentence-row">
+          <div class="sentence-text">Miles, quod fortis est, pugnat.</div>
+          <textarea class="answer-box" data-answer-id="sentence-16" aria-label="Translation for sentence 16"></textarea>
+        </li>
+        <li class="sentence-row">
+          <div class="sentence-text">Mater, quod filiam amat, cantare vult.</div>
+          <textarea class="answer-box" data-answer-id="sentence-17" aria-label="Translation for sentence 17"></textarea>
+        </li>
+        <li class="sentence-row">
+          <div class="sentence-text">Lupus cibum invenire vult.</div>
+          <textarea class="answer-box" data-answer-id="sentence-18" aria-label="Translation for sentence 18"></textarea>
+        </li>
+        <li class="sentence-row">
+          <div class="sentence-text">Poeta carmen scribere potest.</div>
+          <textarea class="answer-box" data-answer-id="sentence-19" aria-label="Translation for sentence 19"></textarea>
+        </li>
+        <li class="sentence-row">
+          <div class="sentence-text">Regina, quod laeta est, ridere vult.</div>
+          <textarea class="answer-box" data-answer-id="sentence-20" aria-label="Translation for sentence 20"></textarea>
+        </li>
+      </ol>
+    </section>
+  </main>
+  <script>
+    const storagePrefix = "latin-chapter-4-practice:";
+    document.querySelectorAll(".answer-box").forEach((field) => {
+      const key = storagePrefix + field.dataset.answerId;
+      field.value = localStorage.getItem(key) || "";
+      field.addEventListener("input", () => localStorage.setItem(key, field.value));
+    });
+    document.getElementById("exportPdf").addEventListener("click", () => {
+      window.print();
+    });
+  </script>
+</body>
+</html>
