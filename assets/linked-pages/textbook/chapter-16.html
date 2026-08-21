@@ -36,11 +36,40 @@
     .doc-content h1, .doc-content h2, .doc-content h3 { font-family: "Trebuchet MS", Arial, sans-serif; line-height: 1.15; letter-spacing: 0; }
     .doc-content h1 { margin: 32px 0 16px; color: var(--accent-dark); font-size: clamp(2rem, 6vw, 3.2rem); }
     .doc-content h2 { margin: 26px 0 12px; color: #312c25; font-size: 1.45rem; }
-    .doc-content table { width: 100%; border-collapse: collapse; margin: 18px 0; font-family: Arial, Helvetica, sans-serif; font-size: 0.97rem; line-height: 1.35; }
+    .doc-content table {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      overscroll-behavior-inline: contain;
+      border-collapse: collapse;
+      margin: 18px 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.97rem;
+      line-height: 1.35;
+    }
     .doc-content table[style] { margin-left: 0 !important; }
     .doc-content th, .doc-content td { border: 1px solid var(--line); padding: 9px !important; vertical-align: top; }
     .doc-content img { max-width: 100%; height: auto !important; margin: 18px auto; border-radius: 6px; }
+    .doc-content span[style*="overflow: hidden"][style*="display: inline-block"] {
+      display: block !important;
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
+    }
+    .doc-content span[style*="overflow: hidden"][style*="display: inline-block"] img {
+      width: 100% !important;
+      max-width: 100% !important;
+      height: auto !important;
+      margin: 18px auto !important;
+      transform: none !important;
+      -webkit-transform: none !important;
+    }
     .doc-content ul, .doc-content ol { padding-left: 28px; }
+    @media (min-width: 641px), print {
+      .doc-content table { display: table; table-layout: fixed; overflow: visible; }
+      .doc-content th, .doc-content td { width: auto !important; overflow-wrap: anywhere; }
+    }
     @media (max-width: 900px) { .hero, .layout { grid-template-columns: 1fr; } .toc { position: static; } .hero-image img { min-height: 310px; } }
     @media (max-width: 640px) { body { font-size: 16px; } .page { width: calc(100% - 24px); padding-top: 20px; } .doc-content { padding: 18px; } }</style>
 </head>
