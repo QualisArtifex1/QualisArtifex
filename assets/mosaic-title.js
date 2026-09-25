@@ -6,56 +6,6 @@ const RETURN_DELAY = 2800;
 const RETURN_DURATION = 850;
 const GRAVITY = 2600;
 
-// Stable variation: relayout moves the mosaic without replacing its materials.
-function noise(seed) {
-  const value = Math.sin(seed * 127.1 + 311.7) * 43758.5453123;
-  return value - Math.floor(value);
-}
-
-// Bake the fine gold-leaf grain once, instead of painting it every animation frame.
-function makeGoldMaterials() {
-  return Array.from({ length: 32 }, (_, index) => {
-    const surface = document.createElement('canvas');
-    surface.width = surface.height = 64;
-    const pen = surface.getContext('2d');
-    const n = offset => noise(index * 149 + offset);
-    const corners = [[5+n(1)*3,5+n(2)*3],[56+n(3)*3,4+n(4)*3],
-      [55+n(5)*4,55+n(6)*4],[4+n(7)*3,54+n(8)*4]];
-    const path = () => {
-      pen.beginPath();
-      corners.forEach(([x,y],i) => i ? pen.lineTo(x,y) : pen.moveTo(x,y));
-      pen.closePath();
-    };
-    path();
-    pen.fillStyle = '#34291c';
-    pen.shadowColor = '#160e08'; pen.shadowBlur = 3; pen.shadowOffsetY = 3;
-    pen.fill(); pen.shadowBlur = 0; pen.shadowOffsetY = 0;
-    pen.save(); path(); pen.clip();
-    const gold = pen.createLinearGradient(5, 0, 54, 64);
-    const tone = n(9) * 12;
-    gold.addColorStop(0, `hsl(46 65% ${76+tone/2}%)`);
-    gold.addColorStop(.38, `hsl(43 58% ${57+tone}%)`);
-    gold.addColorStop(.66, `hsl(45 63% ${67+tone}%)`);
-    gold.addColorStop(1, `hsl(35 49% ${39+tone}%)`);
-    pen.fillStyle = gold; pen.fillRect(0,0,64,64);
-    for(let i=0;i<150;i++) {
-      const seed = 30+i*7;
-      pen.fillStyle = i%3 ? `rgba(255,245,183,${.12+n(seed)*.38})` : `rgba(96,62,16,${.08+n(seed)*.25})`;
-      pen.fillRect(n(seed+1)*64,n(seed+2)*64,.5+n(seed+3)*2.5,.5+n(seed+4)*2);
-    }
-    // Small, irregular leaf seams keep the face from looking like polished plastic.
-    pen.strokeStyle = 'rgba(119,83,28,.22)'; pen.lineWidth=.65;
-    pen.beginPath(); pen.moveTo(12+n(14)*25,7); pen.lineTo(24+n(15)*12,30);
-    pen.lineTo(16+n(16)*30,57); pen.stroke(); pen.restore();
-    pen.lineJoin='bevel'; pen.lineWidth=2.4;
-    pen.strokeStyle='rgba(255,246,194,.85)';
-    pen.beginPath(); pen.moveTo(...corners[3]); pen.lineTo(...corners[0]); pen.lineTo(...corners[1]); pen.stroke();
-    pen.strokeStyle='rgba(80,49,15,.8)';
-    pen.beginPath(); pen.moveTo(...corners[1]); pen.lineTo(...corners[2]); pen.lineTo(...corners[3]); pen.stroke();
-    return surface;
-  });
-}
-
 function mountMosaic(app, heading) {
   const intro = heading.closest('.intro');
   const title = heading.textContent;
@@ -67,7 +17,6 @@ function mountMosaic(app, heading) {
   document.body.append(canvas);
   heading.setAttribute('aria-label', title);
   const letters = [];
-  const materials = makeGoldMaterials();
   heading.replaceChildren();
   title.split(' ').forEach((word, index) => {
     if (index) heading.append(' ');
@@ -114,10 +63,10 @@ function mountMosaic(app, heading) {
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
     const style = getComputedStyle(heading);
     const size = parseFloat(style.fontSize);
-    const step = Math.max(2, size / 19);
+    const step = Math.max(1.8, size / 22);
     const mask = document.createElement('canvas');
     const pen = mask.getContext('2d', { willReadFrequently: true });
-    for (const [letterIndex, letter] of letters.entries()) {
+    for (const letter of letters) {
       const rect = letter.button.getBoundingClientRect();
       mask.width = Math.ceil(rect.width + size * 0.25);
       mask.height = Math.ceil(size * 1.5);
@@ -134,18 +83,14 @@ function mountMosaic(app, heading) {
       const pixels = pen.getImageData(0, 0, mask.width, mask.height).data;
       letter.tiles = [];
       for (let y = step / 2; y < mask.height; y += step) {
-        for (let x = step * (Math.round(y / step) % 2 ? 0.7 : 0.5); x < mask.width; x += step) {
+        for (let x = step / 2; x < mask.width; x += step) {
           if (pixels[(Math.floor(y) * mask.width + Math.floor(x)) * 4 + 3] < 80) continue;
-          const seed = letterIndex * 971 + Math.round(y / step) * 67 + Math.round(x / step) * 13;
           const homeX = rect.left + x;
           const homeY = rect.top + y - padding;
           letter.tiles.push({
             homeX, homeY, x: homeX, y: homeY, vx: 0, vy: 0, angle: 0,
-            spin: 0, size: step * (1.02 + noise(seed) * .1),
-            tone: noise(seed+1), facet: noise(seed+2) * Math.PI * 2,
-            tilt: (noise(seed+3)-.5)*.14, aspect: .94+noise(seed+4)*.12,
-            material: Math.floor(noise(seed+5)*materials.length),
-            floor: height - 8 - noise(seed+6) * step * 3, settled: false,
+            spin: 0, size: step * 0.87, tone: Math.random(), facet: Math.random() * Math.PI * 2,
+            floor: height - 8 - Math.random() * step * 3, settled: false,
           });
         }
       }
@@ -245,23 +190,30 @@ function mountMosaic(app, heading) {
     const dx = pointer.x - tile.x, dy = pointer.y - tile.y;
     const distance = Math.hypot(dx, dy);
     const incidence = (Math.cos(Math.atan2(dy, dx) - tile.facet) + 1) / 2;
-    const light = Math.max(0, 1 - distance / (width * 0.5 + 100));
-    const shine = Math.pow(incidence, 7) * light;
+    const light = Math.max(0, 1 - distance / (width * 0.65 + 160));
+    const shine = Math.pow(incidence, 10) * light;
+    const brightness = 39 + tile.tone * 24 + light * 13;
     const half = tile.size / 2;
     ctx.save();
     ctx.translate(tile.x, tile.y);
-    ctx.rotate(tile.angle + tile.tilt);
-    ctx.scale(tile.aspect, 1);
-    // Keep the dark setting legible even when the tiles are only two pixels wide.
-    ctx.fillStyle = 'rgba(49, 31, 13, .72)';
-    ctx.fillRect(-half*.85+.2, -half*.85+.45, tile.size*.86, tile.size*.86);
-    ctx.drawImage(materials[tile.material], -half, -half, tile.size, tile.size);
-    // A restrained moving reflection; the baked grain and warm edges remain visible.
-    if (shine > .08) {
-      ctx.fillStyle = `rgba(255, 247, 204, ${shine * .3})`;
-      ctx.fillRect(-half*.73, -half*.73, tile.size*.73, tile.size*.73);
-      ctx.fillStyle = `rgba(255, 252, 227, ${shine * .65})`;
-      ctx.fillRect(-half*.7, -half*.72, tile.size*.7, Math.max(.25,tile.size*.065));
+    ctx.rotate(tile.angle);
+    ctx.fillStyle = 'rgba(35, 19, 5, 0.7)';
+    ctx.fillRect(-half + 0.6, -half + 1.1, tile.size, tile.size);
+    ctx.fillStyle = `hsl(${36 + tile.tone * 10} 62% ${brightness}%)`;
+    ctx.fillRect(-half, -half, tile.size, tile.size);
+    ctx.fillStyle = `rgba(255, 248, 208, ${0.2 + shine * 0.8})`;
+    ctx.fillRect(-half, -half, tile.size, Math.max(0.5, tile.size * 0.18));
+    ctx.fillRect(-half, -half, Math.max(0.5, tile.size * 0.13), tile.size);
+    ctx.fillStyle = 'rgba(62, 30, 6, 0.45)';
+    ctx.fillRect(-half, half - 0.5, tile.size, 0.5);
+    if (shine > 0.1) {
+      ctx.fillStyle = `rgba(255, 253, 229, ${shine * 0.88})`;
+      ctx.fillRect(-half, -half, tile.size, tile.size);
+    }
+    if (shine > 0.78 && tile.tone > 0.85) {
+      ctx.fillStyle = `rgba(255, 251, 222, ${(shine - 0.78) * 3})`;
+      ctx.fillRect(-tile.size, -0.4, tile.size * 2, 0.8);
+      ctx.fillRect(-0.4, -tile.size, 0.8, tile.size * 2);
     }
     ctx.restore();
   }
