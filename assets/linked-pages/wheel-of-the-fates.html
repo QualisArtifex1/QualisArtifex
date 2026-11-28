@@ -1,0 +1,1721 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Wheel of the Fates: a classical mythology spinner wheel with custom sections, myth presets and confetti.">
+<title>Wheel of the Fates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Alegreya+Sans:wght@400;500;700&family=Alegreya:ital@1&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.browser.min.js"></script>
+<style>
+/* Layout: night sky over Olympus. Wheel on the left as the hero with its record of results beneath; a bronze-tablet editor on the right; stacks on phones. Big-screen mode hides the editor for projecting. Single committed dark look. */
+:root {
+  color-scheme: dark;
+  --night: #121624;
+  --night-2: #1b2133;
+  --night-3: #252d44;
+  --line: #3a4361;
+  --marble: #efe8d8;
+  --muted: #aaa491;
+  --gold: #d6ab4f;
+  --gold-hi: #f3d98f;
+  --gold-lo: #8d6a24;
+  --laurel: #6f8f4e;
+  --ink: #1a1512;
+  --danger: #d77a62;
+  --display: "Cinzel", "Trajan Pro", "Times New Roman", serif;
+  --body: "Alegreya Sans", "Gill Sans", "Segoe UI", system-ui, sans-serif;
+  --lore: "Alegreya", Georgia, serif;
+  --title: #f3d98f;
+  --shine: #fffaf0;
+  --scrim: #0a0c14b3;
+  --hub-ring: #121624cc;
+  --halo: #d6ab4f30;
+  --halo-won: #f3d98f55;
+  --flash: #fff8e0d9;
+  --flash-2: #f3d98f40;
+  --bolt: #fff6d0;
+  --bolt-glow: #ffe9a8;
+  --shadow: #0006;
+  --thread: #f3d98f;
+  --name-shadow: #000c;
+  --sky: radial-gradient(ellipse at 30% 0%, #26305099 0%, transparent 60%);
+}
+/* Skins: each redefines the same tokens */
+:root[data-skin="olympus"] {
+  color-scheme: light;
+  --night: #f4efe4; --night-2: #f3ede0; --night-3: #fdfaf3; --line: #d8ccb1;
+  --marble: #2a2418; --muted: #6a5f4a; --gold: #c4952f; --gold-hi: #f1d68a; --gold-lo: #8a6418;
+  --ink: #231a08; --title: #8a6418; --shine: #f6dd8e; --danger: #b4492f;
+  --scrim: #3a2f1a66; --hub-ring: #fdfaf3cc; --halo: #fff3c470; --halo-won: #fff3c4bb;
+  --flash: #fffdf2e6; --flash-2: #ffe9a855; --bolt: #f1c95a; --bolt-glow: #fff3c4;
+  --shadow: #6b5a3a33; --thread: #b8862b; --name-shadow: #fff9;
+  --sky: radial-gradient(circle at 85% -5%, #fff8dcf0 0%, #fff3c400 38%), linear-gradient(180deg, #9fc4e6 0%, #d6e7f3 38%, #f4efe4 78%);
+}
+:root[data-skin="underworld"] {
+  --night: #0d0912; --night-2: #1a1224; --night-3: #271b35; --line: #3f2d55;
+  --marble: #ece3f5; --muted: #a596b8; --gold: #5fcf7a; --gold-hi: #b7f5c0; --gold-lo: #2e7a45;
+  --ink: #08160c; --title: #9ff0ad; --shine: #f0fff3; --danger: #ff8a7a;
+  --scrim: #05030ac0; --hub-ring: #0d0912cc; --halo: #5fcf7a30; --halo-won: #7fe39a60;
+  --flash: #d9ffe0cc; --flash-2: #5fcf7a44; --bolt: #c9ffd3; --bolt-glow: #5fdc7f;
+  --shadow: #0009; --thread: #9ff0ad; --name-shadow: #000c;
+  --sky: radial-gradient(ellipse at 50% 115%, #2a7a3e55 0%, transparent 55%), radial-gradient(ellipse at 50% -10%, #3a245088 0%, transparent 60%);
+}
+:root[data-skin="sea"] {
+  --night: #04192a; --night-2: #0a2c3e; --night-3: #103b52; --line: #1f5a73;
+  --marble: #e6f6f4; --muted: #8fb8bd; --gold: #5fd0c0; --gold-hi: #c3f4ec; --gold-lo: #1f7f7a;
+  --ink: #03202a; --title: #a8efe4; --shine: #ffffff; --danger: #ff9a85;
+  --scrim: #021018b8; --hub-ring: #04192acc; --halo: #5fd0c030; --halo-won: #c3f4ec55;
+  --flash: #e8fffbd0; --flash-2: #5fd0c044; --bolt: #e8fffb; --bolt-glow: #7fe3d4;
+  --shadow: #0008; --thread: #c3f4ec; --name-shadow: #000c;
+  --sky: linear-gradient(180deg, #0d5570 0%, #072c40 40%, #03121d 100%);
+}
+:root[data-skin="olympus"] h1 { background-image: linear-gradient(180deg, #c4952f, #8a6418 60%, #5e430d); }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { min-height: 100%; }
+body {
+  margin: 0;
+  background: var(--sky);
+  background-color: var(--night);
+  background-attachment: fixed;
+  color: var(--marble);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.5;
+}
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding-block: 28px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+header { text-align: center; display: grid; gap: 6px; }
+.eyebrow {
+  font-family: var(--display);
+  font-size: 0.78rem;
+  letter-spacing: 0.32em;
+  color: var(--title);
+  text-transform: uppercase;
+}
+h1 {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(2rem, 5.5vw, 3.4rem);
+  letter-spacing: 0.06em;
+  line-height: 1.05;
+  text-wrap: balance;
+  background: linear-gradient(180deg, var(--gold-hi), var(--gold) 55%, var(--gold-lo));
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+}
+.meander {
+  height: 14px;
+  margin: 14px auto 0;
+  width: min(520px, 100%);
+  background-color: var(--gold);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='14' viewBox='0 0 20 14'%3E%3Cpath d='M0 12.5H20M0 1.5H20M15 12.5V4.5H5V10H12V7H8' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3C/svg%3E") 0 0 / 20px 14px repeat-x;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='14' viewBox='0 0 20 14'%3E%3Cpath d='M0 12.5H20M0 1.5H20M15 12.5V4.5H5V10H12V7H8' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3C/svg%3E") 0 0 / 20px 14px repeat-x;
+  opacity: 0.85;
+}
+.layout {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+}
+@media (max-width: 860px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+
+/* Wheel */
+.stage { display: grid; justify-items: center; gap: 16px; min-width: 0; }
+.wheel-wrap {
+  position: relative;
+  width: min(100%, 560px);
+  aspect-ratio: 1;
+  max-width: 100%;
+}
+.wheel-wrap::before {
+  content: "";
+  position: absolute; inset: -5%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--halo) 0%, transparent 68%);
+  pointer-events: none;
+  transition: opacity 400ms;
+}
+.wheel-wrap.won::before { background: radial-gradient(circle, var(--halo-won) 0%, transparent 70%); }
+#wheel {
+  position: absolute; top: 4.6%; left: 4.6%;
+  width: 90.8%; height: 90.8%;
+  will-change: transform, filter;
+  filter: drop-shadow(0 18px 30px #0009);
+  cursor: pointer;
+}
+.pointer {
+  position: absolute;
+  top: -3.5%;
+  left: 50%;
+  width: 9%;
+  transform: translateX(-50%);
+  transform-origin: 50% 25%;
+  z-index: 3;
+  filter: drop-shadow(0 3px 4px #000a);
+  transition: transform 90ms ease-out;
+  pointer-events: none;
+}
+.pointer.flick { transform: translateX(-50%) rotate(-16deg); transition: none; }
+.hub {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 20%; aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 3px solid var(--gold-hi);
+  background: radial-gradient(circle at 35% 30%, var(--gold-hi), var(--gold) 45%, var(--gold-lo) 100%);
+  color: var(--ink);
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(0.85rem, 2.6vw, 1.25rem);
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  z-index: 2;
+  box-shadow: 0 0 0 6px var(--hub-ring), 0 6px 18px #000a, inset 0 -4px 10px #0004;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+  display: grid; place-items: center;
+  line-height: 1;
+}
+.hub::after {
+  content: "";
+  position: absolute; inset: 9%;
+  border-radius: 50%;
+  border: 1.5px dashed var(--gold-lo);
+  opacity: 0.6;
+}
+.hub small { display: block; font-size: 0.6em; letter-spacing: 0; margin-top: 4px; font-weight: 700; }
+.hub:hover:not(:disabled) { transform: translate(-50%, -50%) scale(1.05); }
+.hub:active:not(:disabled) { transform: translate(-50%, -50%) scale(0.97); }
+.hub:disabled { cursor: default; filter: saturate(0.7) brightness(0.9); }
+.hub:focus-visible { outline: 3px solid var(--marble); outline-offset: 4px; }
+.hub.ready:not(:disabled) { animation: breathe 2.8s ease-in-out infinite; }
+@keyframes breathe {
+  0%, 100% { box-shadow: 0 0 0 6px var(--hub-ring), 0 6px 18px #000a, inset 0 -4px 10px #0004; }
+  50% { box-shadow: 0 0 0 6px var(--hub-ring), 0 0 28px var(--halo-won), inset 0 -4px 10px #0004; }
+}
+.status {
+  min-height: 1.6em;
+  font-family: var(--display);
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  text-align: center;
+  font-size: 1rem;
+  text-wrap: balance;
+}
+.status b { color: var(--title); font-weight: 700; }
+.stage-tools { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+
+/* Record of results */
+.record {
+  width: min(100%, 560px);
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  display: grid;
+  gap: 10px;
+}
+.record-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.record ol {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.record li {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--night-2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px 12px 3px 4px;
+  font-size: 0.92rem;
+  max-width: 100%;
+}
+.record li span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.record li .ord {
+  display: grid; place-items: center;
+  min-width: 24px; height: 24px; padding: 0 5px;
+  border-radius: 999px;
+  background: var(--gold); color: var(--ink);
+  font-family: var(--display); font-weight: 700; font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+}
+.record li:first-child { border-color: var(--gold); }
+.empty-note { color: var(--muted); font-size: 0.92rem; margin: 0; }
+
+/* Editor tablet */
+.tablet {
+  min-width: 0;
+  background: linear-gradient(180deg, var(--night-3), var(--night-2));
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--gold);
+  border-radius: 6px;
+  padding: 20px;
+  display: grid;
+  gap: 18px;
+  box-shadow: 0 20px 40px var(--shadow);
+}
+.tablet h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 1.15rem;
+  letter-spacing: 0.14em;
+  color: var(--title);
+}
+.label {
+  font-family: var(--display);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.field { display: grid; gap: 6px; }
+select, input[type="text"], input[type="number"], textarea {
+  font: inherit;
+  color: var(--marble);
+  background: var(--night);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 8px 10px;
+  width: 100%;
+  min-width: 0;
+}
+select:focus-visible, input:focus-visible, textarea:focus-visible, button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+}
+.count-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.count-row input { width: 5.5rem; text-align: center; font-variant-numeric: tabular-nums; font-weight: 700; font-size: 1.1rem; }
+.btn {
+  font-family: var(--body);
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  background: var(--night);
+  color: var(--marble);
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: border-color 120ms, background 120ms;
+}
+.btn:hover:not(:disabled) { border-color: var(--gold); }
+.btn:disabled { opacity: 0.45; cursor: default; }
+.btn.square { width: 40px; height: 40px; padding: 0; font-size: 1.3rem; line-height: 1; }
+.btn.gold { background: var(--gold); border-color: var(--gold-hi); color: var(--ink); }
+.btn.gold:hover:not(:disabled) { background: var(--gold-hi); }
+.btn.quiet { background: transparent; }
+.btn.small { padding: 5px 10px; font-size: 0.85rem; }
+.btn.danger { color: var(--danger); border-color: var(--danger); }
+.btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.entries {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: grid;
+  gap: 6px;
+  max-height: 360px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.entries li { display: grid; grid-template-columns: 2.6rem minmax(0, 1fr) 36px; gap: 6px; align-items: center; }
+.numeral {
+  font-family: var(--display);
+  font-size: 0.8rem;
+  color: var(--gold);
+  text-align: right;
+}
+.swatch-input { position: relative; }
+.swatch-input input { padding-left: 26px; }
+.swatch-input::before {
+  content: ""; position: absolute; left: 9px; top: 50%;
+  width: 10px; height: 10px; margin-top: -5px; border-radius: 2px;
+  background: var(--sw, var(--gold));
+}
+.remove {
+  width: 36px; height: 36px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.remove:hover:not(:disabled) { color: var(--marble); border-color: var(--line); }
+.remove:disabled { opacity: 0.3; cursor: default; }
+details { border-top: 1px solid var(--line); padding-top: 12px; }
+summary { cursor: pointer; color: var(--title); font-weight: 700; }
+details[open] summary { margin-bottom: 10px; }
+textarea { min-height: 160px; resize: vertical; line-height: 1.4; }
+.hint { color: var(--muted); font-size: 0.88rem; margin: 0; }
+.toggle { display: flex; gap: 10px; align-items: flex-start; color: var(--marble); font-size: 0.95rem; cursor: pointer; }
+.toggle input { accent-color: var(--gold); width: 17px; height: 17px; margin-top: 3px; flex: none; }
+.toggle small { display: block; color: var(--muted); font-size: 0.85rem; }
+.options { display: grid; gap: 12px; border-top: 1px solid var(--line); padding-top: 14px; }
+
+.segmented { display: inline-flex; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; flex-wrap: wrap; }
+.segmented input { position: absolute; opacity: 0; pointer-events: none; }
+.segmented label {
+  padding: 7px 14px; cursor: pointer; font-weight: 700; font-size: 0.9rem;
+  color: var(--muted); background: var(--night);
+  border-right: 1px solid var(--line);
+}
+.segmented label:last-of-type { border-right: 0; }
+.segmented input:checked + label { background: var(--gold); color: var(--ink); }
+.segmented input:focus-visible + label { outline: 2px solid var(--gold-hi); outline-offset: -2px; }
+
+.saved-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.saved-list li {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 6px; align-items: center;
+  background: var(--night); border: 1px solid var(--line); border-radius: 4px; padding: 6px 6px 6px 10px;
+}
+.saved-list .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.saved-list .ct { color: var(--muted); font-size: 0.85rem; }
+.save-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+
+/* Big-screen mode for projecting */
+body.big .tablet, body.big header .meander, body.big header .eyebrow { display: none; }
+body.big .layout { grid-template-columns: minmax(0, 1fr); margin-top: 12px; }
+body.big .page { max-width: none; padding-block: 16px 24px; }
+body.big h1 { font-size: clamp(1.4rem, 3vw, 2.2rem); }
+body.big .wheel-wrap { width: min(100%, 76vh); }
+body.big .record { width: min(100%, 900px); }
+body.big .status { font-size: 1.3rem; }
+
+/* Verdict */
+.verdict {
+  position: fixed; inset: 0;
+  z-index: 20;
+  display: grid; place-items: center;
+  background: var(--scrim);
+  backdrop-filter: blur(2px);
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+}
+.verdict-card {
+  position: relative;
+  width: min(480px, 100%);
+  text-align: center;
+  background:
+    radial-gradient(ellipse at 50% 0%, var(--halo), transparent 60%),
+    linear-gradient(180deg, var(--night-3), var(--night-2));
+  border: 1px solid var(--gold-lo);
+  border-top: 4px solid var(--gold);
+  border-radius: 6px;
+  padding: 26px 24px 22px;
+  display: grid; gap: 8px; justify-items: center;
+  box-shadow: 0 30px 60px #000c;
+  animation: rise 420ms cubic-bezier(.2,.9,.3,1.2);
+}
+.wreath { position: relative; width: min(340px, 100%); display: grid; place-items: center; padding: 18px 0 10px; }
+.wreath svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.verdict-card .name {
+  position: relative;
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(1.7rem, 7vw, 2.7rem);
+  line-height: 1.1;
+  overflow-wrap: break-word;
+  hyphens: manual;
+  text-wrap: balance;
+  max-width: 82%;
+  background: linear-gradient(100deg, var(--title) 0%, var(--title) 40%, var(--shine) 50%, var(--title) 60%, var(--title) 100%);
+  background-size: 260% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 2px 10px var(--name-shadow));
+  animation: reveal 750ms cubic-bezier(.2,.8,.3,1) both, shimmer 2.6s ease-in-out 0.8s infinite;
+}
+.verdict-card .name.long { font-size: clamp(1.4rem, 5.4vw, 2.1rem); }
+.verdict-card .name.longer { font-size: clamp(1.15rem, 4.4vw, 1.6rem); }
+@keyframes reveal { from { letter-spacing: 0.45em; opacity: 0; filter: blur(8px) drop-shadow(0 2px 10px var(--name-shadow)); } to { letter-spacing: normal; opacity: 1; filter: blur(0) drop-shadow(0 2px 10px var(--name-shadow)); } }
+@keyframes shimmer { 0% { background-position: 100% 0; } 60%, 100% { background-position: 0% 0; } }
+.lore {
+  font-family: var(--lore);
+  font-style: italic;
+  font-size: 1.08rem;
+  color: var(--marble);
+  max-width: 36ch;
+  margin: 0;
+  text-wrap: pretty;
+}
+.verdict-meta { color: var(--muted); font-size: 0.88rem; margin: 0; }
+.verdict-card .btn-row { justify-content: center; margin-top: 10px; }
+@keyframes rise { from { transform: translateY(18px) scale(0.94); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.toast {
+  position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  background: var(--night-3); border: 1px solid var(--gold-lo); color: var(--marble);
+  padding: 8px 16px; border-radius: 4px; z-index: 40; box-shadow: 0 10px 24px #0008;
+  max-width: calc(100% - 32px);
+}
+/* Look picker */
+.skins { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.skins input { position: absolute; opacity: 0; pointer-events: none; }
+.skins label {
+  display: flex; align-items: center; gap: 10px; min-width: 0;
+  padding: 8px 10px; border: 1px solid var(--line); border-radius: 4px;
+  background: var(--night); cursor: pointer; font-weight: 700; font-size: 0.92rem; line-height: 1.2;
+}
+.skins label i { width: 24px; height: 24px; border-radius: 50%; flex: none; border: 2px solid var(--gold); }
+.skins input:checked + label { border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
+.skins input:focus-visible + label { outline: 2px solid var(--gold-hi); outline-offset: 1px; }
+
+/* The Fates' thread */
+.fates { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 4; overflow: visible; pointer-events: none; filter: drop-shadow(0 0 3px var(--gold-hi)); }
+.fates[hidden] { display: none; }
+.fates .thread { fill: none; stroke: var(--thread); stroke-width: 0.8; stroke-linecap: round; }
+.fates .whorl { fill: var(--gold-lo); stroke: var(--gold-hi); stroke-width: 0.5; }
+.fates .spokes { fill: none; stroke: var(--gold-hi); stroke-width: 0.45; }
+.fates .hubdot { fill: var(--gold-hi); }
+.fates .blade { fill: #e4e8ee; stroke: #2a2f3a; stroke-width: 0.25; }
+.fates .handle { fill: none; stroke: #e4e8ee; stroke-width: 0.8; }
+.fates .pivot { fill: #2a2f3a; }
+.fates .spark { fill: var(--gold-hi); }
+
+/* Effects: marquee lights, starfield, lightning */
+#lights { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+#sky { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.flash {
+  position: fixed; inset: 0; z-index: 25; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle at 50% 30%, var(--flash), var(--flash-2) 45%, transparent 72%);
+  display: grid; justify-items: center; align-items: start;
+}
+.flash svg { width: min(16vw, 130px); margin-top: 3vh; fill: var(--bolt); filter: drop-shadow(0 0 14px var(--bolt-glow)) drop-shadow(0 0 40px var(--bolt-glow)); }
+.flash.on { animation: flash 950ms ease-out; }
+@keyframes flash { 0% { opacity: 0; } 6% { opacity: 1; } 14% { opacity: 0.2; } 22% { opacity: 0.95; } 100% { opacity: 0; } }
+.wheel-wrap.shake { animation: shake 520ms cubic-bezier(.36,.07,.19,.97); }
+@keyframes shake {
+  10%, 90% { transform: translate(-1px, 1px); }
+  20%, 80% { transform: translate(3px, -2px); }
+  30%, 50%, 70% { transform: translate(-5px, 2px); }
+  40%, 60% { transform: translate(5px, -1px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .verdict-card .name { animation: none; }
+  .flash.on, .wheel-wrap.shake { animation: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .verdict-card { animation: none; }
+  .pointer, .hub { transition: none; }
+  .hub.ready:not(:disabled) { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="sky" aria-hidden="true"></canvas>
+<div class="flash" id="flash" aria-hidden="true">
+  <svg viewBox="0 0 100 200"><path d="M60 0 L20 96 H47 L28 200 L82 72 H55 L76 0 Z"/></svg>
+</div>
+<div class="page">
+  <header>
+    <div class="eyebrow" id="skinEyebrow">Clotho spins · Lachesis measures · Atropos cuts</div>
+    <h1>Wheel of the Fates</h1>
+    <div class="meander" aria-hidden="true"></div>
+  </header>
+
+  <div class="layout">
+    <section class="stage" aria-label="Spinner wheel">
+      <div class="wheel-wrap" id="wheelWrap">
+        <svg class="pointer" id="pointer" viewBox="0 0 40 56" aria-hidden="true">
+          <defs>
+            <linearGradient id="pg" x1="0" x2="1">
+              <stop offset="0" style="stop-color: var(--gold-lo)"/><stop offset="0.45" style="stop-color: var(--gold-hi)"/><stop offset="1" style="stop-color: var(--gold)"/>
+            </linearGradient>
+          </defs>
+          <path d="M20 54 L5 14 A15 15 0 1 1 35 14 Z" fill="url(#pg)" style="stroke: var(--night)" stroke-width="2"/>
+          <circle cx="20" cy="14" r="5" style="fill: var(--night)"/>
+        </svg>
+        <canvas id="wheel" aria-hidden="true"></canvas>
+        <canvas id="lights" aria-hidden="true"></canvas>
+        <svg class="fates" id="fates" viewBox="0 0 100 100" hidden aria-hidden="true">
+          <g transform="translate(6 6)">
+            <g id="spindleInner">
+              <circle r="3.2" class="whorl"/>
+              <path d="M-3.2 0H3.2M0 -3.2V3.2M-2.3 -2.3L2.3 2.3M-2.3 2.3L2.3 -2.3" class="spokes"/>
+            </g>
+            <circle r="0.9" class="hubdot"/>
+          </g>
+          <path id="threadFull" class="thread" pathLength="100" d="M6 6 Q28 -2 50 10 L50 22"/>
+          <path id="threadA" class="thread" d="M6 6 Q17 2 28 3"/>
+          <path id="threadB" class="thread" d="M28 3 Q39 4 50 10 L50 22"/>
+          <circle id="snipSpark" class="spark" cx="28" cy="3" r="0"/>
+          <g id="shears" opacity="0">
+            <g id="bladeA"><path class="blade" d="M0 0 L1.5 9 L-0.3 8.4 Z"/><path class="handle" d="M0 0 L-1.2 -2.2"/><circle class="handle" cx="-2" cy="-3.6" r="1.7"/></g>
+            <g id="bladeB"><path class="blade" d="M0 0 L-1.5 9 L0.3 8.4 Z"/><path class="handle" d="M0 0 L1.2 -2.2"/><circle class="handle" cx="2" cy="-3.6" r="1.7"/></g>
+            <circle class="pivot" r="0.6"/>
+          </g>
+        </svg>
+        <button class="hub ready" id="spinBtn" type="button" aria-label="Spin the wheel">
+          <span>SPIN<small id="hubGlyph">Ω</small></span>
+        </button>
+      </div>
+      <div class="status" id="status" aria-live="polite">Click the wheel or press the space bar to spin.</div>
+      <div class="stage-tools">
+        <button class="btn small" id="bigBtn" type="button" aria-pressed="false">Big screen</button>
+        <button class="btn small" id="restoreBtn" type="button" hidden>Put removed entries back</button>
+      </div>
+
+      <div class="record" aria-label="Results so far">
+        <div class="record-head">
+          <span class="label">Chosen so far</span>
+          <button class="btn quiet small" id="clearRecord" type="button" hidden>Clear list</button>
+        </div>
+        <ol id="record" reversed></ol>
+        <p class="empty-note" id="recordEmpty">Each result is listed here, newest first.</p>
+      </div>
+    </section>
+
+    <section class="tablet" aria-label="Customize the wheel">
+      <h2>Inscribe the Wheel</h2>
+
+      <div class="field">
+        <span class="label" id="skinLabel">Look</span>
+        <div class="skins" role="radiogroup" aria-labelledby="skinLabel">
+          <input type="radio" name="skin" id="skin-night" value="night" checked><label for="skin-night"><i style="background: conic-gradient(#b9552e 0 25%, #27497f 0 50%, #c9932f 0 75%, #1f1a17 0)"></i>Night of the Fates</label>
+          <input type="radio" name="skin" id="skin-olympus" value="olympus"><label for="skin-olympus"><i style="background: conic-gradient(#f4efe4 0 25%, #6f9cc8 0 50%, #d9ae52 0 75%, #7f8f4e 0)"></i>Mount Olympus</label>
+          <input type="radio" name="skin" id="skin-underworld" value="underworld"><label for="skin-underworld"><i style="background: conic-gradient(#2a1838 0 25%, #1f4a2e 0 50%, #5a1620 0 75%, #0f0d12 0)"></i>The Underworld</label>
+          <input type="radio" name="skin" id="skin-sea" value="sea"><label for="skin-sea"><i style="background: conic-gradient(#0f4c75 0 25%, #5fc7b8 0 50%, #e07a5f 0 75%, #e8d5a9 0)"></i>Poseidon's Sea</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label" for="preset">Start from a myth set</label>
+        <select id="preset">
+          <option value="olympians">The Twelve Olympians</option>
+          <option value="muses">The Nine Muses</option>
+          <option value="heroes">Heroes of Legend</option>
+          <option value="monsters">Monsters &amp; Beasts</option>
+          <option value="labors">Labors of Heracles</option>
+          <option value="titans">The Titans</option>
+          <option value="roman">Roman Pantheon</option>
+          <option value="custom">Blank slate</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <span class="label" id="countLabel">Number of sections</span>
+        <div class="count-row">
+          <button class="btn square" id="minus" type="button" aria-label="Remove a section">−</button>
+          <input type="number" id="count" min="2" max="40" value="12" aria-labelledby="countLabel">
+          <button class="btn square" id="plus" type="button" aria-label="Add a section">+</button>
+          <span class="hint">2 to 40</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="label">What each section says</span>
+        <ol class="entries" id="entries"></ol>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn" id="shuffle" type="button">Shuffle order</button>
+        <button class="btn quiet" id="clear" type="button">Clear all text</button>
+      </div>
+
+      <div class="options">
+        <div class="field">
+          <span class="label" id="speedLabel">Spin length</span>
+          <div class="segmented" role="radiogroup" aria-labelledby="speedLabel">
+            <input type="radio" name="speed" id="speed-quick" value="quick"><label for="speed-quick">Quick</label>
+            <input type="radio" name="speed" id="speed-normal" value="normal" checked><label for="speed-normal">Normal</label>
+            <input type="radio" name="speed" id="speed-epic" value="epic"><label for="speed-epic">Epic</label>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="effect">When the wheel lands</label>
+          <select id="effect">
+            <option value="random">Surprise me (either one)</option>
+            <option value="lightning">Lightning of Zeus</option>
+            <option value="thread">The Fates cut the thread</option>
+          </select>
+        </div>
+        <label class="toggle"><input type="checkbox" id="elim">
+          <span>Remove each result after it's chosen<small>Good for calling on everyone once. Removed entries can be put back.</small></span>
+        </label>
+        <label class="toggle"><input type="checkbox" id="sound" checked>
+          <span>Sound<small>Ticks as the wheel turns and a fanfare when it lands.</small></span>
+        </label>
+      </div>
+
+      <details id="savedBox" open>
+        <summary>My saved wheels</summary>
+        <p class="hint" style="margin-bottom:10px">Save as many wheels as you like, one for each class or game. Each keeps its entries, look, landing effect and settings.</p>
+        <div class="field">
+          <label class="label" for="saveName">Save this wheel as</label>
+          <div class="save-row">
+            <input type="text" id="saveName" maxlength="40" placeholder="e.g. Period 3 · Greek gods">
+            <button class="btn gold" id="saveBtn" type="button">Save</button>
+          </div>
+          <ul class="saved-list" id="savedList"></ul>
+          <p class="hint" id="savedHint">Saved wheels stay in this browser on this device.</p>
+        </div>
+      </details>
+
+      <details id="bulk">
+        <summary>Paste a list instead</summary>
+        <div class="field">
+          <label class="label" for="bulkText">One entry per line</label>
+          <textarea id="bulkText" placeholder="Zeus&#10;Hera&#10;Poseidon"></textarea>
+          <div class="btn-row">
+            <button class="btn gold" id="applyBulk" type="button">Put these on the wheel</button>
+          </div>
+          <p class="hint">Blank lines are skipped. Up to 40 entries.</p>
+        </div>
+      </details>
+    </section>
+  </div>
+</div>
+
+<div class="verdict" id="verdict" hidden role="dialog" aria-modal="true" aria-labelledby="verdictName">
+  <div class="verdict-card">
+    <div class="eyebrow">The Fates have chosen</div>
+    <div class="wreath">
+      <svg id="wreathSvg" viewBox="0 0 340 150" aria-hidden="true"></svg>
+      <div class="name" id="verdictName"></div>
+    </div>
+    <p class="lore" id="verdictLore" hidden></p>
+    <p class="verdict-meta" id="verdictMeta" hidden></p>
+    <div class="btn-row">
+      <button class="btn gold" id="again" type="button">Spin again</button>
+      <button class="btn" id="removeWinner" type="button">Remove from wheel</button>
+      <button class="btn quiet" id="closeVerdict" type="button">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script>
+(() => {
+  const PRESETS = {
+    olympians: ["Zeus","Hera","Poseidon","Demeter","Athena","Apollo","Artemis","Ares","Aphrodite","Hephaestus","Hermes","Dionysus"],
+    muses: ["Calliope","Clio","Erato","Euterpe","Melpomene","Polyhymnia","Terpsichore","Thalia","Urania"],
+    heroes: ["Heracles","Perseus","Theseus","Achilles","Odysseus","Jason","Atalanta","Hector","Aeneas","Bellerophon"],
+    monsters: ["Medusa","Minotaur","Cyclops","Hydra","Chimera","Cerberus","Scylla","Charybdis","Sphinx","Typhon"],
+    labors: ["Nemean Lion","Lernaean Hydra","Ceryneian Hind","Erymanthian Boar","Augean Stables","Stymphalian Birds","Cretan Bull","Mares of Diomedes","Belt of Hippolyta","Cattle of Geryon","Golden Apples","Capture of Cerberus"],
+    titans: ["Cronus","Rhea","Oceanus","Tethys","Hyperion","Theia","Coeus","Phoebe","Mnemosyne","Themis","Crius","Iapetus"],
+    roman: ["Jupiter","Juno","Neptune","Ceres","Minerva","Apollo","Diana","Mars","Venus","Vulcan","Mercury","Bacchus"],
+    custom: ["","","","","",""]
+  };
+  // One line of lore, shown on the result card when the result matches a known name
+  const LORE = {
+    "zeus": "King of the gods and ruler of Olympus; god of the sky and thunder.",
+    "hera": "Queen of the gods; goddess of marriage and the family.",
+    "poseidon": "God of the sea, earthquakes and horses, who carries the trident.",
+    "demeter": "Goddess of the harvest and grain; mother of Persephone.",
+    "athena": "Goddess of wisdom and strategy; patron of Athens, born from the head of Zeus.",
+    "apollo": "God of music, poetry, prophecy and light; master of the oracle at Delphi.",
+    "artemis": "Goddess of the hunt, the wild and the moon; twin sister of Apollo.",
+    "ares": "God of war and the fury of battle.",
+    "aphrodite": "Goddess of love and beauty, born from the sea foam.",
+    "hephaestus": "God of fire and the forge; smith who crafted the weapons of the gods.",
+    "hermes": "Messenger of the gods with winged sandals; guide of travelers and souls.",
+    "dionysus": "God of wine, festivity and the theater.",
+    "calliope": "Muse of epic poetry, chief of the nine.",
+    "clio": "Muse of history, often shown with a scroll.",
+    "erato": "Muse of love poetry.",
+    "euterpe": "Muse of music and lyric song, often with a flute.",
+    "melpomene": "Muse of tragedy, holding the tragic mask.",
+    "polyhymnia": "Muse of sacred hymns.",
+    "terpsichore": "Muse of dance and choral song.",
+    "thalia": "Muse of comedy, holding the comic mask.",
+    "urania": "Muse of astronomy, shown with a globe.",
+    "heracles": "Son of Zeus, strongest of heroes, who completed the Twelve Labors.",
+    "hercules": "The Roman name for Heracles, strongest of heroes.",
+    "perseus": "Slayer of Medusa and rescuer of Andromeda.",
+    "theseus": "Hero of Athens who slew the Minotaur in the Labyrinth.",
+    "achilles": "Greatest Greek warrior at Troy, vulnerable only at his heel.",
+    "odysseus": "Clever king of Ithaca whose voyage home took ten years.",
+    "jason": "Leader of the Argonauts on the quest for the Golden Fleece.",
+    "atalanta": "Swift huntress who drew first blood in the Calydonian Boar Hunt.",
+    "hector": "Prince of Troy and its greatest defender.",
+    "aeneas": "Trojan survivor whose journey led to the founding of Rome.",
+    "bellerophon": "Rider of Pegasus who slew the Chimera.",
+    "medusa": "The Gorgon whose gaze turned onlookers to stone.",
+    "minotaur": "Half man, half bull, kept in the Labyrinth of Crete.",
+    "cyclops": "One-eyed giant; Odysseus blinded the Cyclops Polyphemus to escape.",
+    "hydra": "Many-headed serpent of Lerna; two heads grew for every one cut off.",
+    "chimera": "Fire-breathing beast with the parts of a lion, a goat and a serpent.",
+    "cerberus": "Three-headed hound who guards the gates of the Underworld.",
+    "scylla": "Six-headed monster lurking on one side of a narrow strait.",
+    "charybdis": "The whirlpool that swallowed the sea, opposite Scylla.",
+    "sphinx": "Riddler of Thebes, defeated when Oedipus answered her riddle.",
+    "typhon": "Storm giant and father of monsters, who battled Zeus himself.",
+    "nemean lion": "First Labor: a lion whose hide no weapon could pierce.",
+    "lernaean hydra": "Second Labor: the many-headed serpent of the swamps of Lerna.",
+    "ceryneian hind": "Third Labor: a golden-horned deer sacred to Artemis, chased for a year.",
+    "erymanthian boar": "Fourth Labor: capture a giant boar alive.",
+    "augean stables": "Fifth Labor: clean the stables in one day by rerouting two rivers.",
+    "stymphalian birds": "Sixth Labor: drive off man-eating birds with bronze feathers.",
+    "cretan bull": "Seventh Labor: capture the wild bull of Crete.",
+    "mares of diomedes": "Eighth Labor: tame the man-eating horses of King Diomedes.",
+    "belt of hippolyta": "Ninth Labor: take the belt of the Amazon queen.",
+    "cattle of geryon": "Tenth Labor: steal the cattle of the three-bodied giant Geryon.",
+    "golden apples": "Eleventh Labor: fetch the Golden Apples of the Hesperides.",
+    "capture of cerberus": "Twelfth Labor: bring Cerberus up from the Underworld.",
+    "cronus": "Leader of the Titans and father of Zeus, who swallowed his children.",
+    "rhea": "Mother of the Olympians, who saved Zeus by hiding him on Crete.",
+    "oceanus": "Titan of the great river that encircles the world.",
+    "tethys": "Titaness of fresh water and mother of the rivers.",
+    "hyperion": "Titan of heavenly light; father of the Sun, Moon and Dawn.",
+    "theia": "Titaness of sight and shining light; mother of Helios, Selene and Eos.",
+    "coeus": "Titan of intellect and the axis of the heavens; father of Leto.",
+    "phoebe": "Titaness linked to prophecy; grandmother of Apollo and Artemis.",
+    "mnemosyne": "Titaness of memory and mother of the nine Muses.",
+    "themis": "Titaness of divine law, order and justice.",
+    "crius": "Titan linked to the constellations and the turning of the year.",
+    "iapetus": "Titan and father of Prometheus and Atlas.",
+    "prometheus": "Titan who stole fire from the gods and gave it to humanity.",
+    "atlas": "Titan condemned to hold up the sky.",
+    "jupiter": "King of the Roman gods; the Greek Zeus.",
+    "juno": "Queen of the Roman gods and protector of Rome; the Greek Hera.",
+    "neptune": "Roman god of the sea; the Greek Poseidon.",
+    "ceres": "Roman goddess of agriculture; the Greek Demeter.",
+    "minerva": "Roman goddess of wisdom and crafts; the Greek Athena.",
+    "diana": "Roman goddess of the hunt and the moon; the Greek Artemis.",
+    "mars": "Roman god of war and father of Romulus and Remus; the Greek Ares.",
+    "venus": "Roman goddess of love; the Greek Aphrodite.",
+    "vulcan": "Roman god of fire and the forge; the Greek Hephaestus.",
+    "mercury": "Roman messenger god; the Greek Hermes.",
+    "bacchus": "Roman god of wine; the Greek Dionysus.",
+    "hades": "Lord of the Underworld and brother of Zeus.",
+    "persephone": "Queen of the Underworld, whose return each spring brings the harvest.",
+    "pegasus": "Winged horse born from the blood of Medusa."
+  };
+  // Each look: slice pigments, rim, marquee lights, sky, sounds
+  const SKINS = {
+    night: {
+      eyebrow: "Clotho spins · Lachesis measures · Atropos cuts", glyph: "Ω",
+      slices: [{ bg: "#b9552e", fg: "#f7efdc" }, { bg: "#27497f", fg: "#f3e6c4" }, { bg: "#c9932f", fg: "#1a1512" }, { bg: "#1f1a17", fg: "#e9c877" }, { bg: "#4e6a39", fg: "#f3ecd6" }, { bg: "#7b2d3b", fg: "#f6e2c8" }],
+      rim: ["#9b7529", "#f0d68c", "#8d6a24"], meander: "#4a3610", edge: "#5c4515", line: "rgba(243,217,143,0.75)", fillet: "rgba(243,217,143,0.3)",
+      stud: ["#fff6dc", "#b48a35"], glow: "#f3d98f", dim: "rgba(10,12,22,0.55)",
+      band: ["#0d101b", "#232a40", "#0d101b"], bandEdge: "#8d6a24", bulbLo: [255, 205, 130], bulbHi: [255, 250, 220], bulbGlow: "#ffd77a",
+      sparks: ["#fff6dc", "#ffd36b"], confetti: ["#f3d98f", "#d6ab4f", "#efe8d8", "#6f8f4e", "#27497f"],
+      sky: "stars", sound: "fanfare", tick: [1500, 600]
+    },
+    olympus: {
+      eyebrow: "Beneath the bright peak of Mount Olympus", glyph: "Ζ",
+      slices: [{ bg: "#f4efe4", fg: "#3b2f1c" }, { bg: "#6f9cc8", fg: "#fffaf0" }, { bg: "#d9ae52", fg: "#2a1e0c" }, { bg: "#7f8f4e", fg: "#fbf7ea" }, { bg: "#cf7a52", fg: "#fff6ea" }, { bg: "#2f5d93", fg: "#f6eccd" }],
+      rim: ["#a98235", "#fbe9b0", "#9a7428"], meander: "#6b4c14", edge: "#8a6a2a", line: "rgba(255,250,235,0.9)", fillet: "rgba(255,250,235,0.5)",
+      stud: ["#ffffff", "#c9a24e"], glow: "#fff3c4", dim: "rgba(60,45,20,0.45)",
+      band: ["#cbbd9c", "#f7f1e3", "#cbbd9c"], bandEdge: "#b8862b", bulbLo: [225, 210, 175], bulbHi: [255, 252, 235], bulbGlow: "#fff1b8",
+      sparks: ["#ffffff", "#ffe08a"], confetti: ["#ffffff", "#f3d98f", "#6f9cc8", "#7f8f4e", "#cf7a52"],
+      sky: "clouds", sound: "harp", tick: [2300, 1100]
+    },
+    underworld: {
+      eyebrow: "Across the River Styx, in the halls of Hades", glyph: "Θ",
+      slices: [{ bg: "#2a1838", fg: "#d9c4f0" }, { bg: "#0f0d12", fg: "#86eba0" }, { bg: "#1f4a2e", fg: "#dcf7e1" }, { bg: "#5a1620", fg: "#f4cfcf" }, { bg: "#3b3a42", fg: "#e8e3f0" }, { bg: "#4b3417", fg: "#f2ddb5" }],
+      rim: ["#1a1420", "#5b4d68", "#120d18"], meander: "#7fe39a", edge: "#0a070d", line: "rgba(127,227,154,0.55)", fillet: "rgba(127,227,154,0.25)",
+      stud: ["#d4ffd9", "#2e7a45"], glow: "#7fe39a", dim: "rgba(5,3,8,0.6)",
+      band: ["#060409", "#1d1427", "#060409"], bandEdge: "#2e7a45", bulbLo: [50, 120, 70], bulbHi: [190, 255, 200], bulbGlow: "#5fdc7f",
+      sparks: ["#b7f5c0", "#ff9a4a"], confetti: ["#7fe39a", "#b7f5c0", "#a07ad0", "#ff9a4a", "#5a1620"],
+      sky: "embers", sound: "gong", tick: [620, 260]
+    },
+    sea: {
+      eyebrow: "From the coral halls of Poseidon", glyph: "Ψ",
+      slices: [{ bg: "#0f4c75", fg: "#e6f6f4" }, { bg: "#5fc7b8", fg: "#062a33" }, { bg: "#e07a5f", fg: "#fff4ea" }, { bg: "#e8d5a9", fg: "#2b2412" }, { bg: "#0a2a43", fg: "#9fe8dc" }, { bg: "#2a9d8f", fg: "#f1fffb" }],
+      rim: ["#4f727c", "#eaf7f5", "#3e5f68"], meander: "#163d48", edge: "#163d48", line: "rgba(230,246,244,0.7)", fillet: "rgba(230,246,244,0.3)",
+      stud: ["#ffffff", "#8fb8bd"], glow: "#c3f4ec", dim: "rgba(2,16,24,0.55)",
+      band: ["#021118", "#0c3042", "#021118"], bandEdge: "#5fd0c0", bulbLo: [80, 160, 160], bulbHi: [220, 255, 250], bulbGlow: "#7fe3d4",
+      sparks: ["#ffffff", "#9ff0e6"], confetti: ["#c3f4ec", "#5fd0c0", "#ffffff", "#e07a5f", "#e8d5a9"],
+      sky: "bubbles", sound: "waves", tick: [900, 1800]
+    }
+  };
+  const EFFECTS = ["random", "lightning", "thread"];
+  let skin = "night";
+  const S = () => SKINS[skin];
+  const SPEEDS = { quick: { ms: 2600, turns: 4 }, normal: { ms: 5600, turns: 7 }, epic: { ms: 9500, turns: 12 } };
+  const MIN = 2, MAX = 40, STORE = "wheel-of-the-fates-v1", SAVED = "wheel-of-the-fates-saved";
+
+  const $ = id => document.getElementById(id);
+  const canvas = $("wheel"), ctx = canvas.getContext("2d");
+  const wrap = $("wheelWrap"), pointer = $("pointer");
+  const entriesEl = $("entries"), countEl = $("count");
+  const spinBtn = $("spinBtn"), statusEl = $("status");
+  const verdict = $("verdict"), verdictName = $("verdictName");
+
+  let items = PRESETS.olympians.slice();
+  let removed = [];          // entries taken off the wheel, so they can be put back
+  let record = [];           // results, newest first
+  let rotation = 0;          // radians
+  let spinning = false;
+  let lastWinner = -1;
+  let highlight = -1;
+  let audioCtx = null;
+
+  // ---------- Storage ----------
+  function load(key) { try { return JSON.parse(localStorage.getItem(key) || "null"); } catch (e) { return null; } }
+  function store(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
+  const saved = load(STORE);
+  if (saved && Array.isArray(saved.items) && saved.items.length >= MIN) {
+    items = saved.items.slice(0, MAX).map(String);
+    if (saved.preset && PRESETS[saved.preset]) $("preset").value = saved.preset;
+    if (typeof saved.sound === "boolean") $("sound").checked = saved.sound;
+    if (typeof saved.elim === "boolean") $("elim").checked = saved.elim;
+    if (saved.speed && SPEEDS[saved.speed]) $("speed-" + saved.speed).checked = true;
+    if (saved.skin && SKINS[saved.skin]) skin = saved.skin;
+    if (saved.effect && EFFECTS.includes(saved.effect)) $("effect").value = saved.effect;
+    if (Array.isArray(saved.removed)) removed = saved.removed.map(String);
+    if (Array.isArray(saved.record)) record = saved.record.slice(0, 60).map(String);
+  }
+  document.documentElement.dataset.skin = skin;
+  const speed = () => (document.querySelector('input[name="speed"]:checked') || {}).value || "normal";
+  function save() {
+    store(STORE, { items, removed, record, preset: $("preset").value, sound: $("sound").checked, elim: $("elim").checked, speed: speed(), skin, effect: $("effect").value });
+  }
+
+  function roman(n) {
+    const map = [[40,"XL"],[10,"X"],[9,"IX"],[5,"V"],[4,"IV"],[1,"I"]];
+    let s = ""; for (const [v, r] of map) while (n >= v) { s += r; n -= v; } return s;
+  }
+  const labelFor = i => (items[i] || "").trim() || roman(i + 1);
+
+  function colorFor(i, n) {
+    const pal = S().slices;
+    let c = i % pal.length;
+    if (i === n - 1 && n > 1 && c === 0) c = (n - 2) % pal.length === 1 ? 2 : 1;
+    return pal[c];
+  }
+
+  let toastTimer;
+  function toast(msg) {
+    const t = $("toast"); t.textContent = msg; t.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 2600);
+  }
+
+  // ---------- Drawing ----------
+  function drawMeander(c, rIn, rOut, lw) {
+    const band = rOut - rIn;
+    const tiles = Math.max(16, Math.round((Math.PI * (rIn + rOut)) / (band * 1.25)));
+    const P = (k, u, v) => {
+      const a = ((k + u) / tiles) * Math.PI * 2;
+      const rr = rIn + v * band;
+      return [c + Math.cos(a) * rr, c + Math.sin(a) * rr];
+    };
+    const spiral = [[0.8, 0.14], [0.8, 0.82], [0.2, 0.82], [0.2, 0.36], [0.62, 0.36], [0.62, 0.6], [0.4, 0.6]];
+    ctx.save();
+    ctx.strokeStyle = S().meander; ctx.lineWidth = lw; ctx.lineJoin = "miter"; ctx.lineCap = "square";
+    ctx.beginPath(); ctx.arc(c, c, rIn + band * 0.14, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath();
+    for (let k = 0; k < tiles; k++) {
+      spiral.forEach(([u, v], j) => { const [x, y] = P(k, u, v); j ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function draw() {
+    const size = canvas.clientWidth;
+    if (!size) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 3);
+    canvas.width = Math.round(size * dpr);
+    canvas.height = Math.round(size * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, size, size);
+
+    const n = items.length;
+    const c = size / 2;
+    const R = size / 2 - 2;
+    const ring = R * 0.085;
+    const r = R - ring;
+    const seg = (Math.PI * 2) / n;
+
+    // Gold rim with a Greek key
+    const rim = ctx.createRadialGradient(c, c, r, c, c, R);
+    rim.addColorStop(0, S().rim[0]);
+    rim.addColorStop(0.5, S().rim[1]);
+    rim.addColorStop(1, S().rim[2]);
+    ctx.beginPath(); ctx.arc(c, c, R, 0, Math.PI * 2); ctx.fillStyle = rim; ctx.fill();
+    drawMeander(c, r + ring * 0.12, R - ring * 0.12, Math.max(1, ring * 0.085));
+    ctx.beginPath(); ctx.arc(c, c, R - 0.5, 0, Math.PI * 2); ctx.strokeStyle = S().edge; ctx.lineWidth = 1.5; ctx.stroke();
+
+    // Slices
+    for (let i = 0; i < n; i++) {
+      const a0 = i * seg, a1 = a0 + seg;
+      const col = colorFor(i, n);
+      ctx.beginPath(); ctx.moveTo(c, c); ctx.arc(c, c, r, a0, a1); ctx.closePath();
+      ctx.fillStyle = col.bg; ctx.fill();
+      const sh = ctx.createRadialGradient(c, c, r * 0.2, c, c, r);
+      sh.addColorStop(0, "rgba(0,0,0,0.28)"); sh.addColorStop(0.6, "rgba(0,0,0,0)"); sh.addColorStop(1, "rgba(255,240,200,0.10)");
+      ctx.fillStyle = sh; ctx.fill();
+      if (highlight >= 0 && i !== highlight) { ctx.fillStyle = S().dim; ctx.fill(); }
+      ctx.strokeStyle = S().line; ctx.lineWidth = Math.max(1, size / 380); ctx.stroke();
+    }
+
+    // Inner fillet line
+    ctx.beginPath(); ctx.arc(c, c, r - 1, 0, Math.PI * 2);
+    ctx.strokeStyle = S().edge; ctx.lineWidth = 2; ctx.stroke();
+    ctx.beginPath(); ctx.arc(c, c, r * 0.94, 0, Math.PI * 2);
+    ctx.strokeStyle = S().fillet; ctx.lineWidth = Math.max(1, size / 500); ctx.stroke();
+
+    // Studs where slices meet the rim
+    for (let i = 0; i < n; i++) {
+      const a = i * seg;
+      const px = c + Math.cos(a) * (r - ring * 0.05), py = c + Math.sin(a) * (r - ring * 0.05);
+      ctx.beginPath(); ctx.arc(px, py, Math.max(2.5, ring * 0.24), 0, Math.PI * 2);
+      const g = ctx.createRadialGradient(px - 1, py - 1, 0, px, py, ring * 0.24);
+      g.addColorStop(0, S().stud[0]); g.addColorStop(1, S().stud[1]);
+      ctx.fillStyle = g; ctx.fill();
+      ctx.strokeStyle = S().edge; ctx.lineWidth = 1; ctx.stroke();
+    }
+
+    // Winner glow
+    if (highlight >= 0 && highlight < n) {
+      ctx.save();
+      ctx.beginPath(); ctx.moveTo(c, c); ctx.arc(c, c, r - 1, highlight * seg, (highlight + 1) * seg); ctx.closePath();
+      ctx.shadowColor = S().glow; ctx.shadowBlur = 18;
+      ctx.strokeStyle = S().glow; ctx.lineWidth = Math.max(3, size / 120); ctx.stroke();
+      ctx.restore();
+    }
+
+    // Labels
+    const arcLen = seg * r * 0.62;
+    let fs = Math.min(R * 0.08, arcLen * 0.55);
+    if (n <= 4) fs = Math.min(R * 0.095, fs);
+    fs = Math.max(9, fs);
+    const maxW = r * 0.6;
+    for (let i = 0; i < n; i++) {
+      const col = colorFor(i, n);
+      const text = labelFor(i);
+      const empty = !(items[i] || "").trim();
+      ctx.save();
+      ctx.translate(c, c);
+      ctx.rotate(i * seg + seg / 2);
+      ctx.textAlign = "right"; ctx.textBaseline = "middle";
+      let s2 = fs;
+      const font = px => `700 ${px}px Cinzel, "Times New Roman", serif`;
+      ctx.font = font(s2);
+      while (ctx.measureText(text).width > maxW && s2 > fs * 0.7) { s2 -= 0.5; ctx.font = font(s2); }
+      let t = text;
+      if (ctx.measureText(t).width > maxW) {
+        while (t.length > 1 && ctx.measureText(t + "…").width > maxW) t = t.slice(0, -1);
+        t = t.trimEnd() + "…";
+      }
+      ctx.fillStyle = col.fg;
+      ctx.globalAlpha = (empty ? 0.55 : 1) * (highlight >= 0 && i !== highlight ? 0.55 : 1);
+      ctx.shadowColor = "rgba(0,0,0,0.4)"; ctx.shadowBlur = 3; ctx.shadowOffsetY = 1;
+      ctx.fillText(t, r * 0.9, 0);
+      ctx.restore();
+    }
+    applyRotation();
+  }
+
+  function applyRotation() { canvas.style.transform = `rotate(${rotation}rad)`; }
+  function setHighlight(i) { highlight = i; wrap.classList.toggle("won", i >= 0); draw(); }
+
+  function indexAt(rot) {
+    const n = items.length, seg = (Math.PI * 2) / n;
+    let rel = (-Math.PI / 2 - rot) % (Math.PI * 2);
+    if (rel < 0) rel += Math.PI * 2;
+    return Math.floor(rel / seg) % n;
+  }
+
+  // ---------- Editor ----------
+  function renderEntries() {
+    entriesEl.innerHTML = "";
+    items.forEach((val, i) => {
+      const li = document.createElement("li");
+      const num = document.createElement("span");
+      num.className = "numeral"; num.textContent = roman(i + 1);
+      const box = document.createElement("div");
+      box.className = "swatch-input";
+      box.style.setProperty("--sw", colorFor(i, items.length).bg);
+      const inp = document.createElement("input");
+      inp.type = "text"; inp.id = "entry-" + i; inp.value = val; inp.maxLength = 40;
+      inp.placeholder = "Section " + roman(i + 1);
+      inp.setAttribute("aria-label", "Text for section " + (i + 1));
+      inp.addEventListener("input", () => { items[i] = inp.value; highlight = -1; draw(); save(); });
+      inp.addEventListener("keydown", e => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          const next = $("entry-" + (i + 1));
+          if (next) next.focus(); else if (items.length < MAX) { setCount(items.length + 1); $("entry-" + (items.length - 1))?.focus(); }
+        }
+      });
+      box.appendChild(inp);
+      const rm = document.createElement("button");
+      rm.type = "button"; rm.className = "remove"; rm.textContent = "×";
+      rm.setAttribute("aria-label", "Remove section " + (i + 1));
+      rm.disabled = items.length <= MIN;
+      rm.addEventListener("click", () => {
+        if (items.length <= MIN || spinning) return;
+        items.splice(i, 1); sync();
+      });
+      li.append(num, box, rm);
+      entriesEl.appendChild(li);
+    });
+  }
+
+  function renderRecord() {
+    const ol = $("record"); ol.innerHTML = "";
+    record.forEach((name, k) => {
+      const li = document.createElement("li");
+      const o = document.createElement("span"); o.className = "ord"; o.textContent = record.length - k;
+      const s = document.createElement("span"); s.textContent = name;
+      li.append(o, s); ol.appendChild(li);
+    });
+    $("recordEmpty").hidden = record.length > 0;
+    $("clearRecord").hidden = record.length === 0;
+  }
+
+  function renderRestore() {
+    const b = $("restoreBtn");
+    b.hidden = removed.length === 0;
+    b.textContent = `Put ${removed.length} removed ${removed.length === 1 ? "entry" : "entries"} back`;
+  }
+
+  function sync() {
+    countEl.value = items.length;
+    highlight = -1; wrap.classList.remove("won");
+    renderEntries(); renderRestore(); draw(); save();
+  }
+
+  function setCount(n) {
+    if (spinning) return;
+    n = Math.max(MIN, Math.min(MAX, Math.round(Number(n) || MIN)));
+    while (items.length < n) items.push("");
+    if (items.length > n) items.length = n;
+    sync();
+  }
+
+  function replaceItems(list) { items = list; removed = []; sync(); }
+
+  $("minus").addEventListener("click", () => setCount(items.length - 1));
+  $("plus").addEventListener("click", () => setCount(items.length + 1));
+  countEl.addEventListener("change", () => setCount(countEl.value));
+  $("preset").addEventListener("change", e => { if (!spinning) replaceItems(PRESETS[e.target.value].slice()); });
+  $("shuffle").addEventListener("click", () => {
+    if (spinning) return;
+    for (let i = items.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [items[i], items[j]] = [items[j], items[i]]; }
+    sync();
+  });
+  $("clear").addEventListener("click", () => {
+    if (spinning) return;
+    items = items.map(() => ""); sync(); $("entry-0")?.focus();
+  });
+  ["sound", "elim"].forEach(id => $(id).addEventListener("change", save));
+  document.querySelectorAll('input[name="speed"]').forEach(r => r.addEventListener("change", save));
+  $("bulk").addEventListener("toggle", () => {
+    if ($("bulk").open) $("bulkText").value = items.filter(s => s.trim()).join("\n");
+  });
+  $("applyBulk").addEventListener("click", () => {
+    if (spinning) return;
+    const lines = $("bulkText").value.split(/\r?\n/).map(s => s.trim()).filter(Boolean).slice(0, MAX);
+    if (lines.length < MIN) { toast("Add at least two lines to make a wheel."); return; }
+    $("preset").value = "custom"; replaceItems(lines);
+    toast(`The wheel now holds ${lines.length} sections.`);
+  });
+  $("restoreBtn").addEventListener("click", () => {
+    if (spinning) return;
+    const room = MAX - items.length;
+    const back = removed.slice(0, room);
+    items = items.concat(back); removed = removed.slice(back.length);
+    sync();
+    toast(`${back.length} ${back.length === 1 ? "entry is" : "entries are"} back on the wheel.`);
+  });
+  $("clearRecord").addEventListener("click", () => { record = []; renderRecord(); save(); });
+
+  // ---------- Saved wheels ----------
+  function getSaved() { const s = load(SAVED); return s && typeof s === "object" && !Array.isArray(s) ? s : {}; }
+  const asCfg = v => Array.isArray(v) ? { items: v.map(String) } : { ...v, items: (v && Array.isArray(v.items) ? v.items : []).map(String) };
+  function renderSaved() {
+    const list = $("savedList"); list.innerHTML = "";
+    const all = getSaved();
+    Object.keys(all).sort((a, b) => a.localeCompare(b)).forEach(name => {
+      const li = document.createElement("li");
+      const nm = document.createElement("span"); nm.className = "nm"; nm.textContent = name;
+      const cfg = asCfg(all[name]);
+      const ct = document.createElement("span"); ct.className = "ct"; ct.textContent = ` · ${cfg.items.length} sections`;
+      nm.appendChild(ct);
+      const ld = document.createElement("button"); ld.type = "button"; ld.className = "btn small"; ld.textContent = "Load";
+      ld.addEventListener("click", () => {
+        if (spinning) return;
+        $("preset").value = "custom";
+        if (cfg.speed && SPEEDS[cfg.speed]) $("speed-" + cfg.speed).checked = true;
+        if (typeof cfg.elim === "boolean") $("elim").checked = cfg.elim;
+        if (typeof cfg.sound === "boolean") $("sound").checked = cfg.sound;
+        if (cfg.effect && EFFECTS.includes(cfg.effect)) $("effect").value = cfg.effect;
+        if (cfg.skin && SKINS[cfg.skin]) applySkin(cfg.skin);
+        replaceItems(cfg.items.slice(0, MAX));
+        $("saveName").value = name;
+        toast(`Loaded “${name}”.`);
+      });
+      const del = document.createElement("button"); del.type = "button"; del.className = "btn small quiet"; del.textContent = "Delete";
+      del.addEventListener("click", () => {
+        if (del.dataset.armed) {
+          const s = getSaved(); delete s[name]; store(SAVED, s); renderSaved(); toast(`Deleted “${name}”.`);
+        } else {
+          del.dataset.armed = "1"; del.textContent = "Confirm"; del.classList.add("danger");
+          setTimeout(() => { if (del.isConnected) { delete del.dataset.armed; del.textContent = "Delete"; del.classList.remove("danger"); } }, 3000);
+        }
+      });
+      li.append(nm, ld, del); list.appendChild(li);
+    });
+    $("savedHint").textContent = Object.keys(all).length
+      ? "Saved wheels stay in this browser on this device."
+      : "No saved wheels yet. Saved wheels stay in this browser on this device.";
+  }
+  $("saveBtn").addEventListener("click", () => {
+    const name = $("saveName").value.trim();
+    if (!name) { $("saveName").focus(); toast("Give this wheel a name first."); return; }
+    const s = getSaved(); const existed = name in s;
+    s[name] = { items: items.concat(removed).slice(0, MAX), speed: speed(), elim: $("elim").checked, sound: $("sound").checked, skin, effect: $("effect").value };
+    store(SAVED, s); renderSaved();
+    toast(existed ? `Updated “${name}”.` : `Saved “${name}”.`);
+  });
+  $("saveName").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); $("saveBtn").click(); } });
+
+  // ---------- Sound ----------
+  function ensureAudio() {
+    try { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume?.(); } catch (e) {}
+  }
+  function tick() {
+    if (!$("sound").checked || !audioCtx) return;
+    try {
+      const t = audioCtx.currentTime;
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      const [f1, f2] = S().tick;
+      o.type = "triangle"; o.frequency.setValueAtTime(f1, t); o.frequency.exponentialRampToValueAtTime(f2, t + 0.03);
+      g.gain.setValueAtTime(0.12, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
+      o.connect(g).connect(audioCtx.destination); o.start(t); o.stop(t + 0.06);
+    } catch (e) {}
+  }
+  function tone(f, start, dur, type, peak) {
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = type; o.frequency.value = f;
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.exponentialRampToValueAtTime(peak, start + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+    o.connect(g).connect(audioCtx.destination); o.start(start); o.stop(start + dur + 0.05);
+  }
+  function landSound() {
+    if (!$("sound").checked || !audioCtx) return;
+    try {
+      const t = audioCtx.currentTime, kind = S().sound;
+      if (kind === "fanfare") {
+        [[523.25, 0, 0.5], [659.25, 0.1, 0.5], [783.99, 0.2, 0.5], [1046.5, 0.32, 1.1], [783.99, 0.32, 1.1]].forEach(([f, d, l]) => tone(f, t + d, l, "triangle", 0.12));
+      } else if (kind === "harp") {
+        [523.25, 587.33, 659.25, 783.99, 880, 1046.5, 1174.66, 1318.51, 1567.98].forEach((f, k) => tone(f, t + k * 0.045, 1.3, "triangle", 0.09));
+      } else if (kind === "gong") {
+        [[98, 3.6, 0.22], [147.5, 3, 0.12], [207, 2.5, 0.09], [271, 2, 0.06], [349, 1.6, 0.04]].forEach(([f, l, pk]) => tone(f, t, l, "sine", pk));
+      } else if (kind === "waves") {
+        const sr = audioCtx.sampleRate, len = Math.floor(sr * 1.9);
+        const buf = audioCtx.createBuffer(1, len, sr), ch = buf.getChannelData(0);
+        for (let i = 0; i < len; i++) ch[i] = Math.random() * 2 - 1;
+        const src = audioCtx.createBufferSource(); src.buffer = buf;
+        const bp = audioCtx.createBiquadFilter(); bp.type = "bandpass"; bp.Q.value = 0.8;
+        bp.frequency.setValueAtTime(300, t); bp.frequency.exponentialRampToValueAtTime(1400, t + 0.7); bp.frequency.exponentialRampToValueAtTime(350, t + 1.9);
+        const g = audioCtx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.35, t + 0.6); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.9);
+        src.connect(bp).connect(g).connect(audioCtx.destination); src.start(t);
+        [1318.51, 1567.98, 1975.53, 2637.02].forEach((f, k) => tone(f, t + 0.5 + k * 0.12, 1.4, "sine", 0.06));
+      }
+    } catch (e) {}
+  }
+  function snip() {
+    if (!$("sound").checked || !audioCtx) return;
+    try {
+      [0, 0.05].forEach(d => {
+        const sr = audioCtx.sampleRate, len = Math.floor(sr * 0.04);
+        const buf = audioCtx.createBuffer(1, len, sr), ch = buf.getChannelData(0);
+        for (let i = 0; i < len; i++) ch[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3);
+        const src = audioCtx.createBufferSource(); src.buffer = buf;
+        const hp = audioCtx.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 3500;
+        const g = audioCtx.createGain(); g.gain.value = 0.5;
+        src.connect(hp).connect(g).connect(audioCtx.destination); src.start(audioCtx.currentTime + d);
+      });
+    } catch (e) {}
+  }
+
+  // ---------- Spin ----------
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function spin() {
+    if (spinning || items.length < MIN) return;
+    closeVerdict(false);
+    if (items.length < MIN) return;
+    ensureAudio();
+    spinning = true; spinBtn.disabled = true; spinBtn.classList.remove("ready");
+    setHighlight(-1);
+    FX.spin();
+    statusEl.textContent = "The wheel turns…";
+
+    const n = items.length, seg = (Math.PI * 2) / n;
+    const winner = Math.floor(Math.random() * n);
+    const within = 0.12 + Math.random() * 0.76;
+    const sp = SPEEDS[speed()];
+    const turns = reduceMotion ? 2 : sp.turns + Math.floor(Math.random() * 2);
+    let target = -Math.PI / 2 - (winner + within) * seg;
+    while (target < rotation + turns * Math.PI * 2) target += Math.PI * 2;
+
+    const start = rotation, delta = target - start;
+    const duration = reduceMotion ? 1400 : sp.ms * (0.92 + Math.random() * 0.16);
+    const t0 = performance.now();
+    let lastIdx = indexAt(rotation);
+    // small wind-up backwards, then a long ease-out
+    const ease = t => {
+      if (reduceMotion) return 1 - Math.pow(1 - t, 3);
+      const wind = 0.06;
+      if (t < wind) return -0.004 * Math.sin((t / wind) * Math.PI);
+      const u = (t - wind) / (1 - wind);
+      return 1 - Math.pow(1 - u, 4);
+    };
+
+    let prevRot = rotation, prevNow = t0;
+    function frame(now) {
+      const t = Math.min(1, (now - t0) / duration);
+      rotation = start + delta * ease(t);
+      applyRotation();
+      // speed drives motion blur, the chasing lights and the sparks
+      const v = Math.abs(rotation - prevRot) / Math.max(1, now - prevNow);
+      prevRot = rotation; prevNow = now;
+      const sp01 = Math.min(1, v / 0.03);
+      FX.speed(sp01);
+      const blur = reduceMotion ? 0 : sp01 * 3.2;
+      canvas.style.filter = "drop-shadow(0 18px 30px #0009)" + (blur > 0.25 ? ` blur(${blur.toFixed(2)}px)` : "");
+      const idx = indexAt(rotation);
+      if (idx !== lastIdx) {
+        lastIdx = idx; tick();
+        pointer.classList.add("flick");
+        requestAnimationFrame(() => pointer.classList.remove("flick"));
+      }
+      if (t < 1) requestAnimationFrame(frame);
+      else land(indexAt(rotation));
+    }
+    requestAnimationFrame(frame);
+  }
+
+  async function land(i) {
+    rotation = rotation % (Math.PI * 2);
+    applyRotation();
+    canvas.style.filter = "";
+    FX.speed(0);
+    lastWinner = i;
+    const name = labelFor(i);
+    setHighlight(i);
+    record.unshift(name); record = record.slice(0, 60);
+    renderRecord(); save();
+
+    FX.win();
+    if (pickEffect() === "thread" && !reduceMotion) await fatesThread();
+    else FX.strike();
+
+    spinning = false; spinBtn.disabled = false; spinBtn.classList.add("ready");
+    statusEl.innerHTML = "";
+    statusEl.append("The Fates have chosen ");
+    const b = document.createElement("b"); b.textContent = name; statusEl.append(b);
+
+    verdictName.textContent = name;
+    const longest = Math.max(...name.split(/\s+/).map(w => w.length));
+    verdictName.classList.toggle("long", longest > 8 && longest <= 12);
+    verdictName.classList.toggle("longer", longest > 12);
+    const lore = LORE[name.toLowerCase()];
+    $("verdictLore").hidden = !lore; $("verdictLore").textContent = lore || "";
+    const elim = $("elim").checked;
+    const meta = $("verdictMeta");
+    meta.hidden = !elim;
+    meta.textContent = elim ? (items.length - 1 >= MIN ? `${name} leaves the wheel when you close this or spin again.` : "Only two entries are left, so this one stays on the wheel.") : "";
+    $("removeWinner").hidden = elim;
+    $("removeWinner").disabled = items.length <= MIN;
+    verdict.hidden = false;
+    $("again").focus();
+    landSound();
+    burst(i);
+  }
+
+  function pickEffect() {
+    const v = $("effect").value;
+    if (v === "lightning" || v === "thread") return v;
+    return Math.random() < 0.5 ? "lightning" : "thread";
+  }
+
+  // Clotho spins the thread, Lachesis measures it, Atropos cuts it
+  const tween = (ms, f) => new Promise(res => {
+    const t0 = performance.now();
+    const step = now => { const t = Math.min(1, (now - t0) / ms); f(t); t < 1 ? requestAnimationFrame(step) : res(); };
+    requestAnimationFrame(step);
+  });
+  const easeOut = t => 1 - Math.pow(1 - t, 3);
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  async function fatesThread() {
+    const svg = $("fates"), full = $("threadFull"), A = $("threadA"), B = $("threadB");
+    const shears = $("shears"), bA = $("bladeA"), bB = $("bladeB"), spark = $("snipSpark"), inner = $("spindleInner");
+    full.style.strokeDasharray = "100"; full.style.strokeDashoffset = "100"; full.style.opacity = "1";
+    A.style.opacity = "0"; B.style.opacity = "0"; A.removeAttribute("transform"); B.removeAttribute("transform");
+    shears.setAttribute("opacity", "0"); spark.setAttribute("r", "0"); spark.style.opacity = "1";
+    svg.removeAttribute("hidden");
+    statusEl.textContent = "Clotho spins the thread…";
+    await tween(850, t => {
+      const e = easeOut(t);
+      full.style.strokeDashoffset = String(100 * (1 - e));
+      inner.setAttribute("transform", `rotate(${(e * 900).toFixed(1)})`);
+    });
+    statusEl.textContent = "Lachesis measures it…";
+    await wait(380);
+    statusEl.textContent = "Atropos cuts.";
+    bA.setAttribute("transform", "rotate(-26)"); bB.setAttribute("transform", "rotate(26)");
+    await tween(380, t => {
+      const e = easeOut(t);
+      shears.setAttribute("transform", `translate(${(40 - 12 * e).toFixed(2)} ${(-14 + 9 * e).toFixed(2)})`);
+      shears.setAttribute("opacity", e.toFixed(2));
+    });
+    await tween(130, t => {
+      bA.setAttribute("transform", `rotate(${(-26 * (1 - t)).toFixed(1)})`);
+      bB.setAttribute("transform", `rotate(${(26 * (1 - t)).toFixed(1)})`);
+    });
+    snip();
+    full.style.opacity = "0"; A.style.opacity = "1"; B.style.opacity = "1";
+    await tween(650, t => {
+      const e = easeOut(t);
+      A.setAttribute("transform", `translate(${(-4 * e).toFixed(2)} ${(-1 * e).toFixed(2)})`); A.style.opacity = String(1 - e);
+      B.setAttribute("transform", `translate(${(2 * e).toFixed(2)} ${(6 * e).toFixed(2)})`); B.style.opacity = String(1 - e);
+      spark.setAttribute("r", (5 * e).toFixed(2)); spark.style.opacity = String(1 - e);
+      shears.setAttribute("opacity", (1 - e).toFixed(2));
+    });
+    svg.setAttribute("hidden", "");
+  }
+
+  // Remove the last winner (after the card closes, so the highlight stays visible while it's open)
+  function removeLast() {
+    if (lastWinner < 0 || items.length <= MIN) return null;
+    const gone = items[lastWinner];
+    const label = labelFor(lastWinner);
+    items.splice(lastWinner, 1);
+    if ((gone || "").trim()) removed.push(gone);
+    lastWinner = -1;
+    sync();
+    return label;
+  }
+
+  function closeVerdict(focusSpin = true) {
+    if (verdict.hidden) return;
+    verdict.hidden = true;
+    if ($("elim").checked && lastWinner >= 0) {
+      const gone = removeLast();
+      if (gone) statusEl.textContent = `${gone} has left the wheel. ${items.length} remain.`;
+    }
+    if (focusSpin) spinBtn.focus();
+  }
+
+  const glyphShapes = {};
+  function burst(i) {
+    if (typeof confetti !== "function") return;
+    let omega = glyphShapes[skin] || null;
+    try { if (!omega && confetti.shapeFromText) omega = glyphShapes[skin] = confetti.shapeFromText({ text: S().glyph, scalar: 2, color: S().glow, fontFamily: "Cinzel" }); } catch (e) {}
+    const colors = S().confetti.concat(colorFor(i, items.length).bg);
+    const base = { colors, zIndex: 30, disableForReducedMotion: false };
+    const scale = reduceMotion ? 0.4 : 1;
+    confetti({ ...base, particleCount: Math.round(140 * scale), spread: 100, startVelocity: 48, origin: { x: 0.5, y: 0.45 } });
+    if (reduceMotion) return;
+    setTimeout(() => {
+      confetti({ ...base, particleCount: 80, angle: 60, spread: 70, startVelocity: 60, origin: { x: 0, y: 0.75 } });
+      confetti({ ...base, particleCount: 80, angle: 120, spread: 70, startVelocity: 60, origin: { x: 1, y: 0.75 } });
+    }, 220);
+    setTimeout(() => {
+      confetti({ ...base, particleCount: 50, spread: 160, startVelocity: 30, gravity: 0.7, scalar: 1.2, shapes: ["star"], origin: { x: 0.5, y: 0.3 } });
+      if (omega) confetti({ ...base, particleCount: 24, spread: 140, startVelocity: 34, gravity: 0.6, scalar: 2, shapes: [omega], flat: true, origin: { x: 0.5, y: 0.35 } });
+    }, 500);
+  }
+
+  // ---------- Laurel wreath for the result card ----------
+  (function buildWreath() {
+    const svg = $("wreathSvg"), NS = "http://www.w3.org/2000/svg";
+    const cx = 170, cy = 80, rx = 150, ry = 68;
+    const g = document.createElementNS(NS, "g");
+    for (const side of [-1, 1]) {
+      const stem = document.createElementNS(NS, "path");
+      const pts = [];
+      for (let k = 0; k <= 20; k++) {
+        const a = Math.PI / 2 + side * (0.25 + (k / 20) * 2.1);
+        pts.push([cx + Math.cos(a) * rx, cy + Math.sin(a) * ry]);
+      }
+      stem.setAttribute("d", "M" + pts.map(p => p.map(v => v.toFixed(1)).join(" ")).join(" L"));
+      stem.setAttribute("fill", "none"); stem.style.stroke = "var(--gold-lo)"; stem.setAttribute("stroke-width", "2");
+      g.appendChild(stem);
+      for (let k = 1; k < 20; k++) {
+        const a = Math.PI / 2 + side * (0.25 + (k / 20) * 2.1);
+        const x = cx + Math.cos(a) * rx, y = cy + Math.sin(a) * ry;
+        const tang = Math.atan2(Math.cos(a) * ry * side, -Math.sin(a) * rx * side) * 180 / Math.PI;
+        for (const out of [-1, 1]) {
+          const leaf = document.createElementNS(NS, "ellipse");
+          leaf.setAttribute("cx", 0); leaf.setAttribute("cy", 0);
+          leaf.setAttribute("rx", 9); leaf.setAttribute("ry", 3.6);
+          leaf.style.fill = out > 0 ? "var(--gold)" : "var(--gold-lo)";
+          leaf.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${(tang + out * 35 * side).toFixed(1)}) translate(8 0)`);
+          g.appendChild(leaf);
+        }
+      }
+    }
+    svg.appendChild(g);
+  })();
+
+  // ---------- Looks ----------
+  function applySkin(name) {
+    if (!SKINS[name]) name = "night";
+    skin = name;
+    document.documentElement.dataset.skin = name;
+    $("skin-" + name).checked = true;
+    $("skinEyebrow").textContent = S().eyebrow;
+    $("hubGlyph").textContent = S().glyph;
+    FX.reskin();
+    renderEntries(); draw(); save();
+  }
+  document.querySelectorAll('input[name="skin"]').forEach(r => r.addEventListener("change", () => { if (!spinning) applySkin(r.value); else $("skin-" + skin).checked = true; }));
+  $("effect").addEventListener("change", save);
+
+  // ---------- Big screen ----------
+  function setBig(on) {
+    document.body.classList.toggle("big", on);
+    $("bigBtn").setAttribute("aria-pressed", String(on));
+    $("bigBtn").textContent = on ? "Exit big screen" : "Big screen";
+    try {
+      if (on && document.documentElement.requestFullscreen && !document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+      if (!on && document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
+    } catch (e) {}
+  }
+  $("bigBtn").addEventListener("click", () => setBig(!document.body.classList.contains("big")));
+  document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement && document.body.classList.contains("big")) setBig(false); });
+
+  // ---------- Effects: marquee lights, sparks, starfield, lightning ----------
+  const FX = (() => {
+    const lc = $("lights"), lx = lc.getContext("2d");
+    const sky = $("sky"), sx = sky.getContext("2d");
+    const BULBS = 28;
+    let mode = "idle", speed = 0, phase = 0, winT = null;
+    let sparks = [], stars = [], meteor = null, nextMeteor = performance.now() + 3500, last = performance.now();
+
+    function fit(cv, w, h) {
+      const d = Math.min(window.devicePixelRatio || 1, 2);
+      cv.width = Math.round(w * d); cv.height = Math.round(h * d);
+      cv.getContext("2d").setTransform(d, 0, 0, d, 0, 0);
+    }
+    let parts = [];
+    const rnd = n => Math.random() * n;
+    const PUFFS = [[0, 0, 1], [0.9, 0.15, 0.75], [-0.9, 0.2, 0.7], [0.4, -0.35, 0.8], [-0.4, -0.3, 0.65]];
+    const newEmber = (W, H, anywhere) => ({ x: rnd(W), y: anywhere ? rnd(H) : H + 10, vx: (Math.random() - 0.5) * 0.02, vy: -(0.02 + rnd(0.05)), r: 0.8 + rnd(1.8), p: rnd(6.28), hot: Math.random() < 0.3 });
+    const newBubble = (W, H, anywhere) => ({ x: rnd(W), y: anywhere ? rnd(H) : H + 10, vy: -(0.015 + rnd(0.04)), r: 1.5 + rnd(5), p: rnd(6.28), amp: 4 + rnd(10) });
+    function initSky() {
+      const W = innerWidth, H = innerHeight, kind = S().sky;
+      parts = []; meteor = null;
+      if (kind === "stars") {
+        const count = Math.min(260, Math.round((W * H) / 8000));
+        for (let i = 0; i < count; i++) parts.push({ x: rnd(W), y: rnd(H), r: Math.random() * 1.2 + 0.3, p: rnd(6.28), s: 0.4 + Math.random() * 1.6 });
+      } else if (kind === "clouds") {
+        for (let i = 0; i < 8; i++) parts.push({ cloud: true, x: rnd(W), y: 20 + rnd(H * 0.55), s: 30 + rnd(60), v: 0.004 + rnd(0.01) });
+        for (let i = 0; i < 40; i++) parts.push({ x: rnd(W), y: rnd(H), r: 0.8 + rnd(1.4), p: rnd(6.28), v: 0.005 + rnd(0.012) });
+      } else if (kind === "embers") {
+        for (let i = 0; i < 70; i++) parts.push(newEmber(W, H, true));
+      } else {
+        for (let i = 0; i < 45; i++) parts.push(newBubble(W, H, true));
+      }
+    }
+    function resize() {
+      fit(lc, wrap.clientWidth, wrap.clientWidth);
+      fit(sky, innerWidth, innerHeight);
+      initSky();
+      if (reduceMotion) { drawSky(0, 0); drawLights(0, 0); }
+    }
+
+    function drawLights(now, dt) {
+      const W = wrap.clientWidth; if (!W) return;
+      lx.clearRect(0, 0, W, W);
+      const c = W / 2, rr = W * 0.477, br = Math.max(2.5, W * 0.0105);
+      // dark bronze marquee band around the wheel
+      lx.beginPath(); lx.arc(c, c, W * 0.497, 0, Math.PI * 2); lx.arc(c, c, W * 0.457, 0, Math.PI * 2, true);
+      const band = lx.createRadialGradient(c, c, W * 0.457, c, c, W * 0.497);
+      const L = S();
+      band.addColorStop(0, L.band[0]); band.addColorStop(0.5, L.band[1]); band.addColorStop(1, L.band[2]);
+      lx.fillStyle = band; lx.fill("evenodd");
+      lx.beginPath(); lx.arc(c, c, W * 0.497, 0, Math.PI * 2);
+      lx.strokeStyle = L.bandEdge; lx.lineWidth = 1.5; lx.stroke();
+
+      if (mode === "spin") phase += dt * (0.004 + speed * 0.028);
+      for (let k = 0; k < BULBS; k++) {
+        const a = (k / BULBS) * Math.PI * 2 - Math.PI / 2;
+        const x = c + Math.cos(a) * rr, y = c + Math.sin(a) * rr;
+        let on;
+        if (reduceMotion) on = 0.75;
+        else if (mode === "spin") { const d = (k - Math.floor(phase)) % 4; on = d === 0 ? 1 : (d === -1 || d === 3 ? 0.45 : 0.15); }
+        else if (mode === "win") on = (Math.floor(now / 130) + k) % 2 ? 1 : 0.2;
+        else on = 0.45 + 0.35 * Math.sin(now / 650 - k * 0.45);
+        lx.beginPath(); lx.arc(x, y, br, 0, Math.PI * 2);
+        const mix = q => Math.round(L.bulbLo[q] + (L.bulbHi[q] - L.bulbLo[q]) * on);
+        lx.fillStyle = `rgba(${mix(0)},${mix(1)},${mix(2)},${(0.3 + 0.7 * on).toFixed(2)})`;
+        lx.shadowColor = L.bulbGlow; lx.shadowBlur = on > 0.6 ? br * 3.2 : 0;
+        lx.fill();
+      }
+      lx.shadowBlur = 0;
+
+      // sparks thrown off where the wheel passes the pointer
+      if (mode === "spin" && speed > 0.12 && !reduceMotion) {
+        const n = Math.random() < speed ? (speed > 0.6 ? 3 : 1) : 0;
+        for (let i = 0; i < n; i++) sparks.push({
+          x: c + (Math.random() - 0.3) * W * 0.02, y: W * 0.085,
+          vx: 0.05 + Math.random() * 0.25 * (0.4 + speed), vy: -0.04 - Math.random() * 0.18,
+          life: 1, hue: L.sparks[Math.random() < 0.3 ? 0 : 1]
+        });
+      }
+      if (sparks.length > 220) sparks.splice(0, sparks.length - 220);
+      sparks = sparks.filter(s => s.life > 0);
+      for (const s of sparks) {
+        s.x += s.vx * dt; s.y += s.vy * dt; s.vy += 0.0007 * dt; s.life -= dt / 650;
+        lx.globalAlpha = Math.max(0, s.life);
+        lx.fillStyle = s.hue;
+        lx.beginPath(); lx.arc(s.x, s.y, 1.3 + s.life, 0, Math.PI * 2); lx.fill();
+      }
+      lx.globalAlpha = 1;
+    }
+
+    function drawSky(now, dt) {
+      const W = innerWidth, H = innerHeight, kind = S().sky;
+      sx.clearRect(0, 0, W, H);
+      if (kind === "stars") {
+        sx.fillStyle = "#fff6e0";
+        for (const s of parts) {
+          sx.globalAlpha = reduceMotion ? 0.6 : 0.3 + 0.5 * (0.5 + 0.5 * Math.sin((now / 1000) * s.s + s.p));
+          sx.beginPath(); sx.arc(s.x, s.y, s.r, 0, 6.283); sx.fill();
+        }
+        sx.globalAlpha = 1;
+        if (reduceMotion) return;
+        if (!meteor && now > nextMeteor) {
+          meteor = { x: Math.random() * W * 0.7, y: Math.random() * H * 0.35, vx: 0.8 + Math.random() * 0.4, vy: 0.3 + Math.random() * 0.2, life: 1 };
+        }
+        if (meteor) {
+          meteor.x += meteor.vx * dt; meteor.y += meteor.vy * dt; meteor.life -= dt / 1100;
+          const tx = meteor.x - meteor.vx * 160, ty = meteor.y - meteor.vy * 160;
+          const g = sx.createLinearGradient(meteor.x, meteor.y, tx, ty);
+          g.addColorStop(0, `rgba(255,240,200,${Math.max(0, meteor.life).toFixed(2)})`); g.addColorStop(1, "rgba(255,240,200,0)");
+          sx.strokeStyle = g; sx.lineWidth = 2; sx.lineCap = "round";
+          sx.beginPath(); sx.moveTo(meteor.x, meteor.y); sx.lineTo(tx, ty); sx.stroke();
+          if (meteor.life <= 0) { meteor = null; nextMeteor = now + 5000 + Math.random() * 9000; }
+        }
+      } else if (kind === "clouds") {
+        for (const c of parts) {
+          if (c.cloud) {
+            c.x += c.v * dt; if (c.x - c.s * 2.2 > W) c.x = -c.s * 2.2;
+            sx.fillStyle = "rgba(255,255,255,0.55)";
+            sx.beginPath();
+            for (const [ox, oy, k] of PUFFS) { const px = c.x + ox * c.s, py = c.y + oy * c.s; sx.moveTo(px + k * c.s, py); sx.arc(px, py, k * c.s, 0, 6.283); }
+            sx.fill();
+          } else {
+            c.y -= c.v * dt; if (c.y < -5) { c.y = H + 5; c.x = rnd(W); }
+            sx.globalAlpha = 0.3 + 0.5 * (0.5 + 0.5 * Math.sin(now / 600 + c.p));
+            sx.fillStyle = "#fff0b0";
+            sx.beginPath(); sx.arc(c.x + Math.sin(now / 1500 + c.p) * 6, c.y, c.r, 0, 6.283); sx.fill();
+            sx.globalAlpha = 1;
+          }
+        }
+      } else if (kind === "embers") {
+        for (let i = 0; i < parts.length; i++) {
+          const e = parts[i];
+          e.x += (e.vx + Math.sin(now / 900 + e.p) * 0.01) * dt; e.y += e.vy * dt;
+          if (e.y < -10) { parts[i] = newEmber(W, H, false); continue; }
+          const a = 0.35 + 0.5 * (0.5 + 0.5 * Math.sin(now / 160 + e.p * 3));
+          sx.globalAlpha = a * 0.25; sx.fillStyle = e.hot ? "#ff9a4a" : "#5fdc7f";
+          sx.beginPath(); sx.arc(e.x, e.y, e.r * 3, 0, 6.283); sx.fill();
+          sx.globalAlpha = a; sx.fillStyle = e.hot ? "#ffd2a0" : "#c9ffd3";
+          sx.beginPath(); sx.arc(e.x, e.y, e.r, 0, 6.283); sx.fill();
+        }
+        sx.globalAlpha = 1;
+      } else {
+        for (let k = 0; k < 5; k++) {
+          const x0 = W * (0.08 + k * 0.2) + Math.sin(now / 4000 + k * 1.7) * 40;
+          const g = sx.createLinearGradient(0, 0, 0, H * 0.8);
+          g.addColorStop(0, "rgba(195,244,236,0.10)"); g.addColorStop(1, "rgba(195,244,236,0)");
+          sx.fillStyle = g;
+          sx.beginPath(); sx.moveTo(x0 - 20, 0); sx.lineTo(x0 + 20, 0); sx.lineTo(x0 + 140, H * 0.8); sx.lineTo(x0 + 40, H * 0.8); sx.closePath(); sx.fill();
+        }
+        sx.lineWidth = 1;
+        for (let i = 0; i < parts.length; i++) {
+          const b = parts[i];
+          b.y += b.vy * dt; if (b.y < -10) { parts[i] = newBubble(W, H, false); continue; }
+          const x = b.x + Math.sin(now / 1200 + b.p) * b.amp;
+          sx.strokeStyle = "rgba(210,255,248,0.45)"; sx.beginPath(); sx.arc(x, b.y, b.r, 0, 6.283); sx.stroke();
+          sx.fillStyle = "rgba(255,255,255,0.5)"; sx.beginPath(); sx.arc(x - b.r * 0.35, b.y - b.r * 0.35, b.r * 0.25, 0, 6.283); sx.fill();
+        }
+      }
+    }
+
+    function loop(now) {
+      const dt = Math.min(50, now - last); last = now;
+      drawLights(now, dt);
+      drawSky(now, dt);
+      requestAnimationFrame(loop);
+    }
+
+    function thunder() {
+      if (!$("sound").checked || !audioCtx) return;
+      try {
+        const sr = audioCtx.sampleRate, len = Math.floor(sr * 1.8);
+        const buf = audioCtx.createBuffer(1, len, sr), d = buf.getChannelData(0);
+        let b = 0;
+        for (let i = 0; i < len; i++) { b = 0.97 * b + 0.03 * (Math.random() * 2 - 1); d[i] = b * 6 * Math.pow(1 - i / len, 2.2); }
+        const src = audioCtx.createBufferSource(); src.buffer = buf;
+        const lp = audioCtx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 520;
+        const g = audioCtx.createGain(); g.gain.value = 0.55;
+        src.connect(lp).connect(g).connect(audioCtx.destination); src.start();
+      } catch (e) {}
+    }
+
+    function restart(el, cls) { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+
+    new ResizeObserver(resize).observe(wrap);
+    addEventListener("resize", resize);
+    resize();
+    if (!reduceMotion) requestAnimationFrame(loop);
+
+    return {
+      reskin() { initSky(); if (reduceMotion) { drawSky(0, 0); drawLights(0, 0); } },
+      spin() { mode = "spin"; clearTimeout(winT); },
+      speed(v) { speed = v; },
+      win() {
+        mode = "win"; clearTimeout(winT);
+        winT = setTimeout(() => { if (mode === "win") mode = "idle"; }, 2800);
+        if (reduceMotion) drawLights(0, 0);
+      },
+      strike() {
+        if (reduceMotion) return;
+        restart($("flash"), "on");
+        restart(wrap, "shake");
+        thunder();
+      }
+    };
+  })();
+
+  // ---------- Wiring ----------
+  spinBtn.addEventListener("click", spin);
+  canvas.addEventListener("click", spin);
+  $("again").addEventListener("click", spin);
+  $("closeVerdict").addEventListener("click", () => closeVerdict());
+  $("removeWinner").addEventListener("click", () => {
+    verdict.hidden = true;
+    const gone = removeLast();
+    if (gone) { statusEl.textContent = `${gone} was removed. ${items.length} sections remain.`; toast(`${gone} was taken off the wheel.`); }
+    spinBtn.focus();
+  });
+  verdict.addEventListener("click", e => { if (e.target === verdict) closeVerdict(); });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") {
+      if (!verdict.hidden) { closeVerdict(); return; }
+      if (document.body.classList.contains("big")) { setBig(false); return; }
+    }
+    const tag = (e.target.tagName || "").toLowerCase();
+    if (e.code === "Space" && !["input", "textarea", "select", "button", "summary"].includes(tag)) { e.preventDefault(); spin(); }
+  });
+
+  new ResizeObserver(() => draw()).observe(wrap);
+  if (document.fonts?.ready) document.fonts.ready.then(draw);
+  renderRecord(); renderSaved(); applySkin(skin); sync();
+})();
+</script>
+</body>
+</html>
